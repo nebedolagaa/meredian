@@ -1,0 +1,238 @@
+{
+  "nav": {
+    "today": "Сегодня",
+    "analytics": "Аналитика",
+    "plans": "Планы",
+    "settings": "Настройки"
+  },
+  "common": {
+    "settings": "Настройки",
+    "email": "Эл. почта",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "saved": "Сохранено",
+    "pleaseWait": "Подождите…",
+    "comingSoon": "Скоро"
+  },
+  "wordmark": {
+    "tagline": "Тренируйся точно."
+  },
+  "status": {
+    "planned": "запланировано",
+    "in_progress": "в процессе",
+    "completed": "завершено",
+    "skipped": "пропущено"
+  },
+  "theme": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "switchToLight": "Включить светлую тему",
+    "switchToDark": "Включить тёмную тему"
+  },
+  "language": {
+    "title": "Язык",
+    "description": "Выберите язык интерфейса.",
+    "label": "Язык интерфейса"
+  },
+  "auth": {
+    "displayName": "Отображаемое имя",
+    "displayNamePlaceholder": "Алекс",
+    "email": "Эл. почта",
+    "emailPlaceholder": "you@example.com",
+    "password": "Пароль",
+    "signIn": "Войти",
+    "createAccount": "Создать аккаунт",
+    "noAccount": "Нет аккаунта?",
+    "signUp": "Зарегистрироваться",
+    "haveAccount": "Уже есть аккаунт?",
+    "rememberMe": "Запомнить меня",
+    "forgotPassword": "Забыли пароль?",
+    "resetTitle": "Сброс пароля",
+    "resetSubtitle": "Введите эл. почту, и мы отправим ссылку для сброса.",
+    "sendResetLink": "Отправить ссылку",
+    "resetEmailSent": "Если такая почта существует, ссылка для сброса уже в пути.",
+    "backToSignIn": "Назад ко входу",
+    "newPasswordTitle": "Новый пароль",
+    "newPasswordSubtitle": "Выберите новый пароль для аккаунта.",
+    "newPassword": "Новый пароль",
+    "updatePassword": "Обновить пароль",
+    "passwordUpdated": "Пароль обновлён. Перенаправляем…"
+  },
+  "dashboard": {
+    "settings": "Настройки",
+    "thisWeek": "Эта неделя",
+    "sessionsKept": "Выполнено {kept} из {total} тренировок на этой неделе",
+    "session": "Тренировка",
+    "exercise": "Упражнение",
+    "noExercises": "В этой тренировке пока нет упражнений.",
+    "continue": "Продолжить",
+    "startSession": "Начать тренировку",
+    "noSessionScheduled": "Нет запланированных тренировок. Запланируйте следующую.",
+    "goToPlans": "Перейти к планам",
+    "openFullCalendar": "Открыть календарь →"
+  },
+  "settings": {
+    "title": "Настройки",
+    "appearance": "Оформление",
+    "appearanceDesc": "Выберите, как Meridian выглядит на этом устройстве.",
+    "profile": "Профиль",
+    "displayName": "Отображаемое имя",
+    "displayNamePlaceholder": "Ваше имя",
+    "email": "Эл. почта",
+    "integrations": "Интеграции",
+    "integrationsDesc": "В планах, пока недоступно.",
+    "signOut": "Выйти",
+    "googleCalendarTitle": "Синхронизация с Google Календарём",
+    "googleCalendarDesc": "Отправляйте запланированные тренировки в Google Календарь.",
+    "appleCalendarTitle": "Синхронизация с Apple Календарём",
+    "appleCalendarDesc": "Двусторонняя синхронизация с приложением Apple Календарь.",
+    "appleHealthTitle": "Интеграция с Apple Health",
+    "appleHealthDesc": "Получайте данные о тренировках и восстановлении из Apple Health.",
+    "aiCoachingTitle": "ИИ-тренер",
+    "aiCoachingDesc": "Персональные рекомендации по прогрессии и корректировке плана на основе истории «план против реальности»."
+  },
+  "analytics": {
+    "title": "Аналитика",
+    "subtitle": "План против реальности во времени",
+    "volume": "Объём",
+    "volumeDesc": "Общий объём за тренировку · последние 30 дней",
+    "actual": "Факт",
+    "planned": "План",
+    "exerciseProgress": "Прогресс в упражнениях",
+    "exerciseProgressDesc": "Максимальный рабочий вес во времени · рекорды цветом moss",
+    "records": "Личные рекорды",
+    "recordsDesc": "Лучший вес и расчётный 1ПМ по каждому упражнению",
+    "noRecords": "Проведите несколько тренировок, чтобы начать отслеживать рекорды.",
+    "oneRepMax": "1ПМ {value}{unit}"
+  },
+  "plans": {
+    "title": "Планы",
+    "new": "Новый",
+    "noPlans": "Планов пока нет",
+    "buildFirst": "Создайте свой первый шаблон тренировки.",
+    "createPlan": "Создать план",
+    "exerciseCount": "{count, plural, one {# упражнение} few {# упражнения} many {# упражнений} other {# упражнения}}",
+    "lastUsed": "последний {date}",
+    "duplicate": "Дублировать план"
+  },
+  "planBuilder": {
+    "editPlan": "Редактировать план",
+    "newPlan": "Новый план",
+    "planName": "Название плана",
+    "planNamePlaceholder": "День тяги A",
+    "addExercise": "Добавить упражнение",
+    "noExercises": "Упражнений пока нет. Найдите их выше, чтобы добавить.",
+    "sets": "Подходы",
+    "reps": "Повторы",
+    "weightKg": "Вес кг",
+    "weight": "Вес ({unit})",
+    "savePlan": "Сохранить план",
+    "saving": "Сохранение…",
+    "nameRequired": "Укажите название плана.",
+    "moveUp": "Переместить вверх",
+    "moveDown": "Переместить вниз",
+    "deleteExercise": "Удалить упражнение",
+    "exercise": "Упражнение"
+  },
+  "exerciseSearch": {
+    "placeholder": "Поиск упражнений…",
+    "addCustom": "Добавить своё «{query}»",
+    "adding": "Добавление…",
+    "typeToSearch": "Введите запрос для поиска по каталогу"
+  },
+  "calendar": {
+    "title": "Календарь",
+    "prevMonth": "Предыдущий месяц",
+    "nextMonth": "Следующий месяц",
+    "addSession": "Добавить тренировку",
+    "done": "Выполнено",
+    "missed": "Пропущено",
+    "planned": "Запланировано",
+    "session": "Тренировка",
+    "scheduledSession": "Запланированная тренировка",
+    "noSessionDay": "В этот день тренировок нет",
+    "openSession": "Открыть тренировку"
+  },
+  "quickAdd": {
+    "scheduleSession": "Запланировать тренировку",
+    "scheduleDesc": "Выберите план и дату. Тренировка начнётся как запланированная.",
+    "plan": "План",
+    "noPlans": "Планов пока нет — сначала создайте план в разделе «Планы».",
+    "selectPlan": "Выберите план",
+    "date": "Дата",
+    "scheduling": "Планирование…",
+    "addSession": "Добавить тренировку"
+  },
+  "session": {
+    "target": "Цель: {sets}×{reps} @ {weight}{unit}",
+    "startSession": "Начать тренировку",
+    "noExercises": "В этом плане нет упражнений.",
+    "volume": "{volume} {unit} объёма",
+    "setsDone": "{done}/{total} подходов выполнено",
+    "finishWorkout": "Завершить тренировку",
+    "saving": "Сохранение…",
+    "saveChanges": "Сохранить изменения",
+    "sessionComplete": "Тренировка завершена",
+    "totalVolume": "Общий объём",
+    "setsCompleted": "Подходов выполнено",
+    "backToDashboard": "На главную",
+    "session": "Тренировка",
+    "exercise": "Упражнение",
+    "manage": "Управление тренировкой",
+    "reschedule": "Перенести",
+    "move": "Перенести",
+    "skipSession": "Пропустить тренировку",
+    "deleteSession": "Удалить тренировку"
+  },
+  "exerciseRow": {
+    "plan": "План {sets}×{reps} @ {weight}{unit}",
+    "actual": "Факт {sets}×{reps} @ {weight}{unit}"
+  },
+  "restTimer": {
+    "startRest": "Таймер отдыха ({seconds}с)",
+    "defaultRest": "Отдых по умолчанию",
+    "seconds": "секунд",
+    "add": "Добавить 15 секунд",
+    "subtract": "Убрать 15 секунд",
+    "dismiss": "Закрыть"
+  },
+  "units": {
+    "title": "Единицы",
+    "description": "Выберите, как отображается и вводится вес.",
+    "kg": "Килограммы",
+    "lb": "Фунты"
+  },
+  "security": {
+    "title": "Безопасность",
+    "description": "Обновите эл. почту и пароль.",
+    "changeEmail": "Сменить эл. почту",
+    "changePassword": "Сменить пароль",
+    "emailConfirmSent": "Проверьте почту, чтобы подтвердить новый адрес.",
+    "passwordChanged": "Пароль изменён."
+  },
+  "dataExport": {
+    "title": "Ваши данные",
+    "description": "Экспортируйте записанные тренировки.",
+    "csv": "Экспорт CSV",
+    "json": "Экспорт JSON"
+  },
+  "errors": {
+    "title": "Что-то пошло не так",
+    "description": "Произошла непредвиденная ошибка. Попробуйте ещё раз.",
+    "retry": "Повторить"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "description": "Страница, которую вы ищете, не существует.",
+    "backHome": "На главную"
+  },
+  "insight": {
+    "label": "Инсайт"
+  },
+  "insights": {
+    "volumeTrend": "Общий объём снизился на {pct}% за последние 2 недели",
+    "stalled": "{name} стоит на месте уже 3 тренировки — подумайте о разгрузке или смене прогрессии",
+    "missedSets": "Вы постоянно не доделываете последние подходы — усталость или перегрузка плана?",
+    "streak": "Серия из 5 тренировок — постоянство приносит плоды"
+  }
+}

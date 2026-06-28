@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Meridian raw palette — LIGHT theme (default).
+       Palette colors are stored as space-separated RGB channels so Tailwind
+       opacity modifiers (e.g. bg-steel/90) keep working. */
+    --carbon: 244 242 238; /* page background #F4F2EE */
+    --graphite: 255 255 255; /* card / panel #FFFFFF */
+    --panel-border: rgba(16, 17, 19, 0.1);
+    --bone: 22 24 28; /* primary text #16181C */
+    --bone-dim: rgba(22, 24, 28, 0.55);
+    --steel: 88 102 117; /* accent #586675 */
+    --clay: 176 73 47; /* #B0492F */
+    --moss: 88 122 83; /* #587A53 */
+
+    /* Typography (theme-independent) */
+    --font-display: "Manrope", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --radius: 0.5rem;
+
+    color-scheme: light;
+
+    /* shadcn token overrides — LIGHT */
+    --background: 40 20% 95%;
+    --foreground: 222 13% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 13% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 13% 10%;
+    --primary: 210 14% 40%;
+    --primary-foreground: 40 20% 96%;
+    --secondary: 40 16% 92%;
+    --secondary-foreground: 222 13% 10%;
+    --muted: 40 16% 92%;
+    --muted-foreground: rgba(22, 24, 28, 0.55);
+    --accent: 40 16% 90%;
+    --accent-foreground: 222 13% 10%;
+    --destructive: 13 58% 44%;
+    --destructive-foreground: 40 20% 96%;
+    --border: rgba(16, 17, 19, 0.1);
+    --input: 40 16% 92%;
+    --ring: 210 14% 40%;
+  }
+
+  .dark {
+    /* Meridian raw palette — DARK theme */
+    --carbon: 16 17 19; /* carbon #101113 */
+    --graphite: 26 27 31; /* graphite #1A1B1F */
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --bone: 237 234 227; /* bone #EDEAE3 */
+    --bone-dim: rgba(237, 234, 227, 0.42);
+    --steel: 155 167 180; /* steel #9BA7B4 */
+    --clay: 189 91 63; /* clay #BD5B3F */
+    --moss: 111 143 106; /* moss #6F8F6A */
+
+    color-scheme: dark;
+
+    /* shadcn token overrides — DARK */
+    --background: 220 9% 6%; /* carbon #101113 */
+    --foreground: 43 18% 90%; /* bone #EDEAE3 */
+    --card: 228 8% 11%; /* graphite #1A1B1F */
+    --card-foreground: 43 18% 90%;
+    --popover: 228 8% 11%;
+    --popover-foreground: 43 18% 90%;
+    --primary: 210 14% 65%; /* steel #9BA7B4 */
+    --primary-foreground: 220 9% 6%;
+    --secondary: 228 8% 11%;
+    --secondary-foreground: 43 18% 90%;
+    --muted: 228 8% 11%;
+    --muted-foreground: rgba(237, 234, 227, 0.42);
+    --accent: 228 8% 14%;
+    --accent-foreground: 43 18% 90%;
+    --destructive: 13 50% 49%; /* clay #BD5B3F */
+    --destructive-foreground: 43 18% 90%;
+    --border: rgba(255, 255, 255, 0.08);
+    --input: 228 8% 11%;
+    --ring: 210 14% 65%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--panel-border);
+  }
+
+  body {
+    background-color: rgb(var(--carbon));
+    color: rgb(var(--bone));
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .font-num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Hide scrollbars but keep scrolling */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

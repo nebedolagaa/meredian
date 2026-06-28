@@ -1,0 +1,238 @@
+{
+  "nav": {
+    "today": "Today",
+    "analytics": "Analytics",
+    "plans": "Plans",
+    "settings": "Settings"
+  },
+  "common": {
+    "settings": "Settings",
+    "email": "Email",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "pleaseWait": "Please wait…",
+    "comingSoon": "Coming soon"
+  },
+  "wordmark": {
+    "tagline": "Train with precision."
+  },
+  "status": {
+    "planned": "planned",
+    "in_progress": "in progress",
+    "completed": "completed",
+    "skipped": "skipped"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "language": {
+    "title": "Language",
+    "description": "Choose the language for the interface.",
+    "label": "Interface language"
+  },
+  "auth": {
+    "displayName": "Display name",
+    "displayNamePlaceholder": "Alex",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "noAccount": "No account?",
+    "signUp": "Sign up",
+    "haveAccount": "Already have an account?",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "resetTitle": "Reset password",
+    "resetSubtitle": "Enter your email and we'll send a reset link.",
+    "sendResetLink": "Send reset link",
+    "resetEmailSent": "If that email exists, a reset link is on its way.",
+    "backToSignIn": "Back to sign in",
+    "newPasswordTitle": "Set a new password",
+    "newPasswordSubtitle": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "updatePassword": "Update password",
+    "passwordUpdated": "Password updated. Redirecting…"
+  },
+  "dashboard": {
+    "settings": "Settings",
+    "thisWeek": "This week",
+    "sessionsKept": "{kept} of {total} sessions kept this week",
+    "session": "Session",
+    "exercise": "Exercise",
+    "noExercises": "This session has no exercises yet.",
+    "continue": "Continue",
+    "startSession": "Start session",
+    "noSessionScheduled": "No session scheduled. Plan your next one.",
+    "goToPlans": "Go to plans",
+    "openFullCalendar": "Open full calendar →"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "appearanceDesc": "Choose how Meridian looks on this device.",
+    "profile": "Profile",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "Your name",
+    "email": "Email",
+    "integrations": "Integrations",
+    "integrationsDesc": "In the roadmap, not yet live.",
+    "signOut": "Sign out",
+    "googleCalendarTitle": "Google Calendar sync",
+    "googleCalendarDesc": "Push scheduled sessions to your Google Calendar.",
+    "appleCalendarTitle": "Apple Calendar sync",
+    "appleCalendarDesc": "Two-way sync with the Apple Calendar app.",
+    "appleHealthTitle": "Apple Health integration",
+    "appleHealthDesc": "Pull workouts and recovery data from Apple Health.",
+    "aiCoachingTitle": "AI Coaching",
+    "aiCoachingDesc": "Personalised progression suggestions and plan adjustments based on your plan-versus-reality history."
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Plan versus reality, over time",
+    "volume": "Volume",
+    "volumeDesc": "Total volume per session · last 30 days",
+    "actual": "Actual",
+    "planned": "Planned",
+    "exerciseProgress": "Exercise progress",
+    "exerciseProgressDesc": "Top working weight over time · PRs in moss",
+    "records": "Personal records",
+    "recordsDesc": "Best weight and estimated 1RM per exercise",
+    "noRecords": "Log a few sessions to start tracking records.",
+    "oneRepMax": "1RM {value}{unit}"
+  },
+  "plans": {
+    "title": "Plans",
+    "new": "New",
+    "noPlans": "No plans yet",
+    "buildFirst": "Build your first workout template.",
+    "createPlan": "Create a plan",
+    "exerciseCount": "{count, plural, one {# exercise} other {# exercises}}",
+    "lastUsed": "last {date}",
+    "duplicate": "Duplicate plan"
+  },
+  "planBuilder": {
+    "editPlan": "Edit plan",
+    "newPlan": "New plan",
+    "planName": "Plan name",
+    "planNamePlaceholder": "Push Day A",
+    "addExercise": "Add exercise",
+    "noExercises": "No exercises yet. Search above to add some.",
+    "sets": "Sets",
+    "reps": "Reps",
+    "weightKg": "Weight kg",
+    "weight": "Weight ({unit})",
+    "savePlan": "Save plan",
+    "saving": "Saving…",
+    "nameRequired": "Plan name is required.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteExercise": "Delete exercise",
+    "exercise": "Exercise"
+  },
+  "exerciseSearch": {
+    "placeholder": "Search exercises…",
+    "addCustom": "Add custom \"{query}\"",
+    "adding": "Adding…",
+    "typeToSearch": "Type to search the catalogue"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "addSession": "Add session",
+    "done": "Done",
+    "missed": "Missed",
+    "planned": "Planned",
+    "session": "Session",
+    "scheduledSession": "Scheduled session",
+    "noSessionDay": "No session on this day",
+    "openSession": "Open session"
+  },
+  "quickAdd": {
+    "scheduleSession": "Schedule a session",
+    "scheduleDesc": "Pick a plan and a date. The session starts as planned.",
+    "plan": "Plan",
+    "noPlans": "No plans yet — create one first in Plans.",
+    "selectPlan": "Select a plan",
+    "date": "Date",
+    "scheduling": "Scheduling…",
+    "addSession": "Add session"
+  },
+  "session": {
+    "target": "Target: {sets}×{reps} @ {weight}{unit}",
+    "startSession": "Start session",
+    "noExercises": "This plan has no exercises.",
+    "volume": "{volume} {unit} vol",
+    "setsDone": "{done}/{total} sets done",
+    "finishWorkout": "Finish workout",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "sessionComplete": "Session complete",
+    "totalVolume": "Total volume",
+    "setsCompleted": "Sets completed",
+    "backToDashboard": "Back to dashboard",
+    "session": "Session",
+    "exercise": "Exercise",
+    "manage": "Manage session",
+    "reschedule": "Reschedule",
+    "move": "Move",
+    "skipSession": "Skip session",
+    "deleteSession": "Delete session"
+  },
+  "exerciseRow": {
+    "plan": "Plan {sets}×{reps} @ {weight}{unit}",
+    "actual": "Actual {sets}×{reps} @ {weight}{unit}"
+  },
+  "restTimer": {
+    "startRest": "Rest timer ({seconds}s)",
+    "defaultRest": "Default rest",
+    "seconds": "seconds",
+    "add": "Add 15 seconds",
+    "subtract": "Subtract 15 seconds",
+    "dismiss": "Dismiss"
+  },
+  "units": {
+    "title": "Units",
+    "description": "Choose how weights are displayed and entered.",
+    "kg": "Kilograms",
+    "lb": "Pounds"
+  },
+  "security": {
+    "title": "Security",
+    "description": "Update your email and password.",
+    "changeEmail": "Change email",
+    "changePassword": "Change password",
+    "emailConfirmSent": "Check your inbox to confirm the new email.",
+    "passwordChanged": "Password changed."
+  },
+  "dataExport": {
+    "title": "Your data",
+    "description": "Export your logged workouts.",
+    "csv": "Export CSV",
+    "json": "Export JSON"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist.",
+    "backHome": "Back to dashboard"
+  },
+  "insight": {
+    "label": "Insight"
+  },
+  "insights": {
+    "volumeTrend": "Total volume is down {pct}% over the last 2 weeks",
+    "stalled": "{name} has stalled for 3 sessions — consider deload or progression change",
+    "missedSets": "You're consistently missing the last sets — fatigue or overplanning?",
+    "streak": "5-session streak — consistency is compounding"
+  }
+}
