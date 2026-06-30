@@ -2,6 +2,7 @@
   "nav": {
     "today": "Today",
     "analytics": "Analytics",
+    "add": "Add",
     "plans": "Plans",
     "settings": "Settings"
   },
@@ -11,6 +12,8 @@
     "save": "Save",
     "saving": "Saving…",
     "saved": "Saved",
+    "delete": "Delete",
+    "cancel": "Cancel",
     "pleaseWait": "Please wait…",
     "comingSoon": "Coming soon"
   },
@@ -56,7 +59,10 @@
     "newPasswordSubtitle": "Choose a new password for your account.",
     "newPassword": "New password",
     "updatePassword": "Update password",
-    "passwordUpdated": "Password updated. Redirecting…"
+    "passwordUpdated": "Password updated. Redirecting…",
+    "confirmEmailTitle": "Confirm your email",
+    "confirmEmailBody": "We sent a confirmation link to {email}. Click it to activate your account, then sign in.",
+    "goToSignIn": "Go to sign in"
   },
   "dashboard": {
     "settings": "Settings",
@@ -69,7 +75,18 @@
     "startSession": "Start session",
     "noSessionScheduled": "No session scheduled. Plan your next one.",
     "goToPlans": "Go to plans",
-    "openFullCalendar": "Open full calendar →"
+    "openFullCalendar": "Open full calendar →",
+    "logNow": "Log a workout now",
+    "logNowPending": "Starting…",
+    "goalProgress": "{kept} of {goal} weekly sessions"
+  },
+  "streak": {
+    "weeks": "{count, plural, =0 {No active streak} one {# week streak} other {# week streak}}",
+    "keepGoing": "Keep the momentum going",
+    "startCta": "Hit your weekly goal to start a streak",
+    "best": "Best",
+    "thisWeek": "This week",
+    "progress": "{done}/{goal} sessions"
   },
   "settings": {
     "title": "Settings",
@@ -94,8 +111,8 @@
   "analytics": {
     "title": "Analytics",
     "subtitle": "Plan versus reality, over time",
-    "volume": "Volume",
-    "volumeDesc": "Total volume per session · last 30 days",
+    "volume": "Progress",
+    "volumeDesc": "Actual vs planned per session · last 30 days",
     "actual": "Actual",
     "planned": "Planned",
     "exerciseProgress": "Exercise progress",
@@ -103,7 +120,14 @@
     "records": "Personal records",
     "recordsDesc": "Best weight and estimated 1RM per exercise",
     "noRecords": "Log a few sessions to start tracking records.",
-    "oneRepMax": "1RM {value}{unit}"
+    "oneRepMax": "1RM {value}{unit}",
+    "frequency": "Training frequency",
+    "frequencyDesc": "Completed sessions per week · last 8 weeks",
+    "frequencyEmpty": "Complete sessions to see your weekly frequency",
+    "muscleBalance": "Muscle balance",
+    "muscleBalanceDesc": "Share of completed volume by muscle group",
+    "share": "Share record",
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
   },
   "plans": {
     "title": "Plans",
@@ -113,7 +137,13 @@
     "createPlan": "Create a plan",
     "exerciseCount": "{count, plural, one {# exercise} other {# exercises}}",
     "lastUsed": "last {date}",
-    "duplicate": "Duplicate plan"
+    "duplicate": "Duplicate plan",
+    "archive": "Archive plan",
+    "unarchive": "Restore plan",
+    "archived": "Archived",
+    "delete": "Delete plan",
+    "deleteConfirm": "Delete this plan?",
+    "deleting": "Deleting…"
   },
   "planBuilder": {
     "editPlan": "Edit plan",
@@ -165,6 +195,13 @@
   },
   "session": {
     "target": "Target: {sets}×{reps} @ {weight}{unit}",
+    "lastTime": "Last time: {weight}{unit} × {reps}",
+    "e1rm": "Est. 1RM {weight}{unit}",
+    "progressSuggest": "RPE {rpe} — go up",
+    "newPR": "{count, plural, one {New personal record!} other {# new personal records!}}",
+    "rpe": "RPE",
+    "setDetails": "Set details",
+    "setNotePlaceholder": "Note",
     "startSession": "Start session",
     "noExercises": "This plan has no exercises.",
     "volume": "{volume} {unit} vol",
@@ -184,6 +221,15 @@
     "skipSession": "Skip session",
     "deleteSession": "Delete session"
   },
+  "progression": {
+    "increaseEasy": "That felt easy last time — add weight",
+    "increaseHit": "You hit every rep — time to add weight",
+    "hold": "Repeat the weight and chase more reps",
+    "deloadHard": "Last session maxed you out — back off to rebuild",
+    "deloadMissed": "Reps fell short — drop the weight and groove it",
+    "suggested": "Suggested {weight}{unit}",
+    "apply": "Set {weight}{unit}"
+  },
   "exerciseRow": {
     "plan": "Plan {sets}×{reps} @ {weight}{unit}",
     "actual": "Actual {sets}×{reps} @ {weight}{unit}"
@@ -194,7 +240,8 @@
     "seconds": "seconds",
     "add": "Add 15 seconds",
     "subtract": "Subtract 15 seconds",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "done": "Rest over — back to work"
   },
   "units": {
     "title": "Units",
@@ -202,19 +249,39 @@
     "kg": "Kilograms",
     "lb": "Pounds"
   },
+  "goal": {
+    "title": "Weekly goal",
+    "description": "Sessions per week to keep your streak alive.",
+    "label": "Sessions per week",
+    "perWeek": "/ week"
+  },
   "security": {
     "title": "Security",
     "description": "Update your email and password.",
     "changeEmail": "Change email",
     "changePassword": "Change password",
     "emailConfirmSent": "Check your inbox to confirm the new email.",
-    "passwordChanged": "Password changed."
+    "passwordChanged": "Password changed.",
+    "currentPassword": "Current password"
   },
   "dataExport": {
     "title": "Your data",
     "description": "Export your logged workouts.",
     "csv": "Export CSV",
     "json": "Export JSON"
+  },
+  "templates": {
+    "title": "Start from a template",
+    "description": "Pick a preset program — adjust the exercises afterwards.",
+    "creating": "Creating…",
+    "full_body": {
+      "name": "Full Body",
+      "desc": "5 compound lifts, 3× per week"
+    },
+    "upper": { "name": "Upper Body", "desc": "Chest, back, shoulders, arms" },
+    "lower": { "name": "Lower Body", "desc": "Legs and posterior chain" },
+    "push": { "name": "Push Day", "desc": "Chest, shoulders, triceps" },
+    "pull": { "name": "Pull Day", "desc": "Back and biceps" }
   },
   "errors": {
     "title": "Something went wrong",
@@ -230,9 +297,94 @@
     "label": "Insight"
   },
   "insights": {
-    "volumeTrend": "Total volume is down {pct}% over the last 2 weeks",
+    "progressTrend": "Plan completion is down {pct}% over the last 2 weeks",
     "stalled": "{name} has stalled for 3 sessions — consider deload or progression change",
     "missedSets": "You're consistently missing the last sets — fatigue or overplanning?",
-    "streak": "5-session streak — consistency is compounding"
+    "streak": "{weeks, plural, one {# week} other {# weeks}} in a row — consistency is compounding"
+  },
+  "account": {
+    "dangerZone": "Danger zone",
+    "dangerZoneDesc": "Irreversible account actions.",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "This permanently deletes your account and all your data. This cannot be undone.",
+    "deleteConfirmCta": "Yes, delete everything",
+    "deleting": "Deleting…",
+    "cancel": "Cancel"
+  },
+  "onboarding": {
+    "title": "Start with a plan",
+    "description": "Create a balanced full-body starter plan you can run today and adjust anytime.",
+    "cta": "Create starter plan",
+    "creating": "Creating…"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "description": "Get a browser notification for today's session while the app is open.",
+    "enable": "Enable session reminders",
+    "notificationTitle": "Today's session",
+    "notificationBody": "{plan} is scheduled for today. Time to train."
+  },
+  "bodyWeight": {
+    "title": "Body weight",
+    "description": "Track your weight over time.",
+    "weight": "Weight ({unit})",
+    "date": "Date",
+    "add": "Add",
+    "noData": "Add at least two entries to see a trend.",
+    "invalidWeight": "Enter a valid weight."
+  },
+  "exerciseHistory": {
+    "personalRecord": "Personal record",
+    "max": "Heaviest",
+    "oneRepMax": "Est. 1RM",
+    "progress": "Progress",
+    "noData": "No logged data for this exercise yet.",
+    "sessions": "{count, plural, =0 {No sessions} one {# session} other {# sessions}}"
+  },
+  "muscleGroups": {
+    "chest": "Chest",
+    "back": "Back",
+    "legs": "Legs",
+    "shoulders": "Shoulders",
+    "arms": "Arms",
+    "core": "Core"
+  },
+  "install": {
+    "title": "Install Meridian",
+    "subtitle": "Add to your home screen for full-screen access",
+    "action": "Install",
+    "dismiss": "Dismiss"
+  },
+  "toast": {
+    "undo": "Undo",
+    "planArchived": "Plan archived",
+    "planRestored": "Plan restored",
+    "planDeleted": "Plan deleted",
+    "planDuplicated": "Plan duplicated"
+  },
+  "plates": {
+    "open": "Plates",
+    "title": "Plate calculator",
+    "description": "Plates to load on each side of the bar.",
+    "total": "Total weight",
+    "barbell": "Bar",
+    "perSide": "Per side",
+    "justBar": "Just the bar — no plates needed.",
+    "off": "Off by {weight}{unit} with available plates"
+  },
+  "feedback": {
+    "title": "Haptics & sound",
+    "description": "Vibration and sound cues for sets and rest.",
+    "haptics": "Vibration",
+    "hapticsDesc": "Buzz when you complete a set or hit a PR.",
+    "sound": "Sound",
+    "soundDesc": "Play a chime when the rest timer ends."
+  },
+  "heatmap": {
+    "title": "Consistency",
+    "description": "Your completed sessions over the last 26 weeks.",
+    "totalDays": "{count, plural, one {# active day} other {# active days}}",
+    "less": "Less",
+    "more": "More"
   }
 }

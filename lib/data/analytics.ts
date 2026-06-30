@@ -11,6 +11,9 @@ import {
   computePersonalRecords,
   type PersonalRecord,
 } from "@/lib/utils/records";
+import { computeStreak, type StreakResult } from "@/lib/utils/streak";
+import { todayISO } from "@/lib/utils/dates";
+import { DEFAULT_WEEKLY_GOAL } from "@/lib/data/preferences";
 
 type Supa = SupabaseClient<Database>;
 
@@ -22,7 +25,7 @@ interface LogRow {
   completed: boolean;
   plan_exercises: {
     target_sets: number;
-    exercises: { name: string } | null;
+    exercises: { name: string; muscle_group: string | null } | null;
   } | null;
 }
 
@@ -37,15 +40,24 @@ export interface AnalyticsData {
   sessions: SessionSummary[];
   history: ExerciseHistory[];
   insights: Insight[];
-  /** Volume per completed session, ordered oldest -> newest. */
-  volumeSeries: { date: string; volume: number; planned: number }[];
+  /** Progress per completed session, ordered oldest -> newest. */
+  progressSeries: { date: string; progress: number; planned: number }[];
+  /** Completed sessions per week for the last 8 weeks, oldest -> newest. */
+  frequencySeries: { week: string; count: number }[];
+  /** Completed volume split by muscle group, largest first. */
+  muscleVolume: { group: string; volume: number }[];
   exerciseNames: string[];
   records: PersonalRecord[];
+  /** Weekly-goal streak summary for the retention card. */
+  streak: StreakResult;
+  /** ISO dates of completed sessions over the last 26 weeks (for the heatmap). */
+  completedDates: string[];
 }
 
 export async function getAnalyticsData(
   supabase: Supa,
   userId: string,
+  weeklyGoal: number = DEFAULT_WEEKLY_GOAL,
 ): Promise<AnalyticsData> {
   // Sessions in the last ~60 days.
   const since = new Date();
@@ -92,7 +104,7 @@ export async function getAnalyticsData(
     const { data: logRows } = await supabase
       .from("session_logs")
       .select(
-        "session_id, set_number, actual_reps, actual_weight, completed, plan_exercises(target_sets, exercises(name))",
+        "session_id, set_number, actual_reps, actual_weight, completed, plan_exercises(target_sets, exercises(name, muscle_group))",
       )
       .in("session_id", sessionIds);
     logs = (logRows ?? []) as unknown as LogRow[];
@@ -130,13 +142,26 @@ export async function getAnalyticsData(
     }
   }
 
-  const summaries: SessionSummary[] = sessions.map((s) => ({
-    date: s.scheduled_date,
-    volume: volumeBySession.get(s.id) ?? 0,
-    plannedSets: s.plan_id ? (plannedSetsByPlan.get(s.plan_id) ?? 0) : 0,
-    completedSets: completedSetsBySession.get(s.id) ?? 0,
-    completed: s.status === "completed",
-  }));
+  const summaries: SessionSummary[] = sessions.map((s) => {
+    const actualVolume = volumeBySession.get(s.id) ?? 0;
+    const plannedVolume = s.plan_id
+      ? (plannedVolumeByPlan.get(s.plan_id) ?? 0)
+      : 0;
+    const progress =
+      plannedVolume > 0
+        ? Math.round((actualVolume / plannedVolume) * 100)
+        : actualVolume > 0
+          ? 100
+          : 0;
+    return {
+      date: s.scheduled_date,
+      volume: actualVolume,
+      progress,
+      plannedSets: s.plan_id ? (plannedSetsByPlan.get(s.plan_id) ?? 0) : 0,
+      completedSets: completedSetsBySession.get(s.id) ?? 0,
+      completed: s.status === "completed",
+    };
+  });
 
   const orderedSessionIds = sessions.map((s) => s.id);
   const history: ExerciseHistory[] = Array.from(
@@ -149,15 +174,85 @@ export async function getAnalyticsData(
   }));
 
   const completedSummaries = summaries.filter((s) => s.completed);
-  const volumeSeries = sessions
+  const progressSeries = sessions
     .filter((s) => s.status === "completed")
-    .map((s) => ({
-      date: s.scheduled_date,
-      volume: volumeBySession.get(s.id) ?? 0,
-      planned: s.plan_id ? (plannedVolumeByPlan.get(s.plan_id) ?? 0) : 0,
-    }));
+    .map((s) => {
+      const actualVolume = volumeBySession.get(s.id) ?? 0;
+      const plannedVolume = s.plan_id
+        ? (plannedVolumeByPlan.get(s.plan_id) ?? 0)
+        : 0;
+      const progress =
+        plannedVolume > 0
+          ? Math.round((actualVolume / plannedVolume) * 100)
+          : actualVolume > 0
+            ? 100
+            : 0;
+      return {
+        date: s.scheduled_date,
+        progress,
+        planned: 100,
+      };
+    });
 
-  const insights = generateInsights({ sessions: completedSummaries, history });
+  // Weekly-goal streak over a longer window than the 60-day analytics view so
+  // longest-streak detection isn't artificially capped.
+  const streakSince = new Date();
+  streakSince.setDate(streakSince.getDate() - 26 * 7);
+  const { data: streakRows } = await supabase
+    .from("workout_sessions")
+    .select("scheduled_date")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .gte("scheduled_date", streakSince.toISOString().slice(0, 10));
+  const streak = computeStreak(
+    (streakRows ?? []).map((r) => r.scheduled_date),
+    weeklyGoal,
+    todayISO(),
+  );
+
+  const insights = generateInsights({
+    sessions: completedSummaries,
+    history,
+    streakWeeks: streak.current,
+  });
+
+  // Training frequency: completed sessions per week (Mon-start), last 8 weeks.
+  const weekStart = (dateStr: string): string => {
+    const d = new Date(`${dateStr}T00:00:00`);
+    const day = (d.getDay() + 6) % 7; // Monday = 0
+    d.setDate(d.getDate() - day);
+    return d.toISOString().slice(0, 10);
+  };
+  const freqByWeek = new Map<string, number>();
+  for (const s of completedSummaries) {
+    const wk = weekStart(s.date);
+    freqByWeek.set(wk, (freqByWeek.get(wk) ?? 0) + 1);
+  }
+  const cursor = new Date();
+  cursor.setDate(cursor.getDate() - ((cursor.getDay() + 6) % 7));
+  const frequencySeries: { week: string; count: number }[] = [];
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date(cursor);
+    d.setDate(d.getDate() - i * 7);
+    const wk = d.toISOString().slice(0, 10);
+    frequencySeries.push({ week: wk, count: freqByWeek.get(wk) ?? 0 });
+  }
+
+  // Completed volume by muscle group.
+  const volumeByMuscle = new Map<string, number>();
+  for (const log of logs) {
+    if (!log.completed) continue;
+    const group = log.plan_exercises?.exercises?.muscle_group;
+    if (!group) continue;
+    volumeByMuscle.set(
+      group,
+      (volumeByMuscle.get(group) ?? 0) +
+        setVolume(log.actual_reps, log.actual_weight),
+    );
+  }
+  const muscleVolume = Array.from(volumeByMuscle.entries())
+    .map(([group, volume]) => ({ group, volume }))
+    .sort((a, b) => b.volume - a.volume);
 
   const records = computePersonalRecords(
     logs
@@ -174,9 +269,13 @@ export async function getAnalyticsData(
     sessions: summaries,
     history,
     insights,
-    volumeSeries,
+    progressSeries,
+    frequencySeries,
+    muscleVolume,
     exerciseNames: Array.from(exerciseSessionMax.keys()).sort(),
     records,
+    streak,
+    completedDates: (streakRows ?? []).map((r) => r.scheduled_date),
   };
 }
 

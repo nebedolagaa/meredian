@@ -5,8 +5,8 @@
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#101113",
-  "theme_color": "#101113",
+  "background_color": "#0F1015",
+  "theme_color": "#0F1015",
   "orientation": "portrait",
   "icons": [
     {
@@ -20,6 +20,26 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today",
+      "short_name": "Today",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Plans",
+      "short_name": "Plans",
+      "url": "/plans",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "url": "/analytics",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }

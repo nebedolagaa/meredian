@@ -17,6 +17,9 @@ export async function getUserLocale(): Promise<Locale> {
 }
 
 export async function setUserLocale(locale: Locale): Promise<void> {
+  // Validate against the allow-list before persisting. Even though the parameter
+  // is typed Locale, the value crosses the server-action trust boundary.
+  if (!locales.includes(locale)) return;
   cookies().set(LOCALE_COOKIE, locale, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,

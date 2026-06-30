@@ -19,8 +19,12 @@ import { LanguageSelect } from "@/components/i18n/LanguageSelect";
 import {
   UnitSegmented,
   RestSecondsField,
+  WeeklyGoalField,
 } from "@/components/settings/PreferencesForms";
 import { SecurityForms } from "@/components/settings/SecurityForms";
+import { RemindersToggle } from "@/components/settings/RemindersToggle";
+import { FeedbackToggles } from "@/components/settings/FeedbackToggles";
+import { DangerZone } from "@/components/settings/DangerZone";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +35,11 @@ export default async function SettingsPage() {
   const tUnits = await getTranslations("units");
   const tSecurity = await getTranslations("security");
   const tData = await getTranslations("dataExport");
+  const tReminders = await getTranslations("reminders");
+  const tFeedback = await getTranslations("feedback");
+  const tAccount = await getTranslations("account");
   const tCommon = await getTranslations("common");
+  const tGoal = await getTranslations("goal");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -62,9 +70,18 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, unit_preference, rest_seconds")
+    .select("display_name, unit_preference, rest_seconds, reminders_enabled")
     .eq("id", user.id)
     .single();
+
+  // Read separately so a missing column (pre-migration 0009) can't break the
+  // rest of the settings page.
+  const { data: goalRow } = await supabase
+    .from("profiles")
+    .select("weekly_goal")
+    .eq("id", user.id)
+    .single();
+  const weeklyGoal = goalRow?.weekly_goal ?? 3;
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -103,6 +120,16 @@ export default async function SettingsPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle>{tGoal("title")}</CardTitle>
+          <p className="text-xs text-bone-dim">{tGoal("description")}</p>
+        </CardHeader>
+        <CardContent>
+          <WeeklyGoalField initial={weeklyGoal} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>{t("profile")}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
@@ -123,6 +150,26 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent>
           <SecurityForms currentEmail={user.email ?? ""} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{tReminders("title")}</CardTitle>
+          <p className="text-xs text-bone-dim">{tReminders("description")}</p>
+        </CardHeader>
+        <CardContent>
+          <RemindersToggle initial={profile?.reminders_enabled ?? false} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{tFeedback("title")}</CardTitle>
+          <p className="text-xs text-bone-dim">{tFeedback("description")}</p>
+        </CardHeader>
+        <CardContent>
+          <FeedbackToggles />
         </CardContent>
       </Card>
 
@@ -177,6 +224,18 @@ export default async function SettingsPage() {
           {t("signOut")}
         </Button>
       </form>
+
+      <Card className="border-red-500/30">
+        <CardHeader>
+          <CardTitle className="text-red-400">
+            {tAccount("dangerZone")}
+          </CardTitle>
+          <p className="text-xs text-bone-dim">{tAccount("dangerZoneDesc")}</p>
+        </CardHeader>
+        <CardContent>
+          <DangerZone />
+        </CardContent>
+      </Card>
     </div>
   );
 }

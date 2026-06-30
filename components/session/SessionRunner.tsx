@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -10,13 +10,20 @@ import {
   Trash2,
   SkipForward,
   CalendarClock,
+  Trophy,
+  TrendingUp,
+  TrendingDown,
+  RotateCcw,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SetInput, type SetState } from "@/components/session/SetInput";
 import { RestTimer } from "@/components/session/RestTimer";
+import { PlateCalculator } from "@/components/session/PlateCalculator";
+import { CountUp } from "@/components/ui/CountUp";
 import {
   Sheet,
   SheetContent,
@@ -33,7 +40,19 @@ import {
   type LogInput,
 } from "@/app/actions/sessions";
 import { totalVolume } from "@/lib/utils/volume";
-import { formatVolume, unitLabel, type WeightUnit } from "@/lib/utils/units";
+import { haptic } from "@/lib/utils/haptics";
+import { fireConfetti } from "@/lib/utils/confetti";
+import {
+  recommendProgression,
+  type ProgressionResult,
+} from "@/lib/utils/progression";
+import { estimateOneRepMax } from "@/lib/utils/records";
+import {
+  formatVolume,
+  toDisplayWeight,
+  unitLabel,
+  type WeightUnit,
+} from "@/lib/utils/units";
 
 export interface RunnerExercise {
   plan_exercise_id: string;
@@ -42,6 +61,9 @@ export interface RunnerExercise {
   target_reps: number;
   target_weight: number;
   sets: SetState[];
+  lastResult?: { weight: number; reps: number } | null;
+  lastRpe?: number | null;
+  priorBest?: number | null;
 }
 
 export interface SessionRunnerProps {
@@ -65,16 +87,46 @@ export function SessionRunner({
 }: SessionRunnerProps) {
   const router = useRouter();
   const t = useTranslations("session");
+  const tProg = useTranslations("progression");
   const tStatus = useTranslations("status");
   const [exercises, setExercises] = useState<RunnerExercise[]>(initial);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [newPRs, setNewPRs] = useState<string[]>([]);
   const [manageOpen, setManageOpen] = useState(false);
   const [rescheduleDate, setRescheduleDate] = useState(date);
   const [busy, setBusy] = useState(false);
   const completed = status === "completed";
   const startRestRef = useRef<(() => void) | null>(null);
+
+  // Keep the screen awake while a workout is actively in progress.
+  useEffect(() => {
+    if (status !== "in_progress") return;
+    if (typeof navigator === "undefined" || !("wakeLock" in navigator)) return;
+
+    let lock: WakeLockSentinel | null = null;
+    let released = false;
+
+    const request = async () => {
+      try {
+        lock = await navigator.wakeLock.request("screen");
+      } catch {
+        // Ignore: wake lock may be denied (e.g. low battery) — non-critical.
+      }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible" && !released) request();
+    };
+
+    request();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      released = true;
+      document.removeEventListener("visibilitychange", onVisibility);
+      lock?.release().catch(() => {});
+    };
+  }, [status]);
 
   function updateSet(
     exId: string,
@@ -85,7 +137,10 @@ export function SessionRunner({
     if (patch.completed === true) {
       const ex = exercises.find((e) => e.plan_exercise_id === exId);
       const prev = ex?.sets.find((s) => s.set_number === setNumber);
-      if (prev && !prev.completed) startRestRef.current?.();
+      if (prev && !prev.completed) {
+        startRestRef.current?.();
+        haptic("success");
+      }
     }
     setExercises((exs) =>
       exs.map((ex) =>
@@ -101,6 +156,59 @@ export function SessionRunner({
     );
   }
 
+  function bumpWeight(exId: string, delta: number) {
+    setExercises((exs) =>
+      exs.map((ex) =>
+        ex.plan_exercise_id !== exId
+          ? ex
+          : {
+              ...ex,
+              sets: ex.sets.map((s) =>
+                s.completed
+                  ? s
+                  : {
+                      ...s,
+                      weight: Math.max(0, +(s.weight + delta).toFixed(2)),
+                    },
+              ),
+            },
+      ),
+    );
+  }
+
+  // Set every incomplete set to a specific weight (used by the progression
+  // suggestion's "apply" action).
+  function applyWeight(exId: string, kg: number) {
+    setExercises((exs) =>
+      exs.map((ex) =>
+        ex.plan_exercise_id !== exId
+          ? ex
+          : {
+              ...ex,
+              sets: ex.sets.map((s) =>
+                s.completed ? s : { ...s, weight: kg },
+              ),
+            },
+      ),
+    );
+  }
+
+  // Progression recommendations are derived from prior performance (props), so
+  // compute them once from the initial data rather than on every set edit.
+  const recById = useMemo(() => {
+    const map = new Map<string, ProgressionResult>();
+    for (const ex of initial) {
+      const rec = recommendProgression({
+        lastWeight: ex.lastResult?.weight ?? null,
+        lastReps: ex.lastResult?.reps ?? null,
+        lastRpe: ex.lastRpe ?? null,
+        targetReps: ex.target_reps,
+      });
+      if (rec) map.set(ex.plan_exercise_id, rec);
+    }
+    return map;
+  }, [initial]);
+
   const allLogs = useMemo<LogInput[]>(
     () =>
       exercises.flatMap((ex) =>
@@ -110,10 +218,26 @@ export function SessionRunner({
           actual_reps: s.reps,
           actual_weight: s.weight,
           completed: s.completed,
+          rpe: s.rpe,
+          note: s.note,
         })),
       ),
     [exercises],
   );
+
+  // Exercises where a completed set beat the prior heaviest weight.
+  function detectPRs(): string[] {
+    const prs: string[] = [];
+    for (const ex of exercises) {
+      const prior = ex.priorBest ?? 0;
+      const best = Math.max(
+        0,
+        ...ex.sets.filter((s) => s.completed).map((s) => s.weight),
+      );
+      if (best > 0 && best > prior) prs.push(ex.name);
+    }
+    return prs;
+  }
 
   const completedVolume = useMemo(
     () =>
@@ -138,13 +262,21 @@ export function SessionRunner({
   async function onFinish() {
     setError(null);
     setFinishing(true);
+    const prs = detectPRs();
     const result = await completeSession(sessionId, allLogs);
     setFinishing(false);
     if (result.error) {
       setError(result.error);
       return;
     }
+    setNewPRs(prs);
     setSummaryOpen(true);
+    if (prs.length > 0) {
+      haptic("celebrate");
+      fireConfetti();
+    } else {
+      haptic("success");
+    }
   }
 
   async function onSaveChanges() {
@@ -223,38 +355,104 @@ export function SessionRunner({
       )}
 
       <div className="flex flex-col gap-5">
-        {exercises.map((ex) => (
-          <div
-            key={ex.plan_exercise_id}
-            className="rounded-2xl border border-panel-border bg-graphite p-4"
-          >
-            <div className="mb-2 flex flex-col gap-0.5">
-              <h3 className="text-lg font-semibold text-bone">{ex.name}</h3>
-              <p className="font-num text-xs tabular-nums text-bone-dim">
-                {t("target", {
-                  sets: ex.target_sets,
-                  reps: ex.target_reps,
-                  weight: ex.target_weight,
-                  unit: unitLabel(unit),
-                })}
-              </p>
+        {exercises.map((ex) => {
+          const rec = recById.get(ex.plan_exercise_id);
+          const workingWeight =
+            ex.sets.find((s) => !s.completed)?.weight ?? ex.target_weight;
+          const bestE1rm = Math.max(
+            0,
+            ...ex.sets
+              .filter((s) => s.completed && s.weight > 0)
+              .map((s) => estimateOneRepMax(s.weight, s.reps)),
+          );
+          return (
+            <div
+              key={ex.plan_exercise_id}
+              className="rounded-2xl border border-panel-border bg-graphite p-4"
+            >
+              <div className="mb-2 flex flex-col gap-0.5">
+                <h3 className="text-lg font-semibold text-bone">{ex.name}</h3>
+                <p className="font-num text-xs tabular-nums text-bone-dim">
+                  {t("target", {
+                    sets: ex.target_sets,
+                    reps: ex.target_reps,
+                    weight: ex.target_weight,
+                    unit: unitLabel(unit),
+                  })}
+                </p>
+                {ex.lastResult && (
+                  <p className="font-num text-xs tabular-nums text-steel">
+                    {t("lastTime", {
+                      weight: toDisplayWeight(ex.lastResult.weight, unit),
+                      unit: unitLabel(unit),
+                      reps: ex.lastResult.reps,
+                    })}
+                  </p>
+                )}
+                {bestE1rm > 0 && (
+                  <p className="font-num text-xs tabular-nums text-moss">
+                    {t("e1rm", {
+                      weight: toDisplayWeight(bestE1rm, unit),
+                      unit: unitLabel(unit),
+                    })}
+                  </p>
+                )}
+                <div className="mt-1">
+                  <PlateCalculator weightKg={workingWeight} unit={unit} />
+                </div>
+                {!completed && rec && (
+                  <ProgressionBanner
+                    rec={rec}
+                    label={tProg(rec.reasonKey)}
+                    suggestedLabel={tProg("suggested", {
+                      weight: toDisplayWeight(rec.suggestedWeightKg, unit),
+                      unit: unitLabel(unit),
+                    })}
+                    applyLabel={tProg("apply", {
+                      weight: toDisplayWeight(rec.suggestedWeightKg, unit),
+                      unit: unitLabel(unit),
+                    })}
+                    onApply={() =>
+                      applyWeight(ex.plan_exercise_id, rec.suggestedWeightKg)
+                    }
+                  />
+                )}
+                {!completed && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => bumpWeight(ex.plan_exercise_id, -2.5)}
+                      className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
+                    >
+                      -2.5
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => bumpWeight(ex.plan_exercise_id, 2.5)}
+                      className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
+                    >
+                      +2.5{unitLabel(unit)}
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="divide-y divide-panel-border">
+                {ex.sets.map((s) => (
+                  <SetInput
+                    key={s.set_number}
+                    set={s}
+                    targetReps={ex.target_reps}
+                    targetWeight={ex.target_weight}
+                    unit={unit}
+                    onChange={(patch) =>
+                      updateSet(ex.plan_exercise_id, s.set_number, patch)
+                    }
+                  />
+                ))}
+              </div>
             </div>
-            <div className="divide-y divide-panel-border">
-              {ex.sets.map((s) => (
-                <SetInput
-                  key={s.set_number}
-                  set={s}
-                  targetReps={ex.target_reps}
-                  targetWeight={ex.target_weight}
-                  unit={unit}
-                  onChange={(patch) =>
-                    updateSet(ex.plan_exercise_id, s.set_number, patch)
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
 
         {exercises.length === 0 && (
           <p className="rounded-2xl border border-dashed border-panel-border py-8 text-center text-sm text-bone-dim">
@@ -376,11 +574,33 @@ export function SessionRunner({
               label={t("totalVolume")}
               value={`${formatVolume(completedVolume, unit)} ${unitLabel(unit)}`}
             />
-            <SummaryStat
-              label={t("setsCompleted")}
-              value={`${completedSets}/${totalSets}`}
-            />
+            <div className="flex flex-col gap-1 rounded-2xl border border-panel-border bg-graphite p-4">
+              <span className="text-xs text-bone-dim">
+                {t("setsCompleted")}
+              </span>
+              <span className="font-num text-xl tabular-nums text-bone">
+                <CountUp value={completedSets} />/{totalSets}
+              </span>
+            </div>
           </div>
+
+          {newPRs.length > 0 && (
+            <div className="mt-4 flex flex-col gap-2 rounded-2xl border border-moss/40 bg-moss/10 p-4">
+              <div className="flex items-center gap-2 text-moss">
+                <Trophy className="h-5 w-5" />
+                <span className="text-sm font-semibold">
+                  {t("newPR", { count: newPRs.length })}
+                </span>
+              </div>
+              <ul className="flex flex-col gap-0.5 pl-7">
+                {newPRs.map((name) => (
+                  <li key={name} className="text-sm text-bone">
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <Button
             className="mt-6 w-full"
@@ -403,6 +623,71 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
     <div className="flex flex-col gap-1 rounded-2xl border border-panel-border bg-graphite p-4">
       <span className="text-xs text-bone-dim">{label}</span>
       <span className="font-num text-xl tabular-nums text-bone">{value}</span>
+    </div>
+  );
+}
+
+function ProgressionBanner({
+  rec,
+  label,
+  suggestedLabel,
+  applyLabel,
+  onApply,
+}: {
+  rec: ProgressionResult;
+  label: string;
+  suggestedLabel: string;
+  applyLabel: string;
+  onApply: () => void;
+}) {
+  const tone =
+    rec.action === "increase"
+      ? {
+          box: "border-moss/40 bg-moss/10",
+          Icon: TrendingUp,
+          accent: "text-moss",
+        }
+      : rec.action === "deload"
+        ? {
+            box: "border-clay/40 bg-clay/10",
+            Icon: TrendingDown,
+            accent: "text-clay",
+          }
+        : {
+            box: "border-panel-border bg-carbon",
+            Icon: RotateCcw,
+            accent: "text-bone-dim",
+          };
+  const Icon = tone.Icon;
+
+  return (
+    <div
+      className={cn(
+        "mt-2 flex items-center gap-2.5 rounded-xl border px-3 py-2",
+        tone.box,
+      )}
+    >
+      <Icon className={cn("h-4 w-4 shrink-0", tone.accent)} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <span className="text-xs font-medium text-bone">{label}</span>
+        <span className="font-num text-[11px] tabular-nums text-bone-dim">
+          {suggestedLabel}
+        </span>
+      </div>
+      {rec.action !== "hold" && (
+        <button
+          type="button"
+          onClick={onApply}
+          className={cn(
+            "shrink-0 rounded-lg border px-2.5 py-1 font-num text-[11px] font-medium tabular-nums transition-colors",
+            rec.action === "increase"
+              ? "border-moss/50 text-moss hover:bg-moss/15"
+              : "border-clay/50 text-clay hover:bg-clay/15",
+          )}
+        >
+          {applyLabel}
+        </button>
+      )}
     </div>
   );
 }

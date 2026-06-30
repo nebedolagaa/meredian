@@ -1,11 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/utils/rateLimit";
 
 interface ExportLogRow {
   set_number: number;
   actual_reps: number | null;
   actual_weight: number | null;
   completed: boolean;
+  rpe: number | null;
+  note: string | null;
   workout_sessions: {
     scheduled_date: string;
     status: string;
@@ -17,7 +20,11 @@ interface ExportLogRow {
 }
 
 function csvEscape(value: string | number | boolean): string {
-  const s = String(value);
+  let s = String(value);
+  // Neutralise CSV/formula injection: spreadsheet apps treat a leading =, +, -,
+  // @ (or control chars tab/CR) as the start of a formula. Prefix such values
+  // with a single quote so the cell is always rendered as literal text.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
@@ -35,6 +42,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const limit = rateLimit(`export:${user.id}`, 10, 60_000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+    );
+  }
+
   const format =
     request.nextUrl.searchParams.get("format") === "json" ? "json" : "csv";
 
@@ -49,7 +64,7 @@ export async function GET(request: NextRequest) {
     const { data } = await supabase
       .from("session_logs")
       .select(
-        "set_number, actual_reps, actual_weight, completed, workout_sessions(scheduled_date, status, workout_plans(name)), plan_exercises(exercises(name))",
+        "set_number, actual_reps, actual_weight, completed, rpe, note, workout_sessions(scheduled_date, status, workout_plans(name)), plan_exercises(exercises(name))",
       )
       .in("session_id", sessionIds);
     logs = (data ?? []) as unknown as ExportLogRow[];
@@ -64,6 +79,8 @@ export async function GET(request: NextRequest) {
     reps: l.actual_reps ?? "",
     weight_kg: l.actual_weight ?? "",
     completed: l.completed,
+    rpe: l.rpe ?? "",
+    note: l.note ?? "",
   }));
 
   rows.sort((a, b) => a.date.localeCompare(b.date));
@@ -88,6 +105,8 @@ export async function GET(request: NextRequest) {
     "reps",
     "weight_kg",
     "completed",
+    "rpe",
+    "note",
   ];
   const lines = [
     header.join(","),
@@ -101,6 +120,8 @@ export async function GET(request: NextRequest) {
         r.reps,
         r.weight_kg,
         r.completed,
+        r.rpe,
+        r.note,
       ]
         .map(csvEscape)
         .join(","),

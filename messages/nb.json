@@ -1,0 +1,390 @@
+{
+  "nav": {
+    "today": "I dag",
+    "analytics": "Analyse",
+    "add": "Legg til",
+    "plans": "Planer",
+    "settings": "Innstillinger"
+  },
+  "common": {
+    "settings": "Innstillinger",
+    "email": "E-post",
+    "save": "Lagre",
+    "saving": "Lagrer…",
+    "saved": "Lagret",
+    "delete": "Slett",
+    "cancel": "Avbryt",
+    "pleaseWait": "Vent litt…",
+    "comingSoon": "Kommer snart"
+  },
+  "wordmark": {
+    "tagline": "Tren med presisjon."
+  },
+  "status": {
+    "planned": "planlagt",
+    "in_progress": "pågår",
+    "completed": "fullført",
+    "skipped": "hoppet over"
+  },
+  "theme": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "switchToLight": "Bytt til lyst tema",
+    "switchToDark": "Bytt til mørkt tema"
+  },
+  "language": {
+    "title": "Språk",
+    "description": "Velg språk for grensesnittet.",
+    "label": "Grensesnittspråk"
+  },
+  "auth": {
+    "displayName": "Visningsnavn",
+    "displayNamePlaceholder": "Alex",
+    "email": "E-post",
+    "emailPlaceholder": "deg@eksempel.no",
+    "password": "Passord",
+    "signIn": "Logg inn",
+    "createAccount": "Opprett konto",
+    "noAccount": "Ingen konto?",
+    "signUp": "Registrer deg",
+    "haveAccount": "Har du allerede en konto?",
+    "rememberMe": "Husk meg",
+    "forgotPassword": "Glemt passord?",
+    "resetTitle": "Tilbakestill passord",
+    "resetSubtitle": "Skriv inn e-posten din, så sender vi en tilbakestillingslenke.",
+    "sendResetLink": "Send tilbakestillingslenke",
+    "resetEmailSent": "Hvis den e-posten finnes, er en tilbakestillingslenke på vei.",
+    "backToSignIn": "Tilbake til innlogging",
+    "newPasswordTitle": "Velg nytt passord",
+    "newPasswordSubtitle": "Velg et nytt passord for kontoen din.",
+    "newPassword": "Nytt passord",
+    "updatePassword": "Oppdater passord",
+    "passwordUpdated": "Passord oppdatert. Videresender…",
+    "confirmEmailTitle": "Bekreft e-posten din",
+    "confirmEmailBody": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen, og logg deretter inn.",
+    "goToSignIn": "Gå til innlogging"
+  },
+  "dashboard": {
+    "settings": "Innstillinger",
+    "thisWeek": "Denne uken",
+    "sessionsKept": "{kept} av {total} økter gjennomført denne uken",
+    "session": "Økt",
+    "exercise": "Øvelse",
+    "noExercises": "Denne økten har ingen øvelser ennå.",
+    "continue": "Fortsett",
+    "startSession": "Start økt",
+    "noSessionScheduled": "Ingen økt planlagt. Planlegg den neste.",
+    "goToPlans": "Gå til planer",
+    "openFullCalendar": "Åpne hele kalenderen →",
+    "logNow": "Logg en økt nå",
+    "logNowPending": "Starter…",
+    "goalProgress": "{kept} av {goal} økter denne uken"
+  },
+  "streak": {
+    "weeks": "{count, plural, =0 {Ingen aktiv rekke} one {# ukes rekke} other {# ukers rekke}}",
+    "keepGoing": "Hold tempoet oppe",
+    "startCta": "Nå ukesmålet for å starte en rekke",
+    "best": "Best",
+    "thisWeek": "Denne uken",
+    "progress": "{done}/{goal} økter"
+  },
+  "settings": {
+    "title": "Innstillinger",
+    "appearance": "Utseende",
+    "appearanceDesc": "Velg hvordan Meridian ser ut på denne enheten.",
+    "profile": "Profil",
+    "displayName": "Visningsnavn",
+    "displayNamePlaceholder": "Navnet ditt",
+    "email": "E-post",
+    "integrations": "Integrasjoner",
+    "integrationsDesc": "På veikartet, ikke aktivt ennå.",
+    "signOut": "Logg ut",
+    "googleCalendarTitle": "Google Kalender-synk",
+    "googleCalendarDesc": "Send planlagte økter til Google Kalender.",
+    "appleCalendarTitle": "Apple Kalender-synk",
+    "appleCalendarDesc": "Toveis synk med Apple Kalender-appen.",
+    "appleHealthTitle": "Apple Helse-integrasjon",
+    "appleHealthDesc": "Hent treningsøkter og restitusjonsdata fra Apple Helse.",
+    "aiCoachingTitle": "AI-coaching",
+    "aiCoachingDesc": "Personlige progresjonsforslag og planjusteringer basert på din historikk over plan kontra virkelighet."
+  },
+  "analytics": {
+    "title": "Analyse",
+    "subtitle": "Plan mot virkelighet, over tid",
+    "volume": "Fremgang",
+    "volumeDesc": "Faktisk mot planlagt per økt · siste 30 dager",
+    "actual": "Faktisk",
+    "planned": "Planlagt",
+    "exerciseProgress": "Øvelsesfremgang",
+    "exerciseProgressDesc": "Tyngste arbeidsvekt over tid · PR-er i mosegrønt",
+    "records": "Personlige rekorder",
+    "recordsDesc": "Beste vekt og estimert 1RM per øvelse",
+    "noRecords": "Logg noen økter for å begynne å spore rekorder.",
+    "oneRepMax": "1RM {value}{unit}",
+    "frequency": "Treningsfrekvens",
+    "frequencyDesc": "Fullførte økter per uke · siste 8 uker",
+    "frequencyEmpty": "Fullfør økter for å se ukentlig frekvens",
+    "muscleBalance": "Muskelbalanse",
+    "muscleBalanceDesc": "Andel av fullført volum per muskelgruppe",
+    "share": "Del rekord",
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
+  },
+  "plans": {
+    "title": "Planer",
+    "new": "Ny",
+    "noPlans": "Ingen planer ennå",
+    "buildFirst": "Lag din første treningsmal.",
+    "createPlan": "Opprett en plan",
+    "exerciseCount": "{count, plural, one {# øvelse} other {# øvelser}}",
+    "lastUsed": "sist {date}",
+    "duplicate": "Dupliser plan",
+    "archive": "Arkiver plan",
+    "unarchive": "Gjenopprett plan",
+    "archived": "Arkivert",
+    "delete": "Slett plan",
+    "deleteConfirm": "Slette denne planen?",
+    "deleting": "Sletter…"
+  },
+  "planBuilder": {
+    "editPlan": "Rediger plan",
+    "newPlan": "Ny plan",
+    "planName": "Plannavn",
+    "planNamePlaceholder": "Push-dag A",
+    "addExercise": "Legg til øvelse",
+    "noExercises": "Ingen øvelser ennå. Søk over for å legge til.",
+    "sets": "Sett",
+    "reps": "Reps",
+    "weightKg": "Vekt kg",
+    "weight": "Vekt ({unit})",
+    "savePlan": "Lagre plan",
+    "saving": "Lagrer…",
+    "nameRequired": "Plannavn er påkrevd.",
+    "moveUp": "Flytt opp",
+    "moveDown": "Flytt ned",
+    "deleteExercise": "Slett øvelse",
+    "exercise": "Øvelse"
+  },
+  "exerciseSearch": {
+    "placeholder": "Søk etter øvelser…",
+    "addCustom": "Legg til egendefinert «{query}»",
+    "adding": "Legger til…",
+    "typeToSearch": "Skriv for å søke i katalogen"
+  },
+  "calendar": {
+    "title": "Kalender",
+    "prevMonth": "Forrige måned",
+    "nextMonth": "Neste måned",
+    "addSession": "Legg til økt",
+    "done": "Ferdig",
+    "missed": "Bommet",
+    "planned": "Planlagt",
+    "session": "Økt",
+    "scheduledSession": "Planlagt økt",
+    "noSessionDay": "Ingen økt denne dagen",
+    "openSession": "Åpne økt"
+  },
+  "quickAdd": {
+    "scheduleSession": "Planlegg en økt",
+    "scheduleDesc": "Velg en plan og en dato. Økten starter som planlagt.",
+    "plan": "Plan",
+    "noPlans": "Ingen planer ennå — opprett en først under Planer.",
+    "selectPlan": "Velg en plan",
+    "date": "Dato",
+    "scheduling": "Planlegger…",
+    "addSession": "Legg til økt"
+  },
+  "session": {
+    "target": "Mål: {sets}×{reps} @ {weight}{unit}",
+    "lastTime": "Forrige gang: {weight}{unit} × {reps}",
+    "e1rm": "Est. 1RM {weight}{unit}",
+    "progressSuggest": "RPE {rpe} — øk",
+    "newPR": "{count, plural, one {Ny personlig rekord!} other {# nye personlige rekorder!}}",
+    "rpe": "RPE",
+    "setDetails": "Settdetaljer",
+    "setNotePlaceholder": "Notat",
+    "startSession": "Start økt",
+    "noExercises": "Denne planen har ingen øvelser.",
+    "volume": "{volume} {unit} vol",
+    "setsDone": "{done}/{total} sett gjort",
+    "finishWorkout": "Fullfør økten",
+    "saving": "Lagrer…",
+    "saveChanges": "Lagre endringer",
+    "sessionComplete": "Økt fullført",
+    "totalVolume": "Totalt volum",
+    "setsCompleted": "Sett fullført",
+    "backToDashboard": "Tilbake til dashbordet",
+    "session": "Økt",
+    "exercise": "Øvelse",
+    "manage": "Administrer økt",
+    "reschedule": "Endre tidspunkt",
+    "move": "Flytt",
+    "skipSession": "Hopp over økten",
+    "deleteSession": "Slett økten"
+  },
+  "progression": {
+    "increaseEasy": "Det føltes lett sist — øk vekten",
+    "increaseHit": "Du klarte alle reps — på tide å øke vekten",
+    "hold": "Gjenta vekten og jakt på flere reps",
+    "deloadHard": "Forrige økt tok deg til maks — trapp ned for å bygge opp igjen",
+    "deloadMissed": "Du kom til kort på reps — senk vekten og finn flyten",
+    "suggested": "Foreslått {weight}{unit}",
+    "apply": "Sett {weight}{unit}"
+  },
+  "exerciseRow": {
+    "plan": "Plan {sets}×{reps} @ {weight}{unit}",
+    "actual": "Faktisk {sets}×{reps} @ {weight}{unit}"
+  },
+  "restTimer": {
+    "startRest": "Hviletimer ({seconds}s)",
+    "defaultRest": "Standard hvile",
+    "seconds": "sekunder",
+    "add": "Legg til 15 sekunder",
+    "subtract": "Trekk fra 15 sekunder",
+    "dismiss": "Lukk",
+    "done": "Hvilen er over — tilbake til arbeidet"
+  },
+  "units": {
+    "title": "Enheter",
+    "description": "Velg hvordan vekter vises og legges inn.",
+    "kg": "Kilogram",
+    "lb": "Pund"
+  },
+  "goal": {
+    "title": "Ukesmål",
+    "description": "Antall økter per uke for å holde rekken i live.",
+    "label": "Økter per uke",
+    "perWeek": "/ uke"
+  },
+  "security": {
+    "title": "Sikkerhet",
+    "description": "Oppdater e-post og passord.",
+    "changeEmail": "Endre e-post",
+    "changePassword": "Endre passord",
+    "emailConfirmSent": "Sjekk innboksen for å bekrefte den nye e-posten.",
+    "passwordChanged": "Passord endret.",
+    "currentPassword": "Nåværende passord"
+  },
+  "dataExport": {
+    "title": "Dataene dine",
+    "description": "Eksporter de loggførte øktene dine.",
+    "csv": "Eksporter CSV",
+    "json": "Eksporter JSON"
+  },
+  "templates": {
+    "title": "Start fra en mal",
+    "description": "Velg et forhåndsdefinert program — juster øvelsene etterpå.",
+    "creating": "Oppretter…",
+    "full_body": {
+      "name": "Helkropp",
+      "desc": "5 baseøvelser, 3× per uke"
+    },
+    "upper": { "name": "Overkropp", "desc": "Bryst, rygg, skuldre, armer" },
+    "lower": { "name": "Underkropp", "desc": "Bein og bakside" },
+    "push": { "name": "Push-dag", "desc": "Bryst, skuldre, triceps" },
+    "pull": { "name": "Pull-dag", "desc": "Rygg og biceps" }
+  },
+  "errors": {
+    "title": "Noe gikk galt",
+    "description": "En uventet feil oppstod. Prøv igjen.",
+    "retry": "Prøv igjen"
+  },
+  "notFound": {
+    "title": "Siden ble ikke funnet",
+    "description": "Siden du leter etter, finnes ikke.",
+    "backHome": "Tilbake til dashbordet"
+  },
+  "insight": {
+    "label": "Innsikt"
+  },
+  "insights": {
+    "progressTrend": "Plangjennomføringen er ned {pct}% de siste 2 ukene",
+    "stalled": "{name} har stått stille i 3 økter — vurder nedtrapping eller endret progresjon",
+    "missedSets": "Du bommer stadig på de siste settene — utmattelse eller for ambisiøs planlegging?",
+    "streak": "{weeks, plural, one {# uke} other {# uker}} på rad — jevnhet gir resultater"
+  },
+  "account": {
+    "dangerZone": "Faresone",
+    "dangerZoneDesc": "Ugjenkallelige kontohandlinger.",
+    "deleteAccount": "Slett konto",
+    "deleteConfirm": "Dette sletter kontoen din og alle dataene permanent. Dette kan ikke angres.",
+    "deleteConfirmCta": "Ja, slett alt",
+    "deleting": "Sletter…",
+    "cancel": "Avbryt"
+  },
+  "onboarding": {
+    "title": "Start med en plan",
+    "description": "Lag en balansert helkropps-startplan du kan kjøre i dag og justere når som helst.",
+    "cta": "Opprett startplan",
+    "creating": "Oppretter…"
+  },
+  "reminders": {
+    "title": "Påminnelser",
+    "description": "Få et nettleservarsel for dagens økt mens appen er åpen.",
+    "enable": "Aktiver øktpåminnelser",
+    "notificationTitle": "Dagens økt",
+    "notificationBody": "{plan} er planlagt for i dag. På tide å trene."
+  },
+  "bodyWeight": {
+    "title": "Kroppsvekt",
+    "description": "Følg vekten din over tid.",
+    "weight": "Vekt ({unit})",
+    "date": "Dato",
+    "add": "Legg til",
+    "noData": "Legg til minst to oppføringer for å se en trend.",
+    "invalidWeight": "Skriv inn en gyldig vekt."
+  },
+  "exerciseHistory": {
+    "personalRecord": "Personlig rekord",
+    "max": "Tyngst",
+    "oneRepMax": "Est. 1RM",
+    "progress": "Fremgang",
+    "noData": "Ingen loggførte data for denne øvelsen ennå.",
+    "sessions": "{count, plural, =0 {Ingen økter} one {# økt} other {# økter}}"
+  },
+  "muscleGroups": {
+    "chest": "Bryst",
+    "back": "Rygg",
+    "legs": "Bein",
+    "shoulders": "Skuldre",
+    "arms": "Armer",
+    "core": "Kjerne"
+  },
+  "install": {
+    "title": "Installer Meridian",
+    "subtitle": "Legg til på startskjermen for fullskjermtilgang",
+    "action": "Installer",
+    "dismiss": "Lukk"
+  },
+  "toast": {
+    "undo": "Angre",
+    "planArchived": "Plan arkivert",
+    "planRestored": "Plan gjenopprettet",
+    "planDeleted": "Plan slettet",
+    "planDuplicated": "Plan kopiert"
+  },
+  "plates": {
+    "open": "Skiver",
+    "title": "Skivekalkulator",
+    "description": "Skiver å laste på hver side av stangen.",
+    "total": "Total vekt",
+    "barbell": "Stang",
+    "perSide": "Per side",
+    "justBar": "Bare stangen — ingen skiver trengs.",
+    "off": "Mangler {weight}{unit} med tilgjengelige skiver"
+  },
+  "feedback": {
+    "title": "Vibrasjon og lyd",
+    "description": "Vibrasjon og lyd for sett og pauser.",
+    "haptics": "Vibrasjon",
+    "hapticsDesc": "Vibrer når du fullfører et sett eller setter rekord.",
+    "sound": "Lyd",
+    "soundDesc": "Spill en lyd når pausetimeren er ferdig."
+  },
+  "heatmap": {
+    "title": "Konsistens",
+    "description": "Fullførte økter de siste 26 ukene.",
+    "totalDays": "{count, plural, one {# aktiv dag} other {# aktive dager}}",
+    "less": "Mindre",
+    "more": "Mer"
+  }
+}

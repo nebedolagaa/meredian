@@ -20,6 +20,7 @@ export interface Insight {
 export interface SessionSummary {
   date: string; // ISO YYYY-MM-DD
   volume: number; // total actual volume
+  progress: number; // actual/planned volume as a percentage (0-100+)
   plannedSets: number;
   completedSets: number;
   completed: boolean; // status === 'completed'
@@ -36,10 +37,13 @@ const avg = (xs: number[]) =>
   xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length;
 
 /**
- * Rule 1 — Volume trend.
- * If avg volume of last 14 days is >10% below the previous 14 days → negative.
+ * Rule 1 — Progress trend.
+ * Compares average plan-completion (%) of the last 14 days against the
+ * previous 14 days. A drop of more than 8 percentage points → negative.
  */
-export function volumeTrendInsight(sessions: SessionSummary[]): Insight | null {
+export function progressTrendInsight(
+  sessions: SessionSummary[],
+): Insight | null {
   if (sessions.length < 4) return null;
 
   const now = Date.now();
@@ -49,24 +53,22 @@ export function volumeTrendInsight(sessions: SessionSummary[]): Insight | null {
 
   for (const s of sessions) {
     const ageDays = (now - new Date(s.date).getTime()) / day;
-    if (ageDays <= 14) recent.push(s.volume);
-    else if (ageDays <= 28) prior.push(s.volume);
+    if (ageDays <= 14) recent.push(s.progress);
+    else if (ageDays <= 28) prior.push(s.progress);
   }
 
   if (recent.length === 0 || prior.length === 0) return null;
 
   const recentAvg = avg(recent);
   const priorAvg = avg(prior);
-  if (priorAvg === 0) return null;
 
-  const change = (recentAvg - priorAvg) / priorAvg;
-  if (change < -0.1) {
-    const pct = Math.round(Math.abs(change) * 100);
+  const dropPoints = Math.round(priorAvg - recentAvg);
+  if (dropPoints > 8) {
     return {
-      id: "volume-trend",
+      id: "progress-trend",
       type: "negative",
-      messageKey: "volumeTrend",
-      params: { pct },
+      messageKey: "progressTrend",
+      params: { pct: dropPoints },
     };
   }
   return null;
@@ -121,33 +123,29 @@ export function missedSetsInsight(sessions: SessionSummary[]): Insight | null {
 }
 
 /**
- * Rule 4 — Streak.
- * If the last 5 sessions were all completed → positive.
+ * Rule 4 — Weekly streak.
+ * Surfaces an encouraging note once the user has strung together two or more
+ * consecutive goal-meeting weeks. Driven by the streak engine (see streak.ts).
  */
-export function streakInsight(sessions: SessionSummary[]): Insight | null {
-  const last5 = sessions
-    .slice()
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(-5);
-  if (last5.length < 5) return null;
-  if (last5.every((s) => s.completed)) {
-    return {
-      id: "streak",
-      type: "positive",
-      messageKey: "streak",
-    };
-  }
-  return null;
+export function weeklyStreakInsight(streakWeeks: number): Insight | null {
+  if (streakWeeks < 2) return null;
+  return {
+    id: "streak",
+    type: "positive",
+    messageKey: "streak",
+    params: { weeks: streakWeeks },
+  };
 }
 
 /** Run every rule and collect the insights that fire. */
 export function generateInsights(input: {
   sessions: SessionSummary[];
   history: ExerciseHistory[];
+  streakWeeks?: number;
 }): Insight[] {
   const results = [
-    streakInsight(input.sessions),
-    volumeTrendInsight(input.sessions),
+    weeklyStreakInsight(input.streakWeeks ?? 0),
+    progressTrendInsight(input.sessions),
     missedSetsInsight(input.sessions),
     stalledExerciseInsight(input.history),
   ];

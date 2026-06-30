@@ -8,6 +8,7 @@ export default async function CalendarPage() {
   const { data: plans } = await supabase
     .from("workout_plans")
     .select("*")
+    .eq("is_archived", false)
     .order("created_at", { ascending: false });
 
   return <CalendarView plans={plans ?? []} />;

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateEmail, updatePassword } from "@/app/actions/auth";
+import { updateEmail, changePassword } from "@/app/actions/auth";
 
 export function SecurityForms({ currentEmail }: { currentEmail: string }) {
   const t = useTranslations("security");
@@ -32,7 +32,7 @@ export function SecurityForms({ currentEmail }: { currentEmail: string }) {
   function onPassword(formData: FormData) {
     setPwMsg(null);
     startPw(async () => {
-      const result = await updatePassword(formData);
+      const result = await changePassword(formData);
       if (result.error) setPwMsg({ ok: false, text: result.error });
       else setPwMsg({ ok: true, text: t("passwordChanged") });
     });
@@ -42,15 +42,24 @@ export function SecurityForms({ currentEmail }: { currentEmail: string }) {
     <div className="flex flex-col gap-6">
       <form action={onEmail} className="flex flex-col gap-2">
         <Label htmlFor="new-email">{t("changeEmail")}</Label>
+        <Input
+          id="new-email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          defaultValue={currentEmail}
+          className="font-num"
+        />
         <div className="flex items-center gap-2">
           <Input
-            id="new-email"
-            name="email"
-            type="email"
-            autoComplete="email"
+            id="email-current-password"
+            name="current_password"
+            type="password"
+            autoComplete="current-password"
             required
-            defaultValue={currentEmail}
-            className="font-num"
+            placeholder={t("currentPassword")}
+            aria-label={t("currentPassword")}
           />
           <Button
             type="submit"
@@ -72,6 +81,15 @@ export function SecurityForms({ currentEmail }: { currentEmail: string }) {
 
       <form action={onPassword} className="flex flex-col gap-2">
         <Label htmlFor="settings-password">{t("changePassword")}</Label>
+        <Input
+          id="settings-current-password"
+          name="current_password"
+          type="password"
+          autoComplete="current-password"
+          required
+          placeholder={t("currentPassword")}
+          aria-label={t("currentPassword")}
+        />
         <div className="flex items-center gap-2">
           <Input
             id="settings-password"

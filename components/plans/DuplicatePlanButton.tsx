@@ -4,17 +4,32 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Copy } from "lucide-react";
-import { duplicatePlan } from "@/app/actions/plans";
+import { duplicatePlan, deletePlan } from "@/app/actions/plans";
+import { toast } from "@/lib/toast/store";
 
 export function DuplicatePlanButton({ planId }: { planId: string }) {
   const t = useTranslations("plans");
+  const tToast = useTranslations("toast");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function onClick() {
     startTransition(async () => {
-      await duplicatePlan(planId);
+      const result = await duplicatePlan(planId);
       router.refresh();
+      if (!result.error && result.id) {
+        const newId = result.id;
+        toast(tToast("planDuplicated"), {
+          action: {
+            label: tToast("undo"),
+            onClick: () =>
+              startTransition(async () => {
+                await deletePlan(newId);
+                router.refresh();
+              }),
+          },
+        });
+      }
     });
   }
 

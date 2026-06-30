@@ -8,8 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { WeekThread, type ThreadDay } from "@/components/thread/WeekThread";
 import { ExerciseRow } from "@/components/session/ExerciseRow";
+import { LogNowButton } from "@/components/session/LogNowButton";
 import { InsightCard } from "@/components/insight/InsightCard";
+import { StreakCard } from "@/components/streak/StreakCard";
+import { GoalRing } from "@/components/dashboard/GoalRing";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
+import { SessionReminder } from "@/components/pwa/SessionReminder";
 import { getAnalyticsData } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
 import { weekDays, toISODate, todayISO } from "@/lib/utils/dates";
@@ -101,9 +106,38 @@ export default async function DashboardPage() {
     planExercises = (data ?? []) as unknown as PlanExerciseRow[];
   }
 
-  const { insights } = await getAnalyticsData(supabase, user.id);
+  const { unit, weeklyGoal } = await getUserPreferences(supabase, user.id);
+  const { insights, streak } = await getAnalyticsData(
+    supabase,
+    user.id,
+    weeklyGoal,
+  );
   const topInsight = insights[0];
-  const { unit } = await getUserPreferences(supabase, user.id);
+
+  // Onboarding: show a starter-plan card when the user has no plans yet.
+  const { count: planCount } = await supabase
+    .from("workout_plans")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+  const hasNoPlans = (planCount ?? 0) === 0;
+
+  // Most recent active plan, used for the one-tap "log a workout now" action.
+  const { data: latestPlan } = await supabase
+    .from("workout_plans")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("is_archived", false)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Reminders preference (opt-in browser notification).
+  const { data: profileRow } = await supabase
+    .from("profiles")
+    .select("reminders_enabled")
+    .eq("id", user.id)
+    .single();
+  const remindersEnabled = profileRow?.reminders_enabled ?? false;
 
   const planName =
     (todaySession?.workout_plans as { name: string } | null)?.name ??
@@ -111,6 +145,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {remindersEnabled && todaySession?.scheduled_date === today && (
+        <SessionReminder enabled planName={planName} />
+      )}
       <div className="flex items-center justify-between pt-6">
         <Wordmark className="!flex-row gap-2" />
         <div className="flex items-center gap-2">
@@ -126,16 +163,27 @@ export default async function DashboardPage() {
 
       {/* Week thread */}
       <Card>
-        <CardHeader>
-          <CardTitle>{t("thisWeek")}</CardTitle>
-          <p className="font-num text-xs tabular-nums text-bone-dim">
-            {t("sessionsKept", { kept: keptThisWeek, total: totalThisWeek })}
-          </p>
+        <CardHeader className="flex-row items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <CardTitle>{t("thisWeek")}</CardTitle>
+            <p className="font-num text-xs tabular-nums text-bone-dim">
+              {t("sessionsKept", { kept: keptThisWeek, total: totalThisWeek })}
+            </p>
+          </div>
+          <GoalRing
+            value={keptThisWeek}
+            goal={weeklyGoal}
+            label={t("goalProgress", { kept: keptThisWeek, goal: weeklyGoal })}
+          />
         </CardHeader>
         <CardContent>
           <WeekThread days={threadDays} />
         </CardContent>
       </Card>
+
+      <StreakCard streak={streak} />
+
+      {hasNoPlans && <OnboardingCard />}
 
       {/* Today's session */}
       {todaySession ? (
@@ -187,6 +235,9 @@ export default async function DashboardPage() {
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
             <p className="text-sm text-bone-dim">{t("noSessionScheduled")}</p>
+            {latestPlan && (
+              <LogNowButton planId={latestPlan.id} className="w-full" />
+            )}
             <Button asChild variant="outline" size="sm">
               <Link href="/plans">{t("goToPlans")}</Link>
             </Button>

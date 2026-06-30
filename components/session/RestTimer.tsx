@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Minus, Plus, Timer, X } from "lucide-react";
+import { getHapticsEnabled, getSoundEnabled } from "@/lib/prefs/clientPrefs";
 
 function fmt(s: number): string {
   const m = Math.floor(s / 60);
@@ -10,10 +11,51 @@ function fmt(s: number): string {
   return `${m}:${String(sec).padStart(2, "0")}`;
 }
 
+/** Short two-tone chime using the Web Audio API (no asset needed). */
+function playChime() {
+  if (typeof window === "undefined") return;
+  try {
+    const Ctx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const now = ctx.currentTime;
+    [880, 1175].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      const start = now + i * 0.18;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.25, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.18);
+    });
+    setTimeout(() => ctx.close(), 600);
+  } catch {
+    // Audio not available — vibration still fires.
+  }
+}
+
+/** Show a browser notification when rest ends and the tab is backgrounded. */
+function notifyRestDone(body: string) {
+  if (typeof document === "undefined" || !document.hidden) return;
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+  try {
+    new Notification(body, { icon: "/icon.svg" });
+  } catch {
+    // ignore
+  }
+}
+
 export interface RestTimerHandle {
   start: () => void;
 }
-
 /**
  * Floating rest countdown. Auto-starts when a set is completed and can be
  * adjusted or dismissed. A short vibration fires when it reaches zero.
@@ -27,6 +69,7 @@ export function RestTimer({
 }) {
   const t = useTranslations("restTimer");
   const [remaining, setRemaining] = useState(0);
+  const [total, setTotal] = useState(0);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -39,6 +82,7 @@ export function RestTimer({
 
   const start = useCallback(() => {
     if (defaultSeconds <= 0) return;
+    setTotal(defaultSeconds);
     setRemaining(defaultSeconds);
     setRunning(true);
   }, [defaultSeconds]);
@@ -55,9 +99,15 @@ export function RestTimer({
           if (intervalRef.current) clearInterval(intervalRef.current);
           intervalRef.current = null;
           setRunning(false);
-          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          if (
+            getHapticsEnabled() &&
+            typeof navigator !== "undefined" &&
+            "vibrate" in navigator
+          ) {
             navigator.vibrate?.([120, 60, 120]);
           }
+          if (getSoundEnabled()) playChime();
+          notifyRestDone(t("done"));
           return 0;
         }
         return r - 1;
@@ -84,35 +134,45 @@ export function RestTimer({
 
   return (
     <div className="fixed inset-x-0 bottom-32 z-40 flex justify-center px-4">
-      <div className="flex items-center gap-3 rounded-2xl border border-panel-border bg-graphite/95 px-4 py-2.5 shadow-lg backdrop-blur">
-        <Timer className="h-4 w-4 text-steel" />
-        <button
-          type="button"
-          aria-label={t("subtract")}
-          onClick={() => setRemaining((r) => Math.max(0, r - 15))}
-          className="rounded-md p-1 text-bone-dim hover:text-bone"
-        >
-          <Minus className="h-4 w-4" />
-        </button>
-        <span className="w-14 text-center font-num text-lg tabular-nums text-bone">
-          {fmt(remaining)}
-        </span>
-        <button
-          type="button"
-          aria-label={t("add")}
-          onClick={() => setRemaining((r) => r + 15)}
-          className="rounded-md p-1 text-bone-dim hover:text-bone"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          aria-label={t("dismiss")}
-          onClick={stop}
-          className="rounded-md p-1 text-clay hover:bg-clay/10"
-        >
-          <X className="h-4 w-4" />
-        </button>
+      <div className="flex flex-col gap-2 rounded-2xl border border-panel-border bg-graphite/95 px-4 py-2.5 shadow-lg backdrop-blur">
+        <div className="flex items-center gap-3">
+          <Timer className="h-4 w-4 text-steel" />
+          <button
+            type="button"
+            aria-label={t("subtract")}
+            onClick={() => setRemaining((r) => Math.max(0, r - 15))}
+            className="rounded-md p-1 text-bone-dim hover:text-bone"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span className="w-14 text-center font-num text-lg tabular-nums text-bone">
+            {fmt(remaining)}
+          </span>
+          <button
+            type="button"
+            aria-label={t("add")}
+            onClick={() => setRemaining((r) => r + 15)}
+            className="rounded-md p-1 text-bone-dim hover:text-bone"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("dismiss")}
+            onClick={stop}
+            className="rounded-md p-1 text-clay hover:bg-clay/10"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="h-1 w-full overflow-hidden rounded-full bg-panel-border">
+          <div
+            className="h-full rounded-full bg-steel transition-[width] duration-1000 ease-linear"
+            style={{
+              width: `${total > 0 ? Math.min(100, (remaining / total) * 100) : 0}%`,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

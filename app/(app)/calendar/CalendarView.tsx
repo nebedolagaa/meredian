@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Check, X, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -194,14 +194,13 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 pt-2 text-[10px] text-bone-dim">
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-steel" /> {t("done")}
+          <Check className="h-3 w-3 text-steel" /> {t("done")}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-clay" /> {t("missed")}
+          <X className="h-3 w-3 text-clay" /> {t("missed")}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-bone-dim" />{" "}
-          {t("planned")}
+          <Clock className="h-3 w-3 text-bone-dim" /> {t("planned")}
         </span>
       </div>
 

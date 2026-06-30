@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { Exercise } from "@/lib/types/database";
+import { exerciseNameSchema, firstError } from "@/lib/validation/schemas";
+import { safeActionError } from "@/lib/utils/errors";
 
 async function requireUser() {
   const supabase = createClient();
@@ -17,6 +19,11 @@ async function requireUser() {
  */
 export async function searchExercises(query: string): Promise<Exercise[]> {
   const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
   const q = query.trim();
 
   let request = supabase
@@ -45,17 +52,18 @@ export async function createCustomExercise(
 ): Promise<CreateExerciseResult> {
   try {
     const { supabase, user } = await requireUser();
-    if (!name.trim()) return { error: "Name is required." };
+    const parsed = exerciseNameSchema.safeParse(name);
+    if (!parsed.success) return { error: firstError(parsed) };
 
     const { data, error } = await supabase
       .from("exercises")
-      .insert({ name: name.trim(), user_id: user.id })
+      .insert({ name: parsed.data, user_id: user.id })
       .select("*")
       .single();
 
-    if (error) return { error: error.message };
+    if (error) return { error: safeActionError("createCustomExercise", error) };
     return { exercise: data };
   } catch (e) {
-    return { error: (e as Error).message };
+    return { error: safeActionError("createCustomExercise", e) };
   }
 }

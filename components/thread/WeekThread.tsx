@@ -9,7 +9,9 @@ export interface ThreadDay {
 }
 
 function Dot({ status }: { status: DayStatus }) {
-  const base = "relative z-10 flex items-center justify-center";
+  // Fixed-height wrapper so every dot — including the small "rest" dot — is
+  // vertically centred on the connector line (which sits at top-[7px]).
+  const base = "relative z-10 flex h-3.5 items-center justify-center";
   switch (status) {
     case "done":
       return (
@@ -44,44 +46,36 @@ function Dot({ status }: { status: DayStatus }) {
   }
 }
 
-/** Connector segment between two dots. Solid steel if the left day was done. */
-function Connector({ solid }: { solid: boolean }) {
-  return (
-    <div className="relative -mx-1 flex-1">
-      <div
-        className={cn(
-          "absolute left-0 right-0 top-1/2 -translate-y-1/2 border-t",
-          solid ? "border-steel border-solid" : "border-bone-dim border-dashed",
-        )}
-      />
-    </div>
-  );
-}
-
 export function WeekThread({ days }: { days: ThreadDay[] }) {
   return (
-    <div className="w-full">
-      <div className="flex items-center">
-        {days.map((day, i) => (
-          <div key={day.date} className="flex flex-1 items-center">
-            <Dot status={day.status} />
-            {i < days.length - 1 && <Connector solid={day.status === "done"} />}
-          </div>
-        ))}
-      </div>
-      <div className="mt-3 flex items-center">
-        {days.map((day) => (
-          <div
-            key={day.date}
+    <div className="flex w-full items-start">
+      {days.map((day, i) => (
+        <div
+          key={day.date}
+          className="relative flex flex-1 flex-col items-center"
+        >
+          {/* Connector to the next dot, anchored at the dot's vertical center. */}
+          {i < days.length - 1 && (
+            <div
+              className={cn(
+                "absolute top-[7px] left-1/2 right-[-50%] border-t",
+                day.status === "done"
+                  ? "border-steel border-solid"
+                  : "border-bone-dim border-dashed",
+              )}
+            />
+          )}
+          <Dot status={day.status} />
+          <span
             className={cn(
-              "flex-1 text-center font-num text-xs tabular-nums",
+              "mt-3 font-num text-xs tabular-nums",
               day.status === "today" ? "text-bone" : "text-bone-dim",
             )}
           >
             {String(day.dayNumber).padStart(2, "0")}
-          </div>
-        ))}
-      </div>
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

@@ -4,17 +4,17 @@
 
 @layer base {
   :root {
-    /* Meridian raw palette — LIGHT theme (default).
+    /* Meridian raw palette — LIGHT theme (default). "Indigo Pulse".
        Palette colors are stored as space-separated RGB channels so Tailwind
        opacity modifiers (e.g. bg-steel/90) keep working. */
-    --carbon: 244 242 238; /* page background #F4F2EE */
+    --carbon: 245 246 250; /* page background #F5F6FA */
     --graphite: 255 255 255; /* card / panel #FFFFFF */
-    --panel-border: rgba(16, 17, 19, 0.1);
-    --bone: 22 24 28; /* primary text #16181C */
-    --bone-dim: rgba(22, 24, 28, 0.55);
-    --steel: 88 102 117; /* accent #586675 */
-    --clay: 176 73 47; /* #B0492F */
-    --moss: 88 122 83; /* #587A53 */
+    --panel-border: rgba(15, 16, 21, 0.1);
+    --bone: 20 21 26; /* primary text #14151A */
+    --bone-dim: rgba(20, 21, 26, 0.55);
+    --steel: 79 70 229; /* accent — indigo #4F46E5 */
+    --clay: 220 38 38; /* destructive — red #DC2626 */
+    --moss: 77 124 15; /* success — lime #4D7C0F */
 
     /* Typography (theme-independent) */
     --font-display: "Manrope", sans-serif;
@@ -25,60 +25,60 @@
     color-scheme: light;
 
     /* shadcn token overrides — LIGHT */
-    --background: 40 20% 95%;
-    --foreground: 222 13% 10%;
+    --background: 228 33% 97%;
+    --foreground: 228 13% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 222 13% 10%;
+    --card-foreground: 228 13% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 13% 10%;
-    --primary: 210 14% 40%;
-    --primary-foreground: 40 20% 96%;
-    --secondary: 40 16% 92%;
-    --secondary-foreground: 222 13% 10%;
-    --muted: 40 16% 92%;
-    --muted-foreground: rgba(22, 24, 28, 0.55);
-    --accent: 40 16% 90%;
-    --accent-foreground: 222 13% 10%;
-    --destructive: 13 58% 44%;
-    --destructive-foreground: 40 20% 96%;
-    --border: rgba(16, 17, 19, 0.1);
-    --input: 40 16% 92%;
-    --ring: 210 14% 40%;
+    --popover-foreground: 228 13% 9%;
+    --primary: 244 75% 59%;
+    --primary-foreground: 240 20% 98%;
+    --secondary: 228 26% 95%;
+    --secondary-foreground: 228 13% 9%;
+    --muted: 228 26% 95%;
+    --muted-foreground: rgba(20, 21, 26, 0.55);
+    --accent: 230 30% 93%;
+    --accent-foreground: 228 13% 9%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 240 20% 98%;
+    --border: rgba(15, 16, 21, 0.1);
+    --input: 228 26% 95%;
+    --ring: 244 75% 59%;
   }
 
   .dark {
-    /* Meridian raw palette — DARK theme */
-    --carbon: 16 17 19; /* carbon #101113 */
-    --graphite: 26 27 31; /* graphite #1A1B1F */
+    /* Meridian raw palette — DARK theme. "Indigo Pulse". */
+    --carbon: 15 16 21; /* carbon #0F1015 */
+    --graphite: 24 26 33; /* graphite #181A21 */
     --panel-border: rgba(255, 255, 255, 0.08);
-    --bone: 237 234 227; /* bone #EDEAE3 */
-    --bone-dim: rgba(237, 234, 227, 0.42);
-    --steel: 155 167 180; /* steel #9BA7B4 */
-    --clay: 189 91 63; /* clay #BD5B3F */
-    --moss: 111 143 106; /* moss #6F8F6A */
+    --bone: 236 236 242; /* bone #ECECF2 */
+    --bone-dim: rgba(236, 236, 242, 0.45);
+    --steel: 129 140 248; /* accent — indigo #818CF8 */
+    --clay: 248 113 113; /* destructive — red #F87171 */
+    --moss: 163 230 53; /* success — lime #A3E635 */
 
     color-scheme: dark;
 
     /* shadcn token overrides — DARK */
-    --background: 220 9% 6%; /* carbon #101113 */
-    --foreground: 43 18% 90%; /* bone #EDEAE3 */
-    --card: 228 8% 11%; /* graphite #1A1B1F */
-    --card-foreground: 43 18% 90%;
-    --popover: 228 8% 11%;
-    --popover-foreground: 43 18% 90%;
-    --primary: 210 14% 65%; /* steel #9BA7B4 */
-    --primary-foreground: 220 9% 6%;
-    --secondary: 228 8% 11%;
-    --secondary-foreground: 43 18% 90%;
-    --muted: 228 8% 11%;
-    --muted-foreground: rgba(237, 234, 227, 0.42);
-    --accent: 228 8% 14%;
-    --accent-foreground: 43 18% 90%;
-    --destructive: 13 50% 49%; /* clay #BD5B3F */
-    --destructive-foreground: 43 18% 90%;
+    --background: 228 17% 7%; /* carbon #0F1015 */
+    --foreground: 240 18% 94%; /* bone #ECECF2 */
+    --card: 228 16% 11%; /* graphite #181A21 */
+    --card-foreground: 240 18% 94%;
+    --popover: 228 16% 11%;
+    --popover-foreground: 240 18% 94%;
+    --primary: 235 89% 74%; /* indigo #818CF8 */
+    --primary-foreground: 228 17% 7%;
+    --secondary: 228 16% 11%;
+    --secondary-foreground: 240 18% 94%;
+    --muted: 228 16% 11%;
+    --muted-foreground: rgba(236, 236, 242, 0.45);
+    --accent: 228 16% 14%;
+    --accent-foreground: 240 18% 94%;
+    --destructive: 0 91% 71%; /* red #F87171 */
+    --destructive-foreground: 228 17% 7%;
     --border: rgba(255, 255, 255, 0.08);
-    --input: 228 8% 11%;
-    --ring: 210 14% 65%;
+    --input: 228 16% 11%;
+    --ring: 235 89% 74%;
   }
 }
 
@@ -120,5 +120,56 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Toast entrance */
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .animate-toast-in {
+    animation: toast-in 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  /* Soft pop used for celebratory moments (PR badges, streak milestones). */
+  @keyframes pop-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    60% {
+      transform: scale(1.06);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-pop-in {
+    animation: pop-in 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+}
+
+/* Cross-document view transitions for route changes (progressive enhancement;
+   ignored by browsers without support). */
+@view-transition {
+  navigation: auto;
+}
+
+/* Honor reduced-motion: disable non-essential animations and transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

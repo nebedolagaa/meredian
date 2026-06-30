@@ -41,8 +41,8 @@ export function ThemeSegmented({ className }: { className?: string }) {
     label: string;
     icon: typeof Sun;
   }[] = [
-    { value: "light", label: t("light"), icon: Sun },
     { value: "dark", label: t("dark"), icon: Moon },
+    { value: "light", label: t("light"), icon: Sun },
   ];
 
   return (

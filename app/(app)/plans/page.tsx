@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DuplicatePlanButton } from "@/components/plans/DuplicatePlanButton";
+import { ArchivePlanButton } from "@/components/plans/ArchivePlanButton";
+import { DeletePlanButton } from "@/components/plans/DeletePlanButton";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +21,7 @@ export default async function PlansPage() {
 
   const { data: plans } = await supabase
     .from("workout_plans")
-    .select("id, name, created_at, plan_exercises(count)")
+    .select("id, name, created_at, is_archived, plan_exercises(count)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -39,6 +41,9 @@ export default async function PlansPage() {
       }
     }
   }
+
+  const activePlans = (plans ?? []).filter((p) => !p.is_archived);
+  const archivedPlans = (plans ?? []).filter((p) => p.is_archived);
 
   return (
     <div className="flex flex-col gap-4 pb-8">
@@ -66,7 +71,7 @@ export default async function PlansPage() {
         </Card>
       ) : (
         <div className="flex flex-col gap-3">
-          {(plans ?? []).map((plan) => {
+          {activePlans.map((plan) => {
             const count =
               (plan.plan_exercises as { count: number }[] | null)?.[0]?.count ??
               0;
@@ -89,6 +94,8 @@ export default async function PlansPage() {
                 </Link>
                 <div className="flex shrink-0 items-center gap-1">
                   <DuplicatePlanButton planId={plan.id} />
+                  <ArchivePlanButton planId={plan.id} archived={false} />
+                  <DeletePlanButton planId={plan.id} />
                   <Link href={`/plans/${plan.id}`} aria-label={plan.name}>
                     <ChevronRight className="h-5 w-5 text-bone-dim" />
                   </Link>
@@ -96,6 +103,39 @@ export default async function PlansPage() {
               </Card>
             );
           })}
+
+          {archivedPlans.length > 0 && (
+            <>
+              <p className="mt-4 px-1 text-xs font-medium uppercase tracking-wide text-bone-dim">
+                {t("archived")}
+              </p>
+              {archivedPlans.map((plan) => {
+                const count =
+                  (plan.plan_exercises as { count: number }[] | null)?.[0]
+                    ?.count ?? 0;
+                return (
+                  <Card
+                    key={plan.id}
+                    className="flex items-center justify-between p-4 opacity-60 transition-colors hover:border-steel/40"
+                  >
+                    <Link
+                      href={`/plans/${plan.id}`}
+                      className="flex min-w-0 flex-1 flex-col gap-1"
+                    >
+                      <span className="font-medium text-bone">{plan.name}</span>
+                      <span className="font-num text-xs tabular-nums text-bone-dim">
+                        {t("exerciseCount", { count })}
+                      </span>
+                    </Link>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <ArchivePlanButton planId={plan.id} archived={true} />
+                      <DeletePlanButton planId={plan.id} />
+                    </div>
+                  </Card>
+                );
+              })}
+            </>
+          )}
         </div>
       )}
     </div>

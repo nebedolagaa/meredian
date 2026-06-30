@@ -58,12 +58,19 @@ export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
       <Link
         key={item.href}
         href={item.href}
+        aria-current={active ? "page" : undefined}
         className={cn(
           "flex flex-1 flex-col items-center gap-1 text-[10px] transition-colors",
           active ? "text-steel" : "text-bone-dim hover:text-bone",
         )}
       >
-        <item.icon className="h-5 w-5" strokeWidth={active ? 2.5 : 2} />
+        <item.icon
+          className={cn(
+            "h-5 w-5 transition-transform duration-200",
+            active && "scale-110",
+          )}
+          strokeWidth={active ? 2.5 : 2}
+        />
         {t(item.labelKey)}
       </Link>
     );
@@ -71,23 +78,21 @@ export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-panel-border bg-carbon/95 backdrop-blur">
-      <div className="relative mx-auto flex h-16 max-w-md items-center px-4">
+      <div className="mx-auto flex h-16 max-w-md items-center px-2">
         <div className="flex flex-1 items-center">
           {leftItems.map(renderLink)}
         </div>
 
-        {/* Spacer that reserves the center slot for the floating add button */}
-        <div className="w-16 shrink-0" aria-hidden />
+        {/* Add-session button, inline in the center of the nav */}
+        <QuickAddTrigger
+          plans={plans}
+          label={t("add")}
+          className="flex flex-1 flex-col items-center gap-1 text-[10px] text-steel transition-colors hover:text-bone active:scale-95"
+        />
 
         <div className="flex flex-1 items-center">
           {rightItems.map(renderLink)}
         </div>
-
-        {/* Floating add-session button, perfectly centered over the nav */}
-        <QuickAddTrigger
-          plans={plans}
-          className="absolute left-1/2 top-0 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-steel text-carbon shadow-lg shadow-black/20 ring-4 ring-carbon transition-transform active:scale-95"
-        />
       </div>
     </nav>
   );

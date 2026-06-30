@@ -1,0 +1,34 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { safeActionError } from "@/lib/utils/errors";
+
+/**
+ * Permanently delete the signed-in user's account and all their data.
+ * Deleting the auth user cascades to profiles and every owned row via FKs.
+ *
+ * Requires SUPABASE_SERVICE_ROLE_KEY to be set on the server.
+ */
+export async function deleteAccount(): Promise<{ error?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const admin = createAdminClient();
+  if (!admin) {
+    return {
+      error:
+        "Account deletion isn't configured on the server (missing service role key).",
+    };
+  }
+
+  const { error } = await admin.auth.admin.deleteUser(user.id);
+  if (error) return { error: safeActionError("deleteAccount", error) };
+
+  await supabase.auth.signOut();
+  redirect("/login");
+}

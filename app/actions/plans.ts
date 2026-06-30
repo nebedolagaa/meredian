@@ -1,8 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { savePlanSchema, firstError } from "@/lib/validation/schemas";
+import { safeActionError } from "@/lib/utils/errors";
 
 async function requireUser() {
   const supabase = createClient();
@@ -37,31 +38,33 @@ export async function savePlan(
   try {
     const { supabase, user } = await requireUser();
 
-    if (!name.trim()) return { error: "Plan name is required." };
+    const parsed = savePlanSchema.safeParse({ name, exercises });
+    if (!parsed.success) return { error: firstError(parsed) };
+    const cleanName = parsed.data.name;
 
     let id = planId;
 
     if (id) {
       const { error } = await supabase
         .from("workout_plans")
-        .update({ name: name.trim() })
+        .update({ name: cleanName })
         .eq("id", id)
         .eq("user_id", user.id);
-      if (error) return { error: error.message };
+      if (error) return { error: safeActionError("savePlan", error) };
 
       // Replace existing plan exercises.
       const { error: delError } = await supabase
         .from("plan_exercises")
         .delete()
         .eq("plan_id", id);
-      if (delError) return { error: delError.message };
+      if (delError) return { error: safeActionError("savePlan", delError) };
     } else {
       const { data, error } = await supabase
         .from("workout_plans")
-        .insert({ name: name.trim(), user_id: user.id })
+        .insert({ name: cleanName, user_id: user.id })
         .select("id")
         .single();
-      if (error) return { error: error.message };
+      if (error) return { error: safeActionError("savePlan", error) };
       id = data.id;
     }
 
@@ -75,13 +78,13 @@ export async function savePlan(
         target_weight: e.target_weight,
       }));
       const { error } = await supabase.from("plan_exercises").insert(rows);
-      if (error) return { error: error.message };
+      if (error) return { error: safeActionError("savePlan", error) };
     }
 
     revalidatePath("/plans");
     return { id: id! };
   } catch (e) {
-    return { error: (e as Error).message };
+    return { error: safeActionError("savePlan", e) };
   }
 }
 
@@ -93,11 +96,33 @@ export async function deletePlan(planId: string): Promise<{ error?: string }> {
       .delete()
       .eq("id", planId)
       .eq("user_id", user.id);
-    if (error) return { error: error.message };
+    if (error) return { error: safeActionError("deletePlan", error) };
     revalidatePath("/plans");
-    redirect("/plans");
+    revalidatePath("/dashboard");
+    return {};
   } catch (e) {
-    return { error: (e as Error).message };
+    return { error: safeActionError("deletePlan", e) };
+  }
+}
+
+/** Toggle a plan between active and archived. */
+export async function setPlanArchived(
+  planId: string,
+  archived: boolean,
+): Promise<{ error?: string }> {
+  try {
+    const { supabase, user } = await requireUser();
+    const { error } = await supabase
+      .from("workout_plans")
+      .update({ is_archived: archived })
+      .eq("id", planId)
+      .eq("user_id", user.id);
+    if (error) return { error: safeActionError("setPlanArchived", error) };
+    revalidatePath("/plans");
+    revalidatePath("/dashboard");
+    return {};
+  } catch (e) {
+    return { error: safeActionError("setPlanArchived", e) };
   }
 }
 
@@ -116,14 +141,16 @@ export async function duplicatePlan(
       .eq("id", planId)
       .eq("user_id", user.id)
       .single();
-    if (planError) return { error: planError.message };
+    if (planError)
+      return { error: safeActionError("duplicatePlan", planError) };
 
     const { data: created, error: createError } = await supabase
       .from("workout_plans")
       .insert({ name: `${plan.name} (copy)`, user_id: user.id })
       .select("id")
       .single();
-    if (createError) return { error: createError.message };
+    if (createError)
+      return { error: safeActionError("duplicatePlan", createError) };
 
     const { data: exercises, error: exError } = await supabase
       .from("plan_exercises")
@@ -131,7 +158,7 @@ export async function duplicatePlan(
         "exercise_id, order_index, target_sets, target_reps, target_weight",
       )
       .eq("plan_id", planId);
-    if (exError) return { error: exError.message };
+    if (exError) return { error: safeActionError("duplicatePlan", exError) };
 
     if (exercises && exercises.length > 0) {
       const { error: insError } = await supabase.from("plan_exercises").insert(
@@ -144,12 +171,13 @@ export async function duplicatePlan(
           target_weight: e.target_weight,
         })),
       );
-      if (insError) return { error: insError.message };
+      if (insError)
+        return { error: safeActionError("duplicatePlan", insError) };
     }
 
     revalidatePath("/plans");
     return { id: created.id };
   } catch (e) {
-    return { error: (e as Error).message };
+    return { error: safeActionError("duplicatePlan", e) };
   }
 }

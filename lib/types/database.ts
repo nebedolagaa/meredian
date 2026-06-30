@@ -19,6 +19,8 @@ export type Database = {
           display_name: string | null;
           unit_preference: WeightUnit;
           rest_seconds: number;
+          reminders_enabled: boolean;
+          weekly_goal: number;
           created_at: string;
         };
         Insert: {
@@ -26,6 +28,8 @@ export type Database = {
           display_name?: string | null;
           unit_preference?: WeightUnit;
           rest_seconds?: number;
+          reminders_enabled?: boolean;
+          weekly_goal?: number;
           created_at?: string;
         };
         Update: {
@@ -33,6 +37,8 @@ export type Database = {
           display_name?: string | null;
           unit_preference?: WeightUnit;
           rest_seconds?: number;
+          reminders_enabled?: boolean;
+          weekly_goal?: number;
           created_at?: string;
         };
         Relationships: [
@@ -85,18 +91,21 @@ export type Database = {
           id: string;
           user_id: string;
           name: string;
+          is_archived: boolean;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           name: string;
+          is_archived?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
           name?: string;
+          is_archived?: boolean;
           created_at?: string;
         };
         Relationships: [
@@ -208,6 +217,8 @@ export type Database = {
           actual_reps: number | null;
           actual_weight: number | null;
           completed: boolean;
+          rpe: number | null;
+          note: string | null;
         };
         Insert: {
           id?: string;
@@ -217,6 +228,8 @@ export type Database = {
           actual_reps?: number | null;
           actual_weight?: number | null;
           completed?: boolean;
+          rpe?: number | null;
+          note?: string | null;
         };
         Update: {
           id?: string;
@@ -226,6 +239,8 @@ export type Database = {
           actual_reps?: number | null;
           actual_weight?: number | null;
           completed?: boolean;
+          rpe?: number | null;
+          note?: string | null;
         };
         Relationships: [
           {
@@ -240,6 +255,41 @@ export type Database = {
             columns: ["plan_exercise_id"];
             isOneToOne: false;
             referencedRelation: "plan_exercises";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      body_measurements: {
+        Row: {
+          id: string;
+          user_id: string;
+          measured_on: string;
+          weight_kg: number;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          measured_on: string;
+          weight_kg: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          measured_on?: string;
+          weight_kg?: number;
+          note?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "body_measurements_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -261,3 +311,5 @@ export type PlanExercise =
 export type WorkoutSession =
   Database["public"]["Tables"]["workout_sessions"]["Row"];
 export type SessionLog = Database["public"]["Tables"]["session_logs"]["Row"];
+export type BodyMeasurement =
+  Database["public"]["Tables"]["body_measurements"]["Row"];

@@ -119,9 +119,11 @@ export function QuickAddSheet({
 export function QuickAddTrigger({
   plans,
   className,
+  label,
 }: {
   plans: WorkoutPlan[];
   className?: string;
+  label?: string;
 }) {
   const [open, setOpen] = useState(false);
   const t = useTranslations("calendar");
@@ -132,7 +134,8 @@ export function QuickAddTrigger({
         onClick={() => setOpen(true)}
         className={className}
       >
-        <Plus className="h-6 w-6" strokeWidth={2.5} />
+        <Plus className="h-5 w-5" strokeWidth={2.5} />
+        {label && <span>{label}</span>}
       </button>
       <QuickAddSheet open={open} onOpenChange={setOpen} plans={plans} />
     </>

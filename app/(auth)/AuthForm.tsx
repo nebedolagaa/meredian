@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
   const [error, setError] = useState<string | null>(null);
+  const [confirmEmail, setConfirmEmail] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function onSubmit(formData: FormData) {
@@ -20,9 +22,36 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     startTransition(async () => {
       const action = mode === "login" ? signIn : signUp;
       const result: AuthResult | undefined = await action(formData);
-      // A redirect throws, so reaching here means an error was returned.
-      if (result?.error) setError(result.error);
+      // A redirect throws, so reaching here means a result was returned.
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+      if (result?.success === "confirmEmail") {
+        setConfirmEmail(String(formData.get("email") ?? ""));
+      }
     });
+  }
+
+  if (confirmEmail) {
+    return (
+      <div className="flex flex-col items-center gap-4 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-moss/10">
+          <MailCheck className="h-6 w-6 text-moss" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-base font-medium text-bone">
+            {t("confirmEmailTitle")}
+          </h2>
+          <p className="text-sm text-bone-dim">
+            {t("confirmEmailBody", { email: confirmEmail })}
+          </p>
+        </div>
+        <Button asChild variant="outline" className="mt-2 w-full">
+          <Link href="/login">{t("goToSignIn")}</Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
