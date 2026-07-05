@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TrendingDown, TrendingUp, Minus, ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { Wordmark } from "@/components/layout/Wordmark";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,9 +15,11 @@ import { GoalRing } from "@/components/dashboard/GoalRing";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { SessionReminder } from "@/components/pwa/SessionReminder";
+import { Reveal } from "@/components/motion/Reveal";
 import { getAnalyticsData } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
 import { weekDays, toISODate, todayISO } from "@/lib/utils/dates";
+import { formatVolume, unitLabel } from "@/lib/utils/units";
 import type { InsightType } from "@/lib/utils/insights";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +41,9 @@ interface PlanExerciseRow {
 
 export default async function DashboardPage() {
   const supabase = createClient();
+  const locale = await getLocale();
   const t = await getTranslations("dashboard");
+  const tCal = await getTranslations("calendar");
   const tStatus = await getTranslations("status");
   const tInsights = await getTranslations("insights");
   const {
@@ -79,13 +83,28 @@ export default async function DashboardPage() {
     } else {
       status = "planned";
     }
-    return { date: iso, dayNumber: d.getDate(), status };
+    return {
+      date: iso,
+      dayNumber: d.getDate(),
+      status,
+      // Days with a session open it directly; the rest lead to the calendar.
+      href: session ? `/session/${session.id}` : "/calendar",
+      label: new Intl.DateTimeFormat(locale, {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      }).format(d),
+    };
   });
 
   const totalThisWeek = (weekSessions ?? []).length;
   const keptThisWeek = (weekSessions ?? []).filter(
     (s) => s.status === "completed",
   ).length;
+  const missedThisWeek = (weekSessions ?? []).filter(
+    (s) => s.status !== "completed" && s.scheduled_date < today,
+  ).length;
+  const upcomingThisWeek = totalThisWeek - keptThisWeek - missedThisWeek;
 
   // Today's session (most relevant): today's, else next upcoming planned.
   const todaySession =
@@ -143,6 +162,21 @@ export default async function DashboardPage() {
     (todaySession?.workout_plans as { name: string } | null)?.name ??
     t("session");
 
+  // Localized "Friday, 13 June" instead of a raw ISO date.
+  const sessionDateLabel = todaySession
+    ? new Intl.DateTimeFormat(locale, {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+      }).format(new Date(`${todaySession.scheduled_date}T00:00:00`))
+    : "";
+
+  // Planned tonnage for the upcoming session — anchors "plan" before "reality".
+  const plannedVolumeKg = planExercises.reduce(
+    (sum, pe) => sum + pe.target_sets * pe.target_reps * pe.target_weight,
+    0,
+  );
+
   return (
     <div className="flex flex-col gap-6">
       {remindersEnabled && todaySession?.scheduled_date === today && (
@@ -153,97 +187,154 @@ export default async function DashboardPage() {
         <ThemeToggle />
       </div>
 
-      {/* Week thread */}
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <CardTitle>{t("thisWeek")}</CardTitle>
-            <p className="font-num text-xs tabular-nums text-bone-dim">
-              {t("sessionsKept", { kept: keptThisWeek, total: totalThisWeek })}
-            </p>
-          </div>
-          <GoalRing
-            value={keptThisWeek}
-            goal={weeklyGoal}
-            label={t("goalProgress", { kept: keptThisWeek, goal: weeklyGoal })}
-          />
-        </CardHeader>
-        <CardContent>
-          <WeekThread days={threadDays} />
-        </CardContent>
-      </Card>
+      {/* Week thread — the plan-vs-reality hero */}
+      <Reveal>
+        <Card>
+          <CardHeader className="flex-row items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <CardTitle>{t("thisWeek")}</CardTitle>
+              <p className="font-num text-xs tabular-nums text-bone-dim">
+                {t("sessionsKept", {
+                  kept: keptThisWeek,
+                  total: totalThisWeek,
+                })}
+              </p>
+            </div>
+            <GoalRing
+              value={keptThisWeek}
+              goal={weeklyGoal}
+              label={t("goalProgress", {
+                kept: keptThisWeek,
+                goal: weeklyGoal,
+              })}
+            />
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <WeekThread days={threadDays} />
+            {totalThisWeek > 0 && (
+              <div className="flex items-center justify-center gap-4 border-t border-panel-border pt-3 text-[11px] text-bone-dim">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-steel" />
+                  {tCal("done")}
+                  <span className="font-num tabular-nums text-bone">
+                    {keptThisWeek}
+                  </span>
+                </span>
+                {missedThisWeek > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full border border-clay" />
+                    {tCal("missed")}
+                    <span className="font-num tabular-nums text-bone">
+                      {missedThisWeek}
+                    </span>
+                  </span>
+                )}
+                {upcomingThisWeek > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full border border-bone-dim" />
+                    {tCal("planned")}
+                    <span className="font-num tabular-nums text-bone">
+                      {upcomingThisWeek}
+                    </span>
+                  </span>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </Reveal>
 
-      <StreakCard streak={streak} />
+      <Reveal delay={0.06}>
+        <StreakCard streak={streak} />
+      </Reveal>
 
-      {hasNoPlans && <OnboardingCard />}
+      {hasNoPlans && (
+        <Reveal delay={0.09}>
+          <OnboardingCard />
+        </Reveal>
+      )}
 
       {/* Today's session */}
       {todaySession ? (
-        <Card data-tour="today-card">
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>{planName}</CardTitle>
-              <p className="font-num text-xs tabular-nums text-bone-dim">
-                {todaySession.scheduled_date}
-              </p>
-            </div>
-            <Badge
-              variant={todaySession.status === "completed" ? "moss" : "steel"}
-            >
-              {tStatus(todaySession.status)}
-            </Badge>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            {planExercises.length === 0 ? (
-              <p className="text-sm text-bone-dim">{t("noExercises")}</p>
-            ) : (
-              <div className="divide-y divide-panel-border">
-                {planExercises.map((pe) => (
-                  <ExerciseRow
-                    key={pe.id}
-                    name={pe.exercises?.name ?? t("exercise")}
-                    targetSets={pe.target_sets}
-                    targetReps={pe.target_reps}
-                    targetWeight={pe.target_weight}
-                    unit={unit}
-                  />
-                ))}
+        <Reveal delay={0.12}>
+          <Card data-tour="today-card">
+            <CardHeader className="flex-row items-center justify-between">
+              <div>
+                <CardTitle>{planName}</CardTitle>
+                <p className="text-xs text-bone-dim">{sessionDateLabel}</p>
               </div>
-            )}
+              <Badge
+                variant={todaySession.status === "completed" ? "moss" : "steel"}
+              >
+                {tStatus(todaySession.status)}
+              </Badge>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-1">
+              {planExercises.length === 0 ? (
+                <p className="text-sm text-bone-dim">{t("noExercises")}</p>
+              ) : (
+                <>
+                  <div className="divide-y divide-panel-border">
+                    {planExercises.map((pe) => (
+                      <ExerciseRow
+                        key={pe.id}
+                        name={pe.exercises?.name ?? t("exercise")}
+                        targetSets={pe.target_sets}
+                        targetReps={pe.target_reps}
+                        targetWeight={pe.target_weight}
+                        unit={unit}
+                      />
+                    ))}
+                  </div>
+                  {plannedVolumeKg > 0 && (
+                    <p className="mt-2 border-t border-panel-border pt-2 text-right font-num text-xs tabular-nums text-bone-dim">
+                      {t("plannedVolume", {
+                        volume: formatVolume(plannedVolumeKg, unit),
+                        unit: unitLabel(unit),
+                      })}
+                    </p>
+                  )}
+                </>
+              )}
 
-            {todaySession.status !== "completed" && (
-              <Button asChild className="mt-4">
-                <Link href={`/session/${todaySession.id}`}>
-                  {todaySession.status === "in_progress"
-                    ? t("continue")
-                    : t("startSession")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+              {todaySession.status !== "completed" && (
+                <Button asChild className="mt-4">
+                  <Link href={`/session/${todaySession.id}`}>
+                    {todaySession.status === "in_progress"
+                      ? t("continue")
+                      : t("startSession")}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </Reveal>
       ) : (
-        <Card data-tour="today-card">
-          <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-            <p className="text-sm text-bone-dim">{t("noSessionScheduled")}</p>
-            {latestPlan && (
-              <LogNowButton planId={latestPlan.id} className="w-full" />
-            )}
-            <Button asChild variant="outline" size="sm">
-              <Link href="/plans">{t("goToPlans")}</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        <Reveal delay={0.12}>
+          <Card data-tour="today-card">
+            <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
+              <p className="text-sm text-bone-dim">{t("noSessionScheduled")}</p>
+              {latestPlan && (
+                <LogNowButton planId={latestPlan.id} className="w-full" />
+              )}
+              <Button asChild variant="outline" size="sm">
+                <Link href="/plans">{t("goToPlans")}</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </Reveal>
       )}
 
       {/* Insight */}
       {topInsight && (
-        <InsightCard
-          type={topInsight.type as InsightType}
-          message={tInsights(topInsight.messageKey, topInsight.params)}
-          icon={insightIcon[topInsight.type]}
-        />
+        <Reveal delay={0.18}>
+          <InsightCard
+            type={topInsight.type as InsightType}
+            message={tInsights(topInsight.messageKey, topInsight.params)}
+            icon={insightIcon[topInsight.type]}
+          />
+        </Reveal>
       )}
 
       <div className="flex justify-center pb-4">

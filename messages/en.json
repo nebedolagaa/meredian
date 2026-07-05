@@ -120,7 +120,8 @@
     "openFullCalendar": "Open full calendar →",
     "logNow": "Log a workout now",
     "logNowPending": "Starting…",
-    "goalProgress": "{kept} of {goal} weekly sessions"
+    "goalProgress": "{kept} of {goal} weekly sessions",
+    "plannedVolume": "Planned volume: {volume} {unit}"
   },
   "streak": {
     "weeks": "{count, plural, =0 {No active streak} one {# week streak} other {# week streak}}",
@@ -528,7 +529,10 @@
     "title": "Start with a plan",
     "description": "Create a balanced full-body starter plan you can run today and adjust anytime.",
     "cta": "Create starter plan",
-    "creating": "Creating…"
+    "creating": "Creating…",
+    "stepPlan": "Create a starter plan",
+    "stepSchedule": "Schedule your week",
+    "stepLog": "Log your first session"
   },
   "onboardingWizard": {
     "stepOf": "Step {step} of {total}",

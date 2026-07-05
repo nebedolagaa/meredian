@@ -120,7 +120,8 @@
     "openFullCalendar": "Åpne hele kalenderen →",
     "logNow": "Logg en økt nå",
     "logNowPending": "Starter…",
-    "goalProgress": "{kept} av {goal} økter denne uken"
+    "goalProgress": "{kept} av {goal} økter denne uken",
+    "plannedVolume": "Planlagt volum: {volume} {unit}"
   },
   "streak": {
     "weeks": "{count, plural, =0 {Ingen aktiv rekke} one {# ukes rekke} other {# ukers rekke}}",
@@ -528,7 +529,10 @@
     "title": "Start med en plan",
     "description": "Lag en balansert helkropps-startplan du kan kjøre i dag og justere når som helst.",
     "cta": "Opprett startplan",
-    "creating": "Oppretter…"
+    "creating": "Oppretter…",
+    "stepPlan": "Lag en startplan",
+    "stepSchedule": "Planlegg uken din",
+    "stepLog": "Loggfør din første økt"
   },
   "onboardingWizard": {
     "stepOf": "Steg {step} av {total}",

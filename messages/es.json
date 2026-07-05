@@ -120,7 +120,8 @@
     "openFullCalendar": "Abrir calendario completo →",
     "logNow": "Registrar un entrenamiento ahora",
     "logNowPending": "Iniciando…",
-    "goalProgress": "{kept} de {goal} sesiones semanales"
+    "goalProgress": "{kept} de {goal} sesiones semanales",
+    "plannedVolume": "Volumen previsto: {volume} {unit}"
   },
   "streak": {
     "weeks": "{count, plural, =0 {Sin racha activa} one {Racha de # semana} other {Racha de # semanas}}",
@@ -531,7 +532,10 @@
     "title": "Empieza con un plan",
     "description": "Crea un plan inicial de cuerpo completo equilibrado que puedes usar hoy y ajustar cuando quieras.",
     "cta": "Crear plan inicial",
-    "creating": "Creando…"
+    "creating": "Creando…",
+    "stepPlan": "Crea un plan inicial",
+    "stepSchedule": "Programa tu semana",
+    "stepLog": "Registra tu primera sesión"
   },
   "onboardingWizard": {
     "stepOf": "Paso {step} de {total}",
