@@ -16,6 +16,7 @@ interface PlanExerciseRow {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  rest_seconds: number | null;
   exercises: { name: string } | null;
 }
 
@@ -36,7 +37,7 @@ export default async function SessionPage({
 
   const { data: session } = await supabase
     .from("workout_sessions")
-    .select("id, plan_id, status, scheduled_date, workout_plans(name)")
+    .select("id, plan_id, status, scheduled_date, notes, workout_plans(name)")
     .eq("id", params.id)
     .single();
 
@@ -51,7 +52,7 @@ export default async function SessionPage({
     const { data } = await supabase
       .from("plan_exercises")
       .select(
-        "id, order_index, target_sets, target_reps, target_weight, exercises(name)",
+        "id, order_index, target_sets, target_reps, target_weight, rest_seconds, exercises(name)",
       )
       .eq("plan_id", session.plan_id)
       .order("order_index", { ascending: true });
@@ -145,6 +146,7 @@ export default async function SessionPage({
       target_sets: pe.target_sets,
       target_reps: pe.target_reps,
       target_weight: pe.target_weight,
+      rest_seconds: pe.rest_seconds,
       sets,
       lastResult: last,
       lastRpe: lastRpeByPe.get(pe.id) ?? null,
@@ -161,6 +163,7 @@ export default async function SessionPage({
       exercises={exercises}
       unit={prefs.unit}
       restSeconds={prefs.restSeconds}
+      notes={session.notes}
     />
   );
 }

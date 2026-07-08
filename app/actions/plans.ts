@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { savePlanSchema, firstError } from "@/lib/validation/schemas";
 import { safeActionError } from "@/lib/utils/errors";
+import { uniquePlanSlug } from "@/lib/data/planSlug";
 
 async function requireUser() {
   const supabase = createClient();
@@ -19,6 +20,7 @@ export interface PlanExerciseInput {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  rest_seconds?: number | null;
 }
 
 export interface SavePlanResult {
@@ -45,9 +47,10 @@ export async function savePlan(
     let id = planId;
 
     if (id) {
+      const slug = await uniquePlanSlug(supabase, user.id, cleanName, id);
       const { error } = await supabase
         .from("workout_plans")
-        .update({ name: cleanName })
+        .update({ name: cleanName, slug })
         .eq("id", id)
         .eq("user_id", user.id);
       if (error) return { error: safeActionError("savePlan", error) };
@@ -59,9 +62,10 @@ export async function savePlan(
         .eq("plan_id", id);
       if (delError) return { error: safeActionError("savePlan", delError) };
     } else {
+      const slug = await uniquePlanSlug(supabase, user.id, cleanName);
       const { data, error } = await supabase
         .from("workout_plans")
-        .insert({ name: cleanName, user_id: user.id })
+        .insert({ name: cleanName, slug, user_id: user.id })
         .select("id")
         .single();
       if (error) return { error: safeActionError("savePlan", error) };
@@ -76,6 +80,7 @@ export async function savePlan(
         target_sets: e.target_sets,
         target_reps: e.target_reps,
         target_weight: e.target_weight,
+        rest_seconds: e.rest_seconds ?? null,
       }));
       const { error } = await supabase.from("plan_exercises").insert(rows);
       if (error) return { error: safeActionError("savePlan", error) };
@@ -102,6 +107,26 @@ export async function deletePlan(planId: string): Promise<{ error?: string }> {
     return {};
   } catch (e) {
     return { error: safeActionError("deletePlan", e) };
+  }
+}
+
+/** Mark (or unmark) a plan as a reusable template. */
+export async function setPlanIsTemplate(
+  planId: string,
+  isTemplate: boolean,
+): Promise<{ error?: string }> {
+  try {
+    const { supabase, user } = await requireUser();
+    const { error } = await supabase
+      .from("workout_plans")
+      .update({ is_template: isTemplate })
+      .eq("id", planId)
+      .eq("user_id", user.id);
+    if (error) return { error: safeActionError("setPlanIsTemplate", error) };
+    revalidatePath("/plans");
+    return {};
+  } catch (e) {
+    return { error: safeActionError("setPlanIsTemplate", e) };
   }
 }
 
@@ -144,9 +169,11 @@ export async function duplicatePlan(
     if (planError)
       return { error: safeActionError("duplicatePlan", planError) };
 
+    const copyName = `${plan.name} (copy)`;
+    const slug = await uniquePlanSlug(supabase, user.id, copyName);
     const { data: created, error: createError } = await supabase
       .from("workout_plans")
-      .insert({ name: `${plan.name} (copy)`, user_id: user.id })
+      .insert({ name: copyName, slug, user_id: user.id })
       .select("id")
       .single();
     if (createError)
@@ -155,7 +182,7 @@ export async function duplicatePlan(
     const { data: exercises, error: exError } = await supabase
       .from("plan_exercises")
       .select(
-        "exercise_id, order_index, target_sets, target_reps, target_weight",
+        "exercise_id, order_index, target_sets, target_reps, target_weight, rest_seconds",
       )
       .eq("plan_id", planId);
     if (exError) return { error: safeActionError("duplicatePlan", exError) };
@@ -169,6 +196,7 @@ export async function duplicatePlan(
           target_sets: e.target_sets,
           target_reps: e.target_reps,
           target_weight: e.target_weight,
+          rest_seconds: e.rest_seconds,
         })),
       );
       if (insError)

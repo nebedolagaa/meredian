@@ -15,8 +15,7 @@
     "saved": "Saved",
     "delete": "Delete",
     "cancel": "Cancel",
-    "pleaseWait": "Please wait…",
-    "comingSoon": "Coming soon"
+    "pleaseWait": "Please wait…"
   },
   "wordmark": {
     "tagline": "Train with precision."
@@ -74,7 +73,7 @@
     "noName": "Athlete",
     "account": "Account",
     "preferences": "Preferences",
-    "data": "Data & integrations"
+    "data": "Data"
   },
   "tour": {
     "stepOf": "{current} of {total}",
@@ -139,17 +138,11 @@
     "displayName": "Display name",
     "displayNamePlaceholder": "Your name",
     "email": "Email",
-    "integrations": "Integrations",
-    "integrationsDesc": "In the roadmap, not yet live.",
     "signOut": "Sign out",
     "googleCalendarTitle": "Google Calendar sync",
     "googleCalendarDesc": "Push scheduled sessions to your Google Calendar.",
     "appleCalendarTitle": "Apple Calendar sync",
-    "appleCalendarDesc": "Two-way sync with the Apple Calendar app.",
-    "appleHealthTitle": "Apple Health integration",
-    "appleHealthDesc": "Pull workouts and recovery data from Apple Health.",
-    "aiCoachingTitle": "AI Coaching",
-    "aiCoachingDesc": "Personalised progression suggestions and plan adjustments based on your plan-versus-reality history."
+    "appleCalendarDesc": "Two-way sync with the Apple Calendar app."
   },
   "analytics": {
     "title": "Analytics",
@@ -167,8 +160,13 @@
     "frequency": "Training frequency",
     "frequencyDesc": "Completed sessions per week · last 8 weeks",
     "frequencyEmpty": "Complete sessions to see your weekly frequency",
+    "muscleBalanceEmpty": "Complete sessions to see your muscle balance",
     "muscleBalance": "Muscle balance",
     "muscleBalanceDesc": "Share of completed volume by muscle group",
+    "muscleMap": "Recently trained",
+    "muscleMapDesc": "Muscles worked most in your completed sessions",
+    "prTimeline": "PR timeline",
+    "prTimelineDesc": "Every time you set a new estimated 1RM",
     "share": "Share record",
     "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
   },
@@ -181,6 +179,8 @@
     "exerciseCount": "{count, plural, one {# exercise} other {# exercises}}",
     "lastUsed": "last {date}",
     "duplicate": "Duplicate plan",
+    "saveAsTemplate": "Save as template",
+    "removeFromTemplates": "Remove from templates",
     "archive": "Archive plan",
     "unarchive": "Restore plan",
     "archived": "Archived",
@@ -199,11 +199,14 @@
     "reps": "Reps",
     "weightKg": "Weight kg",
     "weight": "Weight ({unit})",
+    "restSeconds": "Rest (sec)",
+    "restSecondsAuto": "Auto",
     "savePlan": "Save plan",
     "saving": "Saving…",
     "nameRequired": "Plan name is required.",
     "moveUp": "Move up",
     "moveDown": "Move down",
+    "dragToReorder": "Drag to reorder",
     "deleteExercise": "Delete exercise",
     "startFromTemplate": "Start from template",
     "exercise": "Exercise"
@@ -403,7 +406,10 @@
     "plan": "Plan",
     "noPlans": "No plans yet — create one first in Plans.",
     "selectPlan": "Select a plan",
+    "noPlan": "No plan (freestyle)",
     "date": "Date",
+    "repeatWeekly": "Repeat weekly",
+    "repeatWeeks": "Number of weeks",
     "scheduling": "Scheduling…",
     "addSession": "Add session"
   },
@@ -415,6 +421,7 @@
     "newPR": "{count, plural, one {New personal record!} other {# new personal records!}}",
     "rpe": "RPE",
     "setDetails": "Set details",
+    "exerciseDetails": "Exercise details",
     "setNotePlaceholder": "Note",
     "startSession": "Start session",
     "noExercises": "This plan has no exercises.",
@@ -433,7 +440,9 @@
     "reschedule": "Reschedule",
     "move": "Move",
     "skipSession": "Skip session",
-    "deleteSession": "Delete session"
+    "deleteSession": "Delete session",
+    "sessionNotes": "How did it go?",
+    "sessionNotesPlaceholder": "Add a note about this session…"
   },
   "progression": {
     "increaseEasy": "That felt easy last time — add weight",
@@ -488,6 +497,7 @@
     "title": "Start from a template",
     "description": "Pick a preset program — adjust the exercises afterwards.",
     "creating": "Creating…",
+    "myTemplates": "My templates",
     "full_body": {
       "name": "Full Body",
       "desc": "5 compound lifts, 3× per week"
@@ -647,7 +657,9 @@
     "planArchived": "Plan archived",
     "planRestored": "Plan restored",
     "planDeleted": "Plan deleted",
-    "planDuplicated": "Plan duplicated"
+    "planDuplicated": "Plan duplicated",
+    "templateSaved": "Saved as template",
+    "templateRemoved": "Removed from templates"
   },
   "plates": {
     "open": "Plates",

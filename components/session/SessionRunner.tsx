@@ -9,20 +9,21 @@ import {
   MoreVertical,
   Trash2,
   SkipForward,
-  CalendarClock,
   Trophy,
   TrendingUp,
   TrendingDown,
   RotateCcw,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SetInput, type SetState } from "@/components/session/SetInput";
 import { RestTimer } from "@/components/session/RestTimer";
 import { PlateCalculator } from "@/components/session/PlateCalculator";
+import { RescheduleControl } from "@/components/session/RescheduleControl";
 import { CountUp } from "@/components/ui/CountUp";
 import {
   Sheet,
@@ -35,7 +36,6 @@ import {
   completeSession,
   startSession,
   deleteSession,
-  rescheduleSession,
   setSessionStatus,
   type LogInput,
 } from "@/app/actions/sessions";
@@ -61,6 +61,7 @@ export interface RunnerExercise {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  rest_seconds?: number | null;
   sets: SetState[];
   lastResult?: { weight: number; reps: number } | null;
   lastRpe?: number | null;
@@ -75,6 +76,7 @@ export interface SessionRunnerProps {
   exercises: RunnerExercise[];
   unit?: WeightUnit;
   restSeconds?: number;
+  notes?: string | null;
 }
 
 export function SessionRunner({
@@ -85,6 +87,7 @@ export function SessionRunner({
   exercises: initial,
   unit = "kg",
   restSeconds = 90,
+  notes,
 }: SessionRunnerProps) {
   const router = useRouter();
   const t = useTranslations("session");
@@ -96,10 +99,11 @@ export function SessionRunner({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [newPRs, setNewPRs] = useState<string[]>([]);
   const [manageOpen, setManageOpen] = useState(false);
-  const [rescheduleDate, setRescheduleDate] = useState(date);
   const [busy, setBusy] = useState(false);
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [sessionNotes, setSessionNotes] = useState(notes ?? "");
   const completed = status === "completed";
-  const startRestRef = useRef<(() => void) | null>(null);
+  const startRestRefs = useRef<Map<string, () => void>>(new Map());
 
   // Keep the screen awake while a workout is actively in progress.
   useEffect(() => {
@@ -139,7 +143,7 @@ export function SessionRunner({
       const ex = exercises.find((e) => e.plan_exercise_id === exId);
       const prev = ex?.sets.find((s) => s.set_number === setNumber);
       if (prev && !prev.completed) {
-        startRestRef.current?.();
+        startRestRefs.current.get(exId)?.();
         haptic("success");
         playFeedbackSound("tap");
       }
@@ -156,6 +160,15 @@ export function SessionRunner({
             },
       ),
     );
+  }
+
+  function toggleDetails(exId: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(exId)) next.delete(exId);
+      else next.add(exId);
+      return next;
+    });
   }
 
   function bumpWeight(exId: string, delta: number) {
@@ -265,7 +278,7 @@ export function SessionRunner({
     setError(null);
     setFinishing(true);
     const prs = detectPRs();
-    const result = await completeSession(sessionId, allLogs);
+    const result = await completeSession(sessionId, allLogs, sessionNotes);
     setFinishing(false);
     if (result.error) {
       setError(result.error);
@@ -286,7 +299,7 @@ export function SessionRunner({
   async function onSaveChanges() {
     setError(null);
     setFinishing(true);
-    const result = await completeSession(sessionId, allLogs);
+    const result = await completeSession(sessionId, allLogs, sessionNotes);
     setFinishing(false);
     if (result.error) setError(result.error);
     else router.refresh();
@@ -314,18 +327,6 @@ export function SessionRunner({
     }
     setManageOpen(false);
     router.push("/dashboard");
-    router.refresh();
-  }
-
-  async function onReschedule() {
-    setBusy(true);
-    const result = await rescheduleSession(sessionId, rescheduleDate);
-    setBusy(false);
-    if (result.error) {
-      setError(result.error);
-      return;
-    }
-    setManageOpen(false);
     router.refresh();
   }
 
@@ -375,7 +376,27 @@ export function SessionRunner({
               className="rounded-2xl border border-panel-border bg-graphite p-4"
             >
               <div className="mb-2 flex flex-col gap-0.5">
-                <h3 className="text-lg font-semibold text-bone">{ex.name}</h3>
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="text-lg font-semibold text-bone">
+                    {ex.name}
+                  </h3>
+                  {(bestE1rm > 0 || workingWeight > 0) && (
+                    <button
+                      type="button"
+                      aria-label={t("exerciseDetails")}
+                      aria-expanded={expandedIds.has(ex.plan_exercise_id)}
+                      onClick={() => toggleDetails(ex.plan_exercise_id)}
+                      className="rounded-md p-1 text-bone-dim transition-colors hover:text-bone"
+                    >
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform",
+                          expandedIds.has(ex.plan_exercise_id) && "rotate-180",
+                        )}
+                      />
+                    </button>
+                  )}
+                </div>
                 <p className="font-num text-xs tabular-nums text-bone-dim">
                   {t("target", {
                     sets: ex.target_sets,
@@ -393,17 +414,21 @@ export function SessionRunner({
                     })}
                   </p>
                 )}
-                {bestE1rm > 0 && (
-                  <p className="font-num text-xs tabular-nums text-moss">
-                    {t("e1rm", {
-                      weight: toDisplayWeight(bestE1rm, unit),
-                      unit: unitLabel(unit),
-                    })}
-                  </p>
+                {expandedIds.has(ex.plan_exercise_id) && (
+                  <>
+                    {bestE1rm > 0 && (
+                      <p className="font-num text-xs tabular-nums text-moss">
+                        {t("e1rm", {
+                          weight: toDisplayWeight(bestE1rm, unit),
+                          unit: unitLabel(unit),
+                        })}
+                      </p>
+                    )}
+                    <div className="mt-1">
+                      <PlateCalculator weightKg={workingWeight} unit={unit} />
+                    </div>
+                  </>
                 )}
-                <div className="mt-1">
-                  <PlateCalculator weightKg={workingWeight} unit={unit} />
-                </div>
                 {!completed && rec && (
                   <ProgressionBanner
                     rec={rec}
@@ -454,6 +479,16 @@ export function SessionRunner({
                   />
                 ))}
               </div>
+              {!completed && (
+                <div className="mt-2 flex justify-center">
+                  <RestTimer
+                    defaultSeconds={ex.rest_seconds ?? restSeconds}
+                    registerStart={(fn) =>
+                      startRestRefs.current.set(ex.plan_exercise_id, fn)
+                    }
+                  />
+                </div>
+              )}
             </div>
           );
         })}
@@ -465,21 +500,23 @@ export function SessionRunner({
         )}
       </div>
 
-      {exercises.length > 0 && (
-        <div className="flex justify-center">
-          <RestTimer
-            defaultSeconds={restSeconds}
-            registerStart={(fn) => (startRestRef.current = fn)}
-          />
-        </div>
-      )}
-
       {error && <p className="text-sm text-clay">{error}</p>}
 
       {completed && exercises.length > 0 && (
-        <Button onClick={onSaveChanges} disabled={finishing} variant="outline">
-          {finishing ? t("saving") : t("saveChanges")}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs text-bone-dim" htmlFor="session-notes">
+            {t("sessionNotes")}
+          </label>
+          <Textarea
+            id="session-notes"
+            value={sessionNotes}
+            onChange={(e) => setSessionNotes(e.target.value)}
+            placeholder={t("sessionNotesPlaceholder")}
+          />
+          <Button onClick={onSaveChanges} disabled={finishing} variant="outline">
+            {finishing ? t("saving") : t("saveChanges")}
+          </Button>
+        </div>
       )}
 
       {/* Sticky finish bar */}
@@ -516,25 +553,14 @@ export function SessionRunner({
           </SheetHeader>
 
           <div className="mt-6 flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-bone-dim">{t("reschedule")}</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="date"
-                  value={rescheduleDate}
-                  onChange={(e) => setRescheduleDate(e.target.value)}
-                  className="font-num tabular-nums"
-                />
-                <Button
-                  onClick={onReschedule}
-                  disabled={busy}
-                  variant="outline"
-                >
-                  <CalendarClock className="h-4 w-4" />
-                  {t("move")}
-                </Button>
-              </div>
-            </div>
+            <RescheduleControl
+              sessionId={sessionId}
+              initialDate={date}
+              onDone={() => {
+                setManageOpen(false);
+                router.refresh();
+              }}
+            />
 
             {!completed && (
               <Button onClick={onSkip} disabled={busy} variant="outline">
@@ -606,9 +632,24 @@ export function SessionRunner({
             </div>
           )}
 
+          <div className="mt-4 flex flex-col gap-1.5">
+            <label className="text-xs text-bone-dim" htmlFor="finish-notes">
+              {t("sessionNotes")}
+            </label>
+            <Textarea
+              id="finish-notes"
+              value={sessionNotes}
+              onChange={(e) => setSessionNotes(e.target.value)}
+              placeholder={t("sessionNotesPlaceholder")}
+            />
+          </div>
+
           <Button
             className="mt-6 w-full"
-            onClick={() => {
+            onClick={async () => {
+              if (sessionNotes.trim().length > 0) {
+                await completeSession(sessionId, allLogs, sessionNotes);
+              }
               setSummaryOpen(false);
               router.push("/dashboard");
               router.refresh();

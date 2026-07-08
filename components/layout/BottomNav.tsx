@@ -41,7 +41,7 @@ const rightItems: NavItem[] = [
     href: "/profile",
     labelKey: "profile",
     icon: UserRound,
-    match: ["/profile", "/settings"],
+    match: ["/profile"],
   },
 ];
 

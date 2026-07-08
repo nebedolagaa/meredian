@@ -10,8 +10,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { Activity } from "lucide-react";
 import { shortDate } from "@/lib/utils/dates";
 import { useChartColors } from "@/lib/hooks/useChartColors";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export interface FrequencyPoint {
   week: string;
@@ -50,11 +52,7 @@ export function FrequencyChart({
   const hasData = data.some((d) => d.count > 0);
   const { steel, boneDim, grid, cursor } = useChartColors();
   if (!hasData) {
-    return (
-      <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-panel-border text-sm text-bone-dim">
-        {emptyLabel}
-      </div>
-    );
+    return <EmptyState icon={Activity} message={emptyLabel} />;
   }
 
   return (

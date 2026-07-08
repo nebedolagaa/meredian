@@ -136,21 +136,27 @@ export type Database = {
           id: string;
           user_id: string;
           name: string;
+          slug: string | null;
           is_archived: boolean;
+          is_template: boolean;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           name: string;
+          slug?: string | null;
           is_archived?: boolean;
+          is_template?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
           name?: string;
+          slug?: string | null;
           is_archived?: boolean;
+          is_template?: boolean;
           created_at?: string;
         };
         Relationships: [
@@ -172,6 +178,7 @@ export type Database = {
           target_sets: number;
           target_reps: number;
           target_weight: number;
+          rest_seconds: number | null;
         };
         Insert: {
           id?: string;
@@ -181,6 +188,7 @@ export type Database = {
           target_sets: number;
           target_reps: number;
           target_weight: number;
+          rest_seconds?: number | null;
         };
         Update: {
           id?: string;
@@ -190,6 +198,7 @@ export type Database = {
           target_sets?: number;
           target_reps?: number;
           target_weight?: number;
+          rest_seconds?: number | null;
         };
         Relationships: [
           {

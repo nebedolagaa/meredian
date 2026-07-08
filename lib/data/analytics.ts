@@ -9,11 +9,14 @@ import {
 import { setVolume } from "@/lib/utils/volume";
 import {
   computePersonalRecords,
+  computeRecordTimeline,
   type PersonalRecord,
+  type RecordEvent,
 } from "@/lib/utils/records";
 import { computeStreak, type StreakResult } from "@/lib/utils/streak";
 import { todayISO } from "@/lib/utils/dates";
 import { DEFAULT_WEEKLY_GOAL } from "@/lib/data/preferences";
+import type { PrimaryMuscle } from "@/lib/types/database";
 
 type Supa = SupabaseClient<Database>;
 
@@ -25,7 +28,11 @@ interface LogRow {
   completed: boolean;
   plan_exercises: {
     target_sets: number;
-    exercises: { name: string; muscle_group: string | null } | null;
+    exercises: {
+      name: string;
+      muscle_group: string | null;
+      primary_muscle: string | null;
+    } | null;
   } | null;
 }
 
@@ -46,8 +53,12 @@ export interface AnalyticsData {
   frequencySeries: { week: string; count: number }[];
   /** Completed volume split by muscle group, largest first. */
   muscleVolume: { group: string; volume: number }[];
+  /** Completed volume by fine-grained muscle, normalized 0-1 for the body map heat-map. */
+  muscleIntensity: Partial<Record<PrimaryMuscle, number>>;
   exerciseNames: string[];
   records: PersonalRecord[];
+  /** Chronological log of new personal-best 1RMs, newest first. */
+  recordTimeline: RecordEvent[];
   /** Weekly-goal streak summary for the retention card. */
   streak: StreakResult;
   /** ISO dates of completed sessions over the last 26 weeks (for the heatmap). */
@@ -104,7 +115,7 @@ export async function getAnalyticsData(
     const { data: logRows } = await supabase
       .from("session_logs")
       .select(
-        "session_id, set_number, actual_reps, actual_weight, completed, plan_exercises(target_sets, exercises(name, muscle_group))",
+        "session_id, set_number, actual_reps, actual_weight, completed, plan_exercises(target_sets, exercises(name, muscle_group, primary_muscle))",
       )
       .in("session_id", sessionIds);
     logs = (logRows ?? []) as unknown as LogRow[];
@@ -254,6 +265,30 @@ export async function getAnalyticsData(
     .map(([group, volume]) => ({ group, volume }))
     .sort((a, b) => b.volume - a.volume);
 
+  // Completed volume by fine-grained muscle (for the body map heat-map),
+  // normalized against the largest muscle's volume so fills scale 0-1.
+  const volumeByPrimaryMuscle = new Map<string, number>();
+  for (const log of logs) {
+    if (!log.completed) continue;
+    const muscle = log.plan_exercises?.exercises?.primary_muscle;
+    if (!muscle) continue;
+    volumeByPrimaryMuscle.set(
+      muscle,
+      (volumeByPrimaryMuscle.get(muscle) ?? 0) +
+        setVolume(log.actual_reps, log.actual_weight),
+    );
+  }
+  const maxPrimaryVolume = Math.max(
+    0,
+    ...Array.from(volumeByPrimaryMuscle.values()),
+  );
+  const muscleIntensity: Partial<Record<PrimaryMuscle, number>> = {};
+  if (maxPrimaryVolume > 0) {
+    for (const [muscle, volume] of Array.from(volumeByPrimaryMuscle)) {
+      muscleIntensity[muscle as PrimaryMuscle] = volume / maxPrimaryVolume;
+    }
+  }
+
   const records = computePersonalRecords(
     logs
       .filter((l) => l.completed && l.actual_weight != null)
@@ -265,6 +300,20 @@ export async function getAnalyticsData(
       .filter((l) => l.name),
   );
 
+  const sessionDateById = new Map(sessions.map((s) => [s.id, s.scheduled_date]));
+  const recordTimeline = computeRecordTimeline(
+    logs
+      .filter((l) => l.completed && l.actual_weight != null)
+      .map((l) => ({
+        name: l.plan_exercises?.exercises?.name ?? "",
+        weight: l.actual_weight ?? 0,
+        reps: l.actual_reps ?? 0,
+        date: sessionDateById.get(l.session_id) ?? "",
+      }))
+      .filter((l) => l.name && l.date)
+      .sort((a, b) => a.date.localeCompare(b.date)),
+  );
+
   return {
     sessions: summaries,
     history,
@@ -272,8 +321,10 @@ export async function getAnalyticsData(
     progressSeries,
     frequencySeries,
     muscleVolume,
+    muscleIntensity,
     exerciseNames: Array.from(exerciseSessionMax.keys()).sort(),
     records,
+    recordTimeline,
     streak,
     completedDates: (streakRows ?? []).map((r) => r.scheduled_date),
   };

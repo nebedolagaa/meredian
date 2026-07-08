@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { Plus, Dumbbell, ChevronRight, Archive, ListChecks } from "lucide-react";
+import {
+  Plus,
+  Dumbbell,
+  ChevronRight,
+  Archive,
+  ListChecks,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -8,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { DuplicatePlanButton } from "@/components/plans/DuplicatePlanButton";
 import { ArchivePlanButton } from "@/components/plans/ArchivePlanButton";
 import { DeletePlanButton } from "@/components/plans/DeletePlanButton";
+import { TemplateToggleButton } from "@/components/plans/TemplateToggleButton";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +28,9 @@ export default async function PlansPage() {
 
   const { data: plans } = await supabase
     .from("workout_plans")
-    .select("id, name, created_at, is_archived, plan_exercises(count)")
+    .select(
+      "id, name, slug, created_at, is_archived, is_template, plan_exercises(count)",
+    )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -84,7 +93,7 @@ export default async function PlansPage() {
               className="group flex flex-col p-0 transition-colors hover:border-steel/40"
             >
               <Link
-                href={`/plans/${plan.id}`}
+                href={`/plans/${plan.slug ?? plan.id}`}
                 className="flex items-center gap-3 p-4"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-steel/10 text-steel">
@@ -105,6 +114,10 @@ export default async function PlansPage() {
                 <ChevronRight className="h-5 w-5 shrink-0 text-bone-dim transition-transform group-hover:translate-x-0.5" />
               </Link>
               <div className="flex items-center justify-end gap-1 border-t border-panel-border/70 px-3 py-1.5">
+                <TemplateToggleButton
+                  planId={plan.id}
+                  isTemplate={plan.is_template}
+                />
                 <DuplicatePlanButton planId={plan.id} />
                 <ArchivePlanButton planId={plan.id} archived={false} />
                 <DeletePlanButton planId={plan.id} />
@@ -127,7 +140,7 @@ export default async function PlansPage() {
                     <Archive className="h-5 w-5" />
                   </span>
                   <Link
-                    href={`/plans/${plan.id}`}
+                    href={`/plans/${plan.slug ?? plan.id}`}
                     className="flex min-w-0 flex-1 flex-col gap-0.5"
                   >
                     <span className="truncate font-medium text-bone">

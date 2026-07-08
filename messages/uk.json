@@ -15,8 +15,7 @@
     "saved": "Збережено",
     "delete": "Видалити",
     "cancel": "Скасувати",
-    "pleaseWait": "Зачекайте…",
-    "comingSoon": "Незабаром"
+    "pleaseWait": "Зачекайте…"
   },
   "wordmark": {
     "tagline": "Тренуйся точно."
@@ -74,7 +73,7 @@
     "noName": "Атлет",
     "account": "Акаунт",
     "preferences": "Налаштування",
-    "data": "Дані та інтеграції"
+    "data": "Дані"
   },
   "tour": {
     "stepOf": "{current} з {total}",
@@ -139,17 +138,11 @@
     "displayName": "Відображуване ім'я",
     "displayNamePlaceholder": "Ваше ім'я",
     "email": "Ел. пошта",
-    "integrations": "Інтеграції",
-    "integrationsDesc": "У планах, поки недоступно.",
     "signOut": "Вийти",
     "googleCalendarTitle": "Синхронізація з Google Календарем",
     "googleCalendarDesc": "Надсилайте заплановані тренування у Google Календар.",
     "appleCalendarTitle": "Синхронізація з Apple Календарем",
-    "appleCalendarDesc": "Двостороння синхронізація з застосунком Apple Календар.",
-    "appleHealthTitle": "Інтеграція з Apple Health",
-    "appleHealthDesc": "Отримуйте дані про тренування та відновлення з Apple Health.",
-    "aiCoachingTitle": "ШІ-тренер",
-    "aiCoachingDesc": "Персональні рекомендації щодо прогресії та коригування плану на основі історії «план проти реальності»."
+    "appleCalendarDesc": "Двостороння синхронізація з застосунком Apple Календар."
   },
   "analytics": {
     "title": "Аналітика",
@@ -167,8 +160,13 @@
     "frequency": "Частота тренувань",
     "frequencyDesc": "Завершені тренування на тиждень · останні 8 тижнів",
     "frequencyEmpty": "Завершуйте тренування, щоб бачити частоту по тижнях",
+    "muscleBalanceEmpty": "Завершуйте тренування, щоб бачити баланс м'язових груп",
     "muscleBalance": "Баланс м'язів",
     "muscleBalanceDesc": "Частка виконаного обсягу за групами м'язів",
+    "muscleMap": "Нещодавно тренувалися",
+    "muscleMapDesc": "М'язи, які найбільше навантажувалися у завершених тренуваннях",
+    "prTimeline": "Історія рекордів",
+    "prTimelineDesc": "Кожного разу, коли ви досягаєте нового розрахункового 1ПМ",
     "share": "Поділитися рекордом",
     "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meridian"
   },
@@ -181,6 +179,8 @@
     "exerciseCount": "{count, plural, one {# вправа} few {# вправи} many {# вправ} other {# вправи}}",
     "lastUsed": "останній {date}",
     "duplicate": "Дублювати план",
+    "saveAsTemplate": "Зберегти як шаблон",
+    "removeFromTemplates": "Прибрати з шаблонів",
     "archive": "Архівувати план",
     "unarchive": "Відновити план",
     "archived": "Архів",
@@ -199,11 +199,14 @@
     "reps": "Повтори",
     "weightKg": "Вага кг",
     "weight": "Вага ({unit})",
+    "restSeconds": "Відпочинок (сек)",
+    "restSecondsAuto": "Авто",
     "savePlan": "Зберегти план",
     "saving": "Збереження…",
     "nameRequired": "Вкажіть назву плану.",
     "moveUp": "Перемістити вгору",
     "moveDown": "Перемістити вниз",
+    "dragToReorder": "Перетягніть, щоб змінити порядок",
     "deleteExercise": "Видалити вправу",
     "startFromTemplate": "Почати з шаблону",
     "exercise": "Вправа"
@@ -403,7 +406,10 @@
     "plan": "План",
     "noPlans": "Планів поки немає — спершу створіть план у розділі «Плани».",
     "selectPlan": "Оберіть план",
+    "noPlan": "Без плану (довільно)",
     "date": "Дата",
+    "repeatWeekly": "Повторювати щотижня",
+    "repeatWeeks": "Кількість тижнів",
     "scheduling": "Планування…",
     "addSession": "Додати тренування"
   },
@@ -415,6 +421,7 @@
     "newPR": "{count, plural, one {Новий особистий рекорд!} few {# нові особисті рекорди!} many {# нових особистих рекордів!} other {# особистих рекордів!}}",
     "rpe": "RPE",
     "setDetails": "Деталі підходу",
+    "exerciseDetails": "Деталі вправи",
     "setNotePlaceholder": "Нотатка",
     "startSession": "Почати тренування",
     "noExercises": "У цьому плані немає вправ.",
@@ -433,7 +440,9 @@
     "reschedule": "Перенести",
     "move": "Перенести",
     "skipSession": "Пропустити тренування",
-    "deleteSession": "Видалити тренування"
+    "deleteSession": "Видалити тренування",
+    "sessionNotes": "Як усе пройшло?",
+    "sessionNotesPlaceholder": "Додайте нотатку про це тренування…"
   },
   "progression": {
     "increaseEasy": "Минулого разу було легко — додай вагу",
@@ -488,6 +497,7 @@
     "title": "Почати з шаблону",
     "description": "Оберіть готову програму — вправи можна змінити пізніше.",
     "creating": "Створення…",
+    "myTemplates": "Мої шаблони",
     "full_body": {
       "name": "Все тіло",
       "desc": "5 базових вправ, 3× на тиждень"
@@ -647,7 +657,9 @@
     "planArchived": "План в архіві",
     "planRestored": "План відновлено",
     "planDeleted": "План видалено",
-    "planDuplicated": "План скопійовано"
+    "planDuplicated": "План скопійовано",
+    "templateSaved": "Збережено як шаблон",
+    "templateRemoved": "Прибрано з шаблонів"
   },
   "plates": {
     "open": "Млинці",

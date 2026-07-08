@@ -3,7 +3,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowUp, ArrowDown, Trash2, Save, X } from "lucide-react";
+import { Reorder, useDragControls, useReducedMotion } from "framer-motion";
+import { ArrowUp, ArrowDown, GripVertical, Trash2, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,7 @@ interface Row {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  rest_seconds?: number | null;
   muscle_group?: string | null;
   exercise_type?: string | null;
   equipment?: string | null;
@@ -67,6 +69,7 @@ export function PlanBuilder({
   const t = useTranslations("planBuilder");
   const tc = useTranslations("exerciseCatalog");
   const tmus = useTranslations("muscles");
+  const reducedMotion = useReducedMotion();
   const [name, setName] = useState(initial.name);
   const [rows, setRows] = useState<Row[]>(initial.rows);
   const [saving, setSaving] = useState(false);
@@ -154,6 +157,7 @@ export function PlanBuilder({
       target_sets: r.target_sets,
       target_reps: r.target_reps,
       target_weight: r.target_weight,
+      rest_seconds: r.rest_seconds ?? null,
     }));
     const result = await savePlan(initial.id, name, exercises);
     setSaving(false);
@@ -289,69 +293,45 @@ export function PlanBuilder({
           </p>
         )}
 
-        {rows.map((row, index) => (
-          <div
-            key={row.key}
-            className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-graphite p-4"
+        {reducedMotion ? (
+          rows.map((row, index) => (
+            <PlanRowCard
+              key={row.key}
+              row={row}
+              index={index}
+              rowsLength={rows.length}
+              unit={unit}
+              draggable={false}
+              t={t}
+              onUpdate={update}
+              onRemove={remove}
+              onMove={move}
+            />
+          ))
+        ) : (
+          <Reorder.Group
+            as="div"
+            axis="y"
+            values={rows}
+            onReorder={setRows}
+            className="flex flex-col gap-3"
           >
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex min-w-0 items-center gap-2.5">
-                <ExerciseThumb ex={row} className="h-10 w-10" />
-                <span className="truncate text-sm font-medium text-bone">
-                  {row.name}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  aria-label={t("moveUp")}
-                  onClick={() => move(index, -1)}
-                  disabled={index === 0}
-                  className="rounded-md p-1.5 text-bone-dim hover:text-bone disabled:opacity-30"
-                >
-                  <ArrowUp className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={t("moveDown")}
-                  onClick={() => move(index, 1)}
-                  disabled={index === rows.length - 1}
-                  className="rounded-md p-1.5 text-bone-dim hover:text-bone disabled:opacity-30"
-                >
-                  <ArrowDown className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={t("deleteExercise")}
-                  onClick={() => remove(row.key)}
-                  className="rounded-md p-1.5 text-clay hover:bg-clay/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              <NumberField
-                label={t("sets")}
-                value={row.target_sets}
-                onChange={(v) => update(row.key, { target_sets: v })}
+            {rows.map((row, index) => (
+              <PlanRowCard
+                key={row.key}
+                row={row}
+                index={index}
+                rowsLength={rows.length}
+                unit={unit}
+                draggable
+                t={t}
+                onUpdate={update}
+                onRemove={remove}
+                onMove={move}
               />
-              <NumberField
-                label={t("reps")}
-                value={row.target_reps}
-                onChange={(v) => update(row.key, { target_reps: v })}
-              />
-              <WeightField
-                label={t("weight", { unit: unitLabel(unit) })}
-                value={toDisplayWeight(row.target_weight, unit)}
-                onChange={(v) =>
-                  update(row.key, { target_weight: toKg(v, unit) })
-                }
-              />
-            </div>
-          </div>
-        ))}
+            ))}
+          </Reorder.Group>
+        )}
       </div>
 
       {error && <p className="text-sm text-clay">{error}</p>}
@@ -360,6 +340,142 @@ export function PlanBuilder({
         <Save className="h-4 w-4" />
         {saving ? t("saving") : t("savePlan")}
       </Button>
+    </div>
+  );
+}
+
+function PlanRowCard({
+  row,
+  index,
+  rowsLength,
+  unit,
+  draggable,
+  t,
+  onUpdate,
+  onRemove,
+  onMove,
+}: {
+  row: Row;
+  index: number;
+  rowsLength: number;
+  unit: WeightUnit;
+  draggable: boolean;
+  t: ReturnType<typeof useTranslations>;
+  onUpdate: (key: string, patch: Partial<Row>) => void;
+  onRemove: (key: string) => void;
+  onMove: (index: number, delta: number) => void;
+}) {
+  const controls = useDragControls();
+
+  const content = (
+    <>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
+          {draggable && (
+            <button
+              type="button"
+              aria-label={t("dragToReorder")}
+              onPointerDown={(e) => controls.start(e)}
+              className="cursor-grab touch-none rounded-md p-1 text-bone-dim hover:text-bone active:cursor-grabbing"
+            >
+              <GripVertical className="h-4 w-4" />
+            </button>
+          )}
+          <ExerciseThumb ex={row} className="h-10 w-10" />
+          <span className="truncate text-sm font-medium text-bone">
+            {row.name}
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label={t("moveUp")}
+            onClick={() => onMove(index, -1)}
+            disabled={index === 0}
+            className="rounded-md p-1.5 text-bone-dim hover:text-bone disabled:opacity-30"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("moveDown")}
+            onClick={() => onMove(index, 1)}
+            disabled={index === rowsLength - 1}
+            className="rounded-md p-1.5 text-bone-dim hover:text-bone disabled:opacity-30"
+          >
+            <ArrowDown className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("deleteExercise")}
+            onClick={() => onRemove(row.key)}
+            className="rounded-md p-1.5 text-clay hover:bg-clay/10"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <NumberField
+          label={t("sets")}
+          value={row.target_sets}
+          onChange={(v) => onUpdate(row.key, { target_sets: v })}
+        />
+        <NumberField
+          label={t("reps")}
+          value={row.target_reps}
+          onChange={(v) => onUpdate(row.key, { target_reps: v })}
+        />
+        <WeightField
+          label={t("weight", { unit: unitLabel(unit) })}
+          value={toDisplayWeight(row.target_weight, unit)}
+          onChange={(v) =>
+            onUpdate(row.key, { target_weight: toKg(v, unit) })
+          }
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Label className="text-[10px]">{t("restSeconds")}</Label>
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={600}
+          step={15}
+          placeholder={t("restSecondsAuto")}
+          value={row.rest_seconds ?? ""}
+          onChange={(e) => {
+            const raw = e.target.value;
+            onUpdate(row.key, {
+              rest_seconds:
+                raw === "" ? null : Math.max(0, Math.min(600, Number(raw) || 0)),
+            });
+          }}
+          className="font-num tabular-nums"
+        />
+      </div>
+    </>
+  );
+
+  if (draggable) {
+    return (
+      <Reorder.Item
+        as="div"
+        value={row}
+        dragListener={false}
+        dragControls={controls}
+        className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-graphite p-4"
+      >
+        {content}
+      </Reorder.Item>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-graphite p-4">
+      {content}
     </div>
   );
 }

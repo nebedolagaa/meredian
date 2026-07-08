@@ -47,6 +47,7 @@ export const planExerciseSchema = z.object({
   target_sets: z.number().int().min(1).max(50),
   target_reps: z.number().int().min(1).max(1000),
   target_weight: z.number().min(0).max(10000),
+  rest_seconds: z.number().int().min(0).max(600).nullable().optional(),
 });
 
 export const savePlanSchema = z.object({
@@ -121,6 +122,8 @@ export const sessionLogSchema = z.object({
 });
 
 export const sessionLogsSchema = z.array(sessionLogSchema).max(500);
+
+export const sessionNotesSchema = z.string().trim().max(1000).nullable();
 
 /**
  * Helper: run a Zod schema and return the first error message, if any.

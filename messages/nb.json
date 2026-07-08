@@ -15,8 +15,7 @@
     "saved": "Lagret",
     "delete": "Slett",
     "cancel": "Avbryt",
-    "pleaseWait": "Vent litt…",
-    "comingSoon": "Kommer snart"
+    "pleaseWait": "Vent litt…"
   },
   "wordmark": {
     "tagline": "Tren med presisjon."
@@ -74,7 +73,7 @@
     "noName": "Utøver",
     "account": "Konto",
     "preferences": "Preferanser",
-    "data": "Data og integrasjoner"
+    "data": "Data"
   },
   "tour": {
     "stepOf": "{current} av {total}",
@@ -139,17 +138,11 @@
     "displayName": "Visningsnavn",
     "displayNamePlaceholder": "Navnet ditt",
     "email": "E-post",
-    "integrations": "Integrasjoner",
-    "integrationsDesc": "På veikartet, ikke aktivt ennå.",
     "signOut": "Logg ut",
     "googleCalendarTitle": "Google Kalender-synk",
     "googleCalendarDesc": "Send planlagte økter til Google Kalender.",
     "appleCalendarTitle": "Apple Kalender-synk",
-    "appleCalendarDesc": "Toveis synk med Apple Kalender-appen.",
-    "appleHealthTitle": "Apple Helse-integrasjon",
-    "appleHealthDesc": "Hent treningsøkter og restitusjonsdata fra Apple Helse.",
-    "aiCoachingTitle": "AI-coaching",
-    "aiCoachingDesc": "Personlige progresjonsforslag og planjusteringer basert på din historikk over plan kontra virkelighet."
+    "appleCalendarDesc": "Toveis synk med Apple Kalender-appen."
   },
   "analytics": {
     "title": "Analyse",
@@ -167,8 +160,13 @@
     "frequency": "Treningsfrekvens",
     "frequencyDesc": "Fullførte økter per uke · siste 8 uker",
     "frequencyEmpty": "Fullfør økter for å se ukentlig frekvens",
+    "muscleBalanceEmpty": "Fullfør økter for å se muskelbalansen din",
     "muscleBalance": "Muskelbalanse",
     "muscleBalanceDesc": "Andel av fullført volum per muskelgruppe",
+    "muscleMap": "Nylig trent",
+    "muscleMapDesc": "Musklene som er mest trent i dine fullførte økter",
+    "prTimeline": "Rekordhistorikk",
+    "prTimelineDesc": "Hver gang du setter en ny estimert 1RM",
     "share": "Del rekord",
     "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
   },
@@ -181,6 +179,8 @@
     "exerciseCount": "{count, plural, one {# øvelse} other {# øvelser}}",
     "lastUsed": "sist {date}",
     "duplicate": "Dupliser plan",
+    "saveAsTemplate": "Lagre som mal",
+    "removeFromTemplates": "Fjern fra maler",
     "archive": "Arkiver plan",
     "unarchive": "Gjenopprett plan",
     "archived": "Arkivert",
@@ -199,11 +199,14 @@
     "reps": "Reps",
     "weightKg": "Vekt kg",
     "weight": "Vekt ({unit})",
+    "restSeconds": "Pause (sek)",
+    "restSecondsAuto": "Auto",
     "savePlan": "Lagre plan",
     "saving": "Lagrer…",
     "nameRequired": "Plannavn er påkrevd.",
     "moveUp": "Flytt opp",
     "moveDown": "Flytt ned",
+    "dragToReorder": "Dra for å endre rekkefølge",
     "deleteExercise": "Slett øvelse",
     "startFromTemplate": "Start fra en mal",
     "exercise": "Øvelse"
@@ -403,7 +406,10 @@
     "plan": "Plan",
     "noPlans": "Ingen planer ennå — opprett en først under Planer.",
     "selectPlan": "Velg en plan",
+    "noPlan": "Ingen plan (fri økt)",
     "date": "Dato",
+    "repeatWeekly": "Gjenta ukentlig",
+    "repeatWeeks": "Antall uker",
     "scheduling": "Planlegger…",
     "addSession": "Legg til økt"
   },
@@ -415,6 +421,7 @@
     "newPR": "{count, plural, one {Ny personlig rekord!} other {# nye personlige rekorder!}}",
     "rpe": "RPE",
     "setDetails": "Settdetaljer",
+    "exerciseDetails": "Øvelsesdetaljer",
     "setNotePlaceholder": "Notat",
     "startSession": "Start økt",
     "noExercises": "Denne planen har ingen øvelser.",
@@ -433,7 +440,9 @@
     "reschedule": "Endre tidspunkt",
     "move": "Flytt",
     "skipSession": "Hopp over økten",
-    "deleteSession": "Slett økten"
+    "deleteSession": "Slett økten",
+    "sessionNotes": "Hvordan gikk det?",
+    "sessionNotesPlaceholder": "Legg til et notat om denne økten…"
   },
   "progression": {
     "increaseEasy": "Det føltes lett sist — øk vekten",
@@ -488,6 +497,7 @@
     "title": "Start fra en mal",
     "description": "Velg et forhåndsdefinert program — juster øvelsene etterpå.",
     "creating": "Oppretter…",
+    "myTemplates": "Mine maler",
     "full_body": {
       "name": "Helkropp",
       "desc": "5 baseøvelser, 3× per uke"
@@ -647,7 +657,9 @@
     "planArchived": "Plan arkivert",
     "planRestored": "Plan gjenopprettet",
     "planDeleted": "Plan slettet",
-    "planDuplicated": "Plan kopiert"
+    "planDuplicated": "Plan kopiert",
+    "templateSaved": "Lagret som mal",
+    "templateRemoved": "Fjernet fra maler"
   },
   "plates": {
     "open": "Skiver",

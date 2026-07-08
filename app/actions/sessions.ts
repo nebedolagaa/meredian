@@ -2,8 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { isoDateSchema, sessionLogsSchema } from "@/lib/validation/schemas";
-import { todayISO } from "@/lib/utils/dates";
+import {
+  isoDateSchema,
+  sessionLogsSchema,
+  sessionNotesSchema,
+} from "@/lib/validation/schemas";
+import { todayISO, addDays, toISODate } from "@/lib/utils/dates";
 import { safeActionError } from "@/lib/utils/errors";
 
 async function requireUser() {
@@ -58,6 +62,56 @@ export async function createSession(
     return { id: data.id };
   } catch (e) {
     return { error: safeActionError("createSession", e) };
+  }
+}
+
+const MAX_RECURRING_WEEKS = 12;
+
+/**
+ * Create `weeks` planned sessions, one per week starting on `startDate`.
+ */
+export async function createRecurringSessions(
+  planId: string | null,
+  startDate: string,
+  weeks: number,
+): Promise<ActionResult> {
+  try {
+    const { supabase, user } = await requireUser();
+    if (!isoDateSchema.safeParse(startDate).success) {
+      return { error: "A valid date is required." };
+    }
+    if (!Number.isInteger(weeks) || weeks < 2 || weeks > MAX_RECURRING_WEEKS) {
+      return { error: `Repeat count must be between 2 and ${MAX_RECURRING_WEEKS} weeks.` };
+    }
+    if (planId) {
+      const { data: plan } = await supabase
+        .from("workout_plans")
+        .select("id")
+        .eq("id", planId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!plan) return { error: "Plan not found." };
+    }
+
+    const start = new Date(`${startDate}T00:00:00`);
+    const rows = Array.from({ length: weeks }, (_, i) => ({
+      plan_id: planId,
+      user_id: user.id,
+      scheduled_date: toISODate(addDays(start, 7 * i)),
+      status: "planned" as const,
+    }));
+
+    const { data, error } = await supabase
+      .from("workout_sessions")
+      .insert(rows)
+      .select("id");
+
+    if (error) return { error: safeActionError("createRecurringSessions", error) };
+    revalidatePath("/dashboard");
+    revalidatePath("/calendar");
+    return { id: data?.[0]?.id };
+  } catch (e) {
+    return { error: safeActionError("createRecurringSessions", e) };
   }
 }
 
@@ -129,6 +183,7 @@ export interface LogInput {
 export async function completeSession(
   sessionId: string,
   logs: LogInput[],
+  notes?: string | null,
 ): Promise<ActionResult> {
   try {
     const { supabase, user } = await requireUser();
@@ -146,6 +201,9 @@ export async function completeSession(
     const parsed = sessionLogsSchema.safeParse(logs);
     if (!parsed.success) return { error: "Invalid session data." };
     const safeLogs = parsed.data;
+
+    const parsedNotes = sessionNotesSchema.safeParse(notes ?? null);
+    if (!parsedNotes.success) return { error: "Invalid notes." };
 
     // Clear existing logs for this session, then insert fresh.
     const { error: delError } = await supabase
@@ -177,6 +235,7 @@ export async function completeSession(
       .update({
         status: "completed",
         completed_at: new Date().toISOString(),
+        notes: parsedNotes.data || null,
       })
       .eq("id", sessionId)
       .eq("user_id", user.id);

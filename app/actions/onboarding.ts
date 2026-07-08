@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { safeActionError } from "@/lib/utils/errors";
 import { onboardingSchema, firstError } from "@/lib/validation/schemas";
 import { todayISO } from "@/lib/utils/dates";
+import { uniquePlanSlug } from "@/lib/data/planSlug";
 async function requireUser() {
   const supabase = createClient();
   const {
@@ -122,9 +123,18 @@ export async function createStarterPlan(): Promise<{
     }
 
     // Create the plan.
+    const starterSlug = await uniquePlanSlug(
+      supabase,
+      user.id,
+      "Full Body Starter",
+    );
     const { data: plan, error: planError } = await supabase
       .from("workout_plans")
-      .insert({ name: "Full Body Starter", user_id: user.id })
+      .insert({
+        name: "Full Body Starter",
+        slug: starterSlug,
+        user_id: user.id,
+      })
       .select("id")
       .single();
     if (planError)

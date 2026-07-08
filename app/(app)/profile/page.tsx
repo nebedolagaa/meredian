@@ -1,7 +1,5 @@
 import {
   LogOut,
-  HeartPulse,
-  Sparkles,
   Download,
   UserRound,
   ShieldCheck,
@@ -12,12 +10,10 @@ import {
   Trophy,
   Bell,
   Vibrate,
-  Puzzle,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/app/actions/auth";
 import { DisplayNameForm } from "@/components/settings/DisplayNameForm";
@@ -49,26 +45,12 @@ export default async function ProfilePage() {
   const tReminders = await getTranslations("reminders");
   const tFeedback = await getTranslations("feedback");
   const tAccount = await getTranslations("account");
-  const tCommon = await getTranslations("common");
   const tGoal = await getTranslations("goal");
   const tBodyGoal = await getTranslations("bodyGoal");
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
-
-  const comingSoon = [
-    {
-      icon: HeartPulse,
-      title: t("appleHealthTitle"),
-      description: t("appleHealthDesc"),
-    },
-    {
-      icon: Sparkles,
-      title: t("aiCoachingTitle"),
-      description: t("aiCoachingDesc"),
-    },
-  ];
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -231,29 +213,6 @@ export default async function ProfilePage() {
                 {tData("json")}
               </a>
             </Button>
-          </div>
-        </SettingRow>
-        <SettingRow
-          icon={<Puzzle className="h-4 w-4" />}
-          title={t("integrations")}
-          dialogDescription={t("integrationsDesc")}
-        >
-          <div className="flex flex-col gap-3">
-            {comingSoon.map((item) => (
-              <div
-                key={item.title}
-                className="flex items-start gap-3 rounded-lg border border-panel-border bg-carbon p-3 opacity-70"
-              >
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-bone-dim" />
-                <div className="flex flex-1 flex-col gap-0.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-bone">{item.title}</span>
-                    <Badge variant="outline">{tCommon("comingSoon")}</Badge>
-                  </div>
-                  <p className="text-xs text-bone-dim">{item.description}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </SettingRow>
       </SettingsGroup>

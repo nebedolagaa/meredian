@@ -53,3 +53,45 @@ export function computePersonalRecords(logs: RecordLog[]): PersonalRecord[] {
     (a, b) => b.bestOneRepMax - a.bestOneRepMax,
   );
 }
+
+export interface RecordEvent {
+  name: string;
+  date: string;
+  weight: number;
+  reps: number;
+  oneRepMax: number;
+}
+
+interface DatedRecordLog extends RecordLog {
+  date: string;
+}
+
+/**
+ * Walk logs oldest -> newest and emit an event each time a new best
+ * estimated 1RM is reached for an exercise — a PR timeline derived from
+ * data already on hand, no persisted history required.
+ */
+export function computeRecordTimeline(
+  logs: DatedRecordLog[],
+): RecordEvent[] {
+  const bestByName = new Map<string, number>();
+  const events: RecordEvent[] = [];
+
+  for (const log of logs) {
+    if (log.weight <= 0) continue;
+    const orm = estimateOneRepMax(log.weight, log.reps);
+    const best = bestByName.get(log.name) ?? 0;
+    if (orm > best) {
+      bestByName.set(log.name, orm);
+      events.push({
+        name: log.name,
+        date: log.date,
+        weight: log.weight,
+        reps: log.reps,
+        oneRepMax: orm,
+      });
+    }
+  }
+
+  return events.sort((a, b) => b.date.localeCompare(a.date));
+}

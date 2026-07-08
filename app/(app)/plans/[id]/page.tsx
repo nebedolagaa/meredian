@@ -13,6 +13,7 @@ interface PlanExerciseRow {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  rest_seconds: number | null;
   exercises: {
     name: string;
     muscle_group: string | null;
@@ -38,10 +39,15 @@ export default async function EditPlanPage({
   // Body-map figure follows the profile sex; male by default.
   const sex = user ? await getProfileSex(supabase, user.id) : "male";
 
+  // The URL segment is normally a slug, but older links used the plan's UUID.
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      params.id,
+    );
   const { data: plan } = await supabase
     .from("workout_plans")
     .select("id, name")
-    .eq("id", params.id)
+    .eq(isUuid ? "id" : "slug", params.id)
     .single();
 
   if (!plan) notFound();
@@ -49,7 +55,7 @@ export default async function EditPlanPage({
   const { data: planExercises } = await supabase
     .from("plan_exercises")
     .select(
-      "id, exercise_id, order_index, target_sets, target_reps, target_weight, exercises(name, muscle_group, description)",
+      "id, exercise_id, order_index, target_sets, target_reps, target_weight, rest_seconds, exercises(name, muscle_group, description)",
     )
     .eq("plan_id", plan.id)
     .order("order_index", { ascending: true });
@@ -64,6 +70,7 @@ export default async function EditPlanPage({
       target_sets: pe.target_sets,
       target_reps: pe.target_reps,
       target_weight: pe.target_weight,
+      rest_seconds: pe.rest_seconds,
     }),
   );
 

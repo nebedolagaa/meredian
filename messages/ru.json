@@ -15,8 +15,7 @@
     "saved": "Сохранено",
     "delete": "Удалить",
     "cancel": "Отмена",
-    "pleaseWait": "Подождите…",
-    "comingSoon": "Скоро"
+    "pleaseWait": "Подождите…"
   },
   "wordmark": {
     "tagline": "Тренируйся точно."
@@ -74,7 +73,7 @@
     "noName": "Атлет",
     "account": "Аккаунт",
     "preferences": "Предпочтения",
-    "data": "Данные и интеграции"
+    "data": "Данные"
   },
   "tour": {
     "stepOf": "{current} из {total}",
@@ -139,17 +138,11 @@
     "displayName": "Отображаемое имя",
     "displayNamePlaceholder": "Ваше имя",
     "email": "Эл. почта",
-    "integrations": "Интеграции",
-    "integrationsDesc": "В планах, пока недоступно.",
     "signOut": "Выйти",
     "googleCalendarTitle": "Синхронизация с Google Календарём",
     "googleCalendarDesc": "Отправляйте запланированные тренировки в Google Календарь.",
     "appleCalendarTitle": "Синхронизация с Apple Календарём",
-    "appleCalendarDesc": "Двусторонняя синхронизация с приложением Apple Календарь.",
-    "appleHealthTitle": "Интеграция с Apple Health",
-    "appleHealthDesc": "Получайте данные о тренировках и восстановлении из Apple Health.",
-    "aiCoachingTitle": "ИИ-тренер",
-    "aiCoachingDesc": "Персональные рекомендации по прогрессии и корректировке плана на основе истории «план против реальности»."
+    "appleCalendarDesc": "Двусторонняя синхронизация с приложением Apple Календарь."
   },
   "analytics": {
     "title": "Аналитика",
@@ -167,8 +160,13 @@
     "frequency": "Частота тренировок",
     "frequencyDesc": "Завершённые тренировки в неделю · последние 8 недель",
     "frequencyEmpty": "Завершайте тренировки, чтобы видеть частоту по неделям",
+    "muscleBalanceEmpty": "Завершайте тренировки, чтобы видеть баланс мышечных групп",
     "muscleBalance": "Баланс мышц",
     "muscleBalanceDesc": "Доля выполненного объёма по группам мышц",
+    "muscleMap": "Недавно тренировались",
+    "muscleMapDesc": "Мышцы, которые больше всего нагружались в завершённых тренировках",
+    "prTimeline": "История рекордов",
+    "prTimelineDesc": "Каждый раз, когда вы достигаете нового расчётного 1ПМ",
     "share": "Поделиться рекордом",
     "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meridian"
   },
@@ -181,6 +179,8 @@
     "exerciseCount": "{count, plural, one {# упражнение} few {# упражнения} many {# упражнений} other {# упражнения}}",
     "lastUsed": "последний {date}",
     "duplicate": "Дублировать план",
+    "saveAsTemplate": "Сохранить как шаблон",
+    "removeFromTemplates": "Убрать из шаблонов",
     "archive": "Архивировать план",
     "unarchive": "Восстановить план",
     "archived": "Архив",
@@ -199,11 +199,14 @@
     "reps": "Повторы",
     "weightKg": "Вес кг",
     "weight": "Вес ({unit})",
+    "restSeconds": "Отдых (сек)",
+    "restSecondsAuto": "Авто",
     "savePlan": "Сохранить план",
     "saving": "Сохранение…",
     "nameRequired": "Укажите название плана.",
     "moveUp": "Переместить вверх",
     "moveDown": "Переместить вниз",
+    "dragToReorder": "Перетащите, чтобы изменить порядок",
     "deleteExercise": "Удалить упражнение",
     "startFromTemplate": "Начать с шаблона",
     "exercise": "Упражнение"
@@ -403,7 +406,10 @@
     "plan": "План",
     "noPlans": "Планов пока нет — сначала создайте план в разделе «Планы».",
     "selectPlan": "Выберите план",
+    "noPlan": "Без плана (произвольно)",
     "date": "Дата",
+    "repeatWeekly": "Повторять каждую неделю",
+    "repeatWeeks": "Количество недель",
     "scheduling": "Планирование…",
     "addSession": "Добавить тренировку"
   },
@@ -415,6 +421,7 @@
     "newPR": "{count, plural, one {Новый личный рекорд!} other {# новых личных рекорда!}}",
     "rpe": "RPE",
     "setDetails": "Детали подхода",
+    "exerciseDetails": "Детали упражнения",
     "setNotePlaceholder": "Заметка",
     "startSession": "Начать тренировку",
     "noExercises": "В этом плане нет упражнений.",
@@ -433,7 +440,9 @@
     "reschedule": "Перенести",
     "move": "Перенести",
     "skipSession": "Пропустить тренировку",
-    "deleteSession": "Удалить тренировку"
+    "deleteSession": "Удалить тренировку",
+    "sessionNotes": "Как всё прошло?",
+    "sessionNotesPlaceholder": "Добавьте заметку об этой тренировке…"
   },
   "progression": {
     "increaseEasy": "В прошлый раз было легко — добавь вес",
@@ -488,6 +497,7 @@
     "title": "Начать с шаблона",
     "description": "Выберите готовую программу — упражнения можно изменить позже.",
     "creating": "Создание…",
+    "myTemplates": "Мои шаблоны",
     "full_body": {
       "name": "Всё тело",
       "desc": "5 базовых упражнений, 3× в неделю"
@@ -647,7 +657,9 @@
     "planArchived": "План в архиве",
     "planRestored": "План восстановлен",
     "planDeleted": "План удалён",
-    "planDuplicated": "План скопирован"
+    "planDuplicated": "План скопирован",
+    "templateSaved": "Сохранено как шаблон",
+    "templateRemoved": "Убрано из шаблонов"
   },
   "plates": {
     "open": "Блины",

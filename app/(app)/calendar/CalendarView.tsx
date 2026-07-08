@@ -16,12 +16,14 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { QuickAddSheet } from "@/components/session/QuickAdd";
+import { RescheduleControl } from "@/components/session/RescheduleControl";
 import {
   monthGrid,
   toISODate,
   todayISO,
   startOfMonth,
 } from "@/lib/utils/dates";
+import { haptic } from "@/lib/utils/haptics";
 import type { WorkoutPlan } from "@/lib/types/database";
 
 interface CalSession {
@@ -320,6 +322,7 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
         aria-label={t("addSession")}
         data-tour="calendar-add"
         onClick={() => {
+          haptic("tap");
           setQuickAddDate(today);
           setQuickAddOpen(true);
         }}
@@ -386,6 +389,14 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
                     {t("addToGoogleCalendar")}
                   </Button>
                 </div>
+                <RescheduleControl
+                  sessionId={selectedSession.id}
+                  initialDate={selectedSession.scheduled_date}
+                  onDone={() => {
+                    setSelected(null);
+                    load();
+                  }}
+                />
               </>
             ) : (
               <Button

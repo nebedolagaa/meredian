@@ -1,9 +1,10 @@
-import { TrendingDown, TrendingUp, Minus, Trophy } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus, Trophy, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { InsightCard } from "@/components/insight/InsightCard";
 import { VolumeChart } from "@/components/charts/VolumeChart";
 import { FrequencyChart } from "@/components/charts/FrequencyChart";
@@ -13,9 +14,11 @@ import { ShareRecordButton } from "@/components/analytics/ShareRecordButton";
 import { ConsistencyHeatmap } from "@/components/analytics/ConsistencyHeatmap";
 import { BodyWeightCard } from "@/components/measurements/BodyWeightCard";
 import { StreakCard } from "@/components/streak/StreakCard";
+import { BodyMap } from "@/components/exercises/BodyMap";
 import { getAnalyticsData } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
 import { toDisplayWeight, unitLabel } from "@/lib/utils/units";
+import { shortDate } from "@/lib/utils/dates";
 import type { InsightType } from "@/lib/utils/insights";
 
 export const dynamic = "force-dynamic";
@@ -42,12 +45,22 @@ export default async function AnalyticsPage() {
     progressSeries,
     exerciseNames,
     records,
+    recordTimeline,
     frequencySeries,
     muscleVolume,
+    muscleIntensity,
     streak,
     completedDates,
   } = await getAnalyticsData(supabase, user.id, weeklyGoal);
   const unitName = unitLabel(unit);
+
+  // Sex for the body map silhouette (migration 0010); read separately so a
+  // missing column can't break the analytics page.
+  const { data: sexRow } = await supabase
+    .from("profiles")
+    .select("sex")
+    .eq("id", user.id)
+    .single();
 
   const { data: measurementRows } = await supabase
     .from("body_measurements")
@@ -159,8 +172,23 @@ export default async function AnalyticsPage() {
         <CardContent>
           <MuscleVolumeChart
             data={muscleVolume}
-            emptyLabel={t("frequencyEmpty")}
+            emptyLabel={t("muscleBalanceEmpty")}
           />
+        </CardContent>
+      </Card>
+
+      {/* Muscle recovery / recently trained body map */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("muscleMap")}</CardTitle>
+          <p className="text-xs text-bone-dim">{t("muscleMapDesc")}</p>
+        </CardHeader>
+        <CardContent>
+          {Object.keys(muscleIntensity).length === 0 ? (
+            <EmptyState icon={Dumbbell} message={t("muscleBalanceEmpty")} />
+          ) : (
+            <BodyMap sex={sexRow?.sex ?? "male"} intensities={muscleIntensity} />
+          )}
         </CardContent>
       </Card>
 
@@ -175,9 +203,7 @@ export default async function AnalyticsPage() {
         </CardHeader>
         <CardContent>
           {records.length === 0 ? (
-            <p className="py-4 text-center text-sm text-bone-dim">
-              {t("noRecords")}
-            </p>
+            <EmptyState icon={Trophy} message={t("noRecords")} />
           ) : (
             <div className="divide-y divide-panel-border">
               {records.slice(0, 8).map((r) => (
@@ -210,6 +236,46 @@ export default async function AnalyticsPage() {
                       unit={unitName}
                     />
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* PR timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Trophy className="h-4 w-4 text-moss" />
+            {t("prTimeline")}
+          </CardTitle>
+          <p className="text-xs text-bone-dim">{t("prTimelineDesc")}</p>
+        </CardHeader>
+        <CardContent>
+          {recordTimeline.length === 0 ? (
+            <EmptyState icon={Trophy} message={t("noRecords")} />
+          ) : (
+            <div className="divide-y divide-panel-border">
+              {recordTimeline.slice(0, 10).map((ev, i) => (
+                <div
+                  key={`${ev.name}-${ev.date}-${i}`}
+                  className="flex items-center justify-between gap-3 py-3"
+                >
+                  <div className="flex min-w-0 flex-col">
+                    <span className="truncate text-sm text-bone">
+                      {ev.name}
+                    </span>
+                    <span className="font-num text-[10px] tabular-nums text-bone-dim">
+                      {shortDate(ev.date)}
+                    </span>
+                  </div>
+                  <span className="font-num text-sm tabular-nums text-moss">
+                    {t("oneRepMax", {
+                      value: toDisplayWeight(ev.oneRepMax, unit),
+                      unit: unitName,
+                    })}
+                  </span>
                 </div>
               ))}
             </div>

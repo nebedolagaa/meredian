@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { safeActionError } from "@/lib/utils/errors";
+import { uniquePlanSlug } from "@/lib/data/planSlug";
 
 async function requireUser() {
   const supabase = createClient();
@@ -119,9 +120,10 @@ export async function createPlanFromTemplate(
       for (const row of created ?? []) idByName.set(row.name, row.id);
     }
 
+    const slug = await uniquePlanSlug(supabase, user.id, template.planName);
     const { data: plan, error: planError } = await supabase
       .from("workout_plans")
-      .insert({ name: template.planName, user_id: user.id })
+      .insert({ name: template.planName, slug, user_id: user.id })
       .select("id")
       .single();
     if (planError)

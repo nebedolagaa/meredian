@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { PieChart } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export interface MusclePoint {
   group: string;
@@ -27,11 +29,7 @@ export function MuscleVolumeChart({
   const total = data.reduce((sum, d) => sum + d.volume, 0);
 
   if (total <= 0) {
-    return (
-      <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-panel-border text-sm text-bone-dim">
-        {emptyLabel}
-      </div>
-    );
+    return <EmptyState icon={PieChart} message={emptyLabel} />;
   }
 
   return (

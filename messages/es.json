@@ -15,8 +15,7 @@
     "saved": "Guardado",
     "delete": "Eliminar",
     "cancel": "Cancelar",
-    "pleaseWait": "Espera…",
-    "comingSoon": "Próximamente"
+    "pleaseWait": "Espera…"
   },
   "wordmark": {
     "tagline": "Entrena con precisión."
@@ -74,7 +73,7 @@
     "noName": "Atleta",
     "account": "Cuenta",
     "preferences": "Preferencias",
-    "data": "Datos e integraciones"
+    "data": "Datos"
   },
   "tour": {
     "stepOf": "{current} de {total}",
@@ -139,17 +138,11 @@
     "displayName": "Nombre visible",
     "displayNamePlaceholder": "Tu nombre",
     "email": "Correo",
-    "integrations": "Integraciones",
-    "integrationsDesc": "En la hoja de ruta, aún no disponible.",
     "signOut": "Cerrar sesión",
     "googleCalendarTitle": "Sincronización con Google Calendar",
     "googleCalendarDesc": "Envía las sesiones programadas a tu Google Calendar.",
     "appleCalendarTitle": "Sincronización con Apple Calendar",
-    "appleCalendarDesc": "Sincronización bidireccional con la app Apple Calendar.",
-    "appleHealthTitle": "Integración con Apple Health",
-    "appleHealthDesc": "Importa entrenamientos y datos de recuperación desde Apple Health.",
-    "aiCoachingTitle": "Entrenamiento con IA",
-    "aiCoachingDesc": "Sugerencias de progresión y ajustes de plan personalizados según tu historial de plan frente a realidad."
+    "appleCalendarDesc": "Sincronización bidireccional con la app Apple Calendar."
   },
   "analytics": {
     "title": "Analíticas",
@@ -167,8 +160,13 @@
     "frequency": "Frecuencia de entrenamiento",
     "frequencyDesc": "Sesiones completadas por semana · últimas 8 semanas",
     "frequencyEmpty": "Completa sesiones para ver tu frecuencia semanal",
+    "muscleBalanceEmpty": "Completa sesiones para ver tu balance muscular",
     "muscleBalance": "Equilibrio muscular",
     "muscleBalanceDesc": "Porcentaje del volumen completado por grupo muscular",
+    "muscleMap": "Entrenado recientemente",
+    "muscleMapDesc": "Músculos más trabajados en tus sesiones completadas",
+    "prTimeline": "Cronología de récords",
+    "prTimelineDesc": "Cada vez que logras un nuevo 1RM estimado",
     "share": "Compartir récord",
     "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meridian"
   },
@@ -181,6 +179,8 @@
     "exerciseCount": "{count, plural, one {# ejercicio} other {# ejercicios}}",
     "lastUsed": "último {date}",
     "duplicate": "Duplicar plan",
+    "saveAsTemplate": "Guardar como plantilla",
+    "removeFromTemplates": "Quitar de plantillas",
     "archive": "Archivar plan",
     "unarchive": "Restaurar plan",
     "archived": "Archivado",
@@ -199,11 +199,14 @@
     "reps": "Reps",
     "weightKg": "Peso kg",
     "weight": "Peso ({unit})",
+    "restSeconds": "Descanso (seg)",
+    "restSecondsAuto": "Auto",
     "savePlan": "Guardar plan",
     "saving": "Guardando…",
     "nameRequired": "El nombre del plan es obligatorio.",
     "moveUp": "Mover arriba",
     "moveDown": "Mover abajo",
+    "dragToReorder": "Arrastra para reordenar",
     "deleteExercise": "Eliminar ejercicio",
     "startFromTemplate": "Empezar con una plantilla",
     "exercise": "Ejercicio"
@@ -403,7 +406,10 @@
     "plan": "Plan",
     "noPlans": "Aún no hay planes — crea uno primero en Planes.",
     "selectPlan": "Selecciona un plan",
+    "noPlan": "Sin plan (libre)",
     "date": "Fecha",
+    "repeatWeekly": "Repetir cada semana",
+    "repeatWeeks": "Número de semanas",
     "scheduling": "Programando…",
     "addSession": "Añadir sesión"
   },
@@ -415,6 +421,7 @@
     "newPR": "{count, plural, one {¡Nuevo récord personal!} other {¡# nuevos récords personales!}}",
     "rpe": "RPE",
     "setDetails": "Detalles de la serie",
+    "exerciseDetails": "Detalles del ejercicio",
     "setNotePlaceholder": "Nota",
     "startSession": "Empezar sesión",
     "noExercises": "Este plan no tiene ejercicios.",
@@ -433,7 +440,9 @@
     "reschedule": "Reprogramar",
     "move": "Mover",
     "skipSession": "Omitir sesión",
-    "deleteSession": "Eliminar sesión"
+    "deleteSession": "Eliminar sesión",
+    "sessionNotes": "¿Qué tal fue?",
+    "sessionNotesPlaceholder": "Añade una nota sobre esta sesión…"
   },
   "progression": {
     "increaseEasy": "La última vez fue fácil — sube el peso",
@@ -488,6 +497,7 @@
     "title": "Empezar desde una plantilla",
     "description": "Elige un programa predefinido — ajusta los ejercicios después.",
     "creating": "Creando…",
+    "myTemplates": "Mis plantillas",
     "full_body": {
       "name": "Cuerpo completo",
       "desc": "5 ejercicios compuestos, 3× por semana"
@@ -650,7 +660,9 @@
     "planArchived": "Plan archivado",
     "planRestored": "Plan restaurado",
     "planDeleted": "Plan eliminado",
-    "planDuplicated": "Plan duplicado"
+    "planDuplicated": "Plan duplicado",
+    "templateSaved": "Guardado como plantilla",
+    "templateRemoved": "Quitado de plantillas"
   },
   "plates": {
     "open": "Discos",
