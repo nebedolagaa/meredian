@@ -1,16 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowUp, ArrowDown, Trash2, Save } from "lucide-react";
+import { ArrowUp, ArrowDown, Trash2, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { ExerciseSearch } from "@/components/session/ExerciseSearch";
+import { BodyMap, MUSCLE_COLORS } from "@/components/exercises/BodyMap";
+import {
+  ExercisePicker,
+  ExerciseRow,
+} from "@/components/exercises/ExercisePicker";
+import {
+  ExercisePreviewSheet,
+  ExerciseThumb,
+} from "@/components/exercises/ExercisePreview";
+import { listExercises } from "@/app/actions/exercises";
 import { savePlan, type PlanExerciseInput } from "@/app/actions/plans";
-import type { Exercise } from "@/lib/types/database";
+import type { Exercise, PrimaryMuscle, Sex } from "@/lib/types/database";
 import {
   toDisplayWeight,
   toKg,
@@ -25,6 +34,13 @@ interface Row {
   target_sets: number;
   target_reps: number;
   target_weight: number;
+  muscle_group?: string | null;
+  exercise_type?: string | null;
+  equipment?: string | null;
+  location?: string | null;
+  gif_url?: string | null;
+  description?: string | null;
+  primary_muscle?: string | null;
 }
 
 export interface PlanBuilderInitial {
@@ -39,16 +55,51 @@ const nextKey = () => `row-${Date.now()}-${keyCounter++}`;
 export function PlanBuilder({
   initial,
   unit = "kg",
+  sex = "male",
+  templatePicker,
 }: {
   initial: PlanBuilderInitial;
   unit?: WeightUnit;
+  sex?: Sex;
+  templatePicker?: ReactNode;
 }) {
   const router = useRouter();
   const t = useTranslations("planBuilder");
+  const tc = useTranslations("exerciseCatalog");
+  const tmus = useTranslations("muscles");
   const [name, setName] = useState(initial.name);
   const [rows, setRows] = useState<Row[]>(initial.rows);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Exercise catalog + body-map muscle selection, shared with the picker.
+  const [catalog, setCatalog] = useState<Exercise[] | null>(null);
+  const [muscles, setMuscles] = useState<string[]>([]);
+  const [preview, setPreview] = useState<Exercise | null>(null);
+  const [templateOpen, setTemplateOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    listExercises().then((data) => {
+      if (!cancelled) setCatalog(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function toggleMuscle(m: PrimaryMuscle) {
+    setMuscles((prev) =>
+      prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
+    );
+  }
+
+  const suggestions =
+    muscles.length > 0
+      ? (catalog ?? []).filter(
+          (ex) => ex.primary_muscle && muscles.includes(ex.primary_muscle),
+        )
+      : [];
 
   function addExercise(ex: Exercise) {
     setRows((r) => [
@@ -60,6 +111,13 @@ export function PlanBuilder({
         target_sets: 3,
         target_reps: 10,
         target_weight: 20,
+        muscle_group: ex.muscle_group,
+        exercise_type: ex.exercise_type,
+        equipment: ex.equipment,
+        location: ex.location,
+        gif_url: ex.gif_url,
+        description: ex.description,
+        primary_muscle: ex.primary_muscle,
       },
     ]);
   }
@@ -114,7 +172,7 @@ export function PlanBuilder({
         backHref="/plans"
       />
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5" data-tour="plan-name">
         <Label htmlFor="plan-name">{t("planName")}</Label>
         <Input
           id="plan-name"
@@ -124,10 +182,105 @@ export function PlanBuilder({
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Label>{t("addExercise")}</Label>
-        <ExerciseSearch onSelect={addExercise} />
-      </div>
+      {templatePicker && !initial.id && (
+        <section className="rounded-2xl border border-panel-border bg-graphite p-4">
+          <button
+            type="button"
+            onClick={() => setTemplateOpen((v) => !v)}
+            aria-expanded={templateOpen}
+            className="text-sm font-medium text-bone hover:text-bone-dim"
+          >
+            {t("startFromTemplate")}
+          </button>
+          {templateOpen && <div className="mt-3">{templatePicker}</div>}
+        </section>
+      )}
+
+      {/* What do you want to train? — interactive body map */}
+      <section className="flex flex-col gap-4 rounded-2xl border border-panel-border bg-graphite p-4">
+        <div className="flex flex-col gap-0.5">
+          <h2 className="font-display text-base font-semibold text-bone">
+            {tc("trainTitle")}
+          </h2>
+          <p className="text-xs text-bone-dim">{tc("trainHint")}</p>
+        </div>
+
+        <BodyMap sex={sex} selected={muscles} onToggle={toggleMuscle} />
+
+        {muscles.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {muscles.map((m) => {
+              const color = MUSCLE_COLORS[m as PrimaryMuscle];
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => toggleMuscle(m as PrimaryMuscle)}
+                  aria-label={`${tc("clear")} ${tmus(m)}`}
+                  className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium"
+                  style={{
+                    borderColor: color,
+                    backgroundColor: `${color}26`,
+                    color,
+                  }}
+                >
+                  {tmus(m)}
+                  <X className="h-3 w-3" />
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => setMuscles([])}
+              className="px-1 text-xs text-bone-dim hover:text-bone"
+            >
+              {tc("clear")}
+            </button>
+          </div>
+        )}
+
+        {muscles.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {catalog === null ? (
+              <p className="py-2 text-center text-xs text-bone-dim">
+                {tc("loading")}
+              </p>
+            ) : suggestions.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-panel-border py-4 text-center text-xs text-bone-dim">
+                {tc("noMuscleMatches")}
+              </p>
+            ) : (
+              <div className="flex max-h-80 flex-col gap-2 overflow-y-auto">
+                {suggestions.map((ex) => (
+                  <ExerciseRow
+                    key={ex.id}
+                    exercise={ex}
+                    added={rows.some((r) => r.exercise_id === ex.id)}
+                    onOpen={() => setPreview(ex)}
+                    onAdd={() => addExercise(ex)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <ExercisePicker
+        exercises={catalog}
+        onExercisesChange={setCatalog}
+        muscles={muscles}
+        onMusclesChange={setMuscles}
+        onSelect={addExercise}
+      />
+
+      <ExercisePreviewSheet
+        exercise={preview}
+        open={preview !== null}
+        onOpenChange={(open) => {
+          if (!open) setPreview(null);
+        }}
+      />
 
       <div className="flex flex-col gap-3">
         {rows.length === 0 && (
@@ -142,7 +295,12 @@ export function PlanBuilder({
             className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-graphite p-4"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-medium text-bone">{row.name}</span>
+              <div className="flex min-w-0 items-center gap-2.5">
+                <ExerciseThumb ex={row} className="h-10 w-10" />
+                <span className="truncate text-sm font-medium text-bone">
+                  {row.name}
+                </span>
+              </div>
               <div className="flex items-center gap-1">
                 <button
                   type="button"

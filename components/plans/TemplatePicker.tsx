@@ -9,6 +9,14 @@ import { createPlanFromTemplate } from "@/app/actions/templates";
 const TEMPLATE_IDS = ["full_body", "upper", "lower", "push", "pull"] as const;
 
 export function TemplatePicker() {
+  return <TemplatePickerContent />;
+}
+
+export function TemplatePickerContent({
+  hideHeader = false,
+}: {
+  hideHeader?: boolean;
+}) {
   const t = useTranslations("templates");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -34,10 +42,12 @@ export function TemplatePicker() {
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-panel-border bg-graphite p-4">
-      <div className="flex flex-col gap-0.5">
-        <h2 className="text-sm font-semibold text-bone">{t("title")}</h2>
-        <p className="text-xs text-bone-dim">{t("description")}</p>
-      </div>
+      {!hideHeader && (
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-sm font-semibold text-bone">{t("title")}</h2>
+          <p className="text-xs text-bone-dim">{t("description")}</p>
+        </div>
+      )}
       {error && <p className="text-xs text-clay">{error}</p>}
       <div className="grid grid-cols-1 gap-2">
         {TEMPLATE_IDS.map((id) => (

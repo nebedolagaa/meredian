@@ -40,11 +40,13 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/signup");
-  // Public routes reachable without a session (password recovery flow).
+  // Public routes reachable without a session (password recovery flow,
+  // OAuth callback).
   const isPublicRoute =
     isAuthRoute ||
     pathname.startsWith("/reset-password") ||
-    pathname.startsWith("/update-password");
+    pathname.startsWith("/update-password") ||
+    pathname.startsWith("/auth/callback");
 
   // Unauthenticated users trying to reach app routes -> login
   if (!user && !isPublicRoute && pathname !== "/") {

@@ -11,6 +11,7 @@ import {
   setSoundEnabled,
 } from "@/lib/prefs/clientPrefs";
 import { haptic } from "@/lib/utils/haptics";
+import { playFeedbackSound } from "@/lib/utils/sound";
 
 /** Client-side toggles for vibration and sound feedback (stored locally). */
 export function FeedbackToggles() {
@@ -35,6 +36,7 @@ export function FeedbackToggles() {
     const next = !sound;
     setSound(next);
     setSoundEnabled(next);
+    if (next) playFeedbackSound("success");
   }
 
   return (

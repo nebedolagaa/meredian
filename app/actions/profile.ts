@@ -2,9 +2,53 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { WeightUnit } from "@/lib/types/database";
-import { displayNameSchema } from "@/lib/validation/schemas";
+import type { WeightUnit, Sex, GoalType } from "@/lib/types/database";
+import {
+  displayNameSchema,
+  bodyGoalSchema,
+  firstError,
+} from "@/lib/validation/schemas";
 import { safeActionError } from "@/lib/utils/errors";
+
+export interface BodyGoalInput {
+  sex: Sex | null;
+  heightCm: number | null;
+  goalType: GoalType | null;
+  goalWeightKg: number | null;
+}
+
+/** Update the body profile and weight goal captured during onboarding. */
+export async function updateBodyGoal(
+  input: BodyGoalInput,
+): Promise<{ error?: string }> {
+  const parsed = bodyGoalSchema.safeParse(input);
+  if (!parsed.success) return { error: firstError(parsed) };
+
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { error: "Not authenticated" };
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        sex: parsed.data.sex,
+        height_cm: parsed.data.heightCm,
+        goal_type: parsed.data.goalType,
+        goal_weight_kg: parsed.data.goalWeightKg,
+      })
+      .eq("id", user.id);
+
+    if (error) return { error: safeActionError("updateBodyGoal", error) };
+    revalidatePath("/profile");
+    revalidatePath("/analytics");
+    return {};
+  } catch (e) {
+    return { error: safeActionError("updateBodyGoal", e) };
+  }
+}
 
 export async function updateDisplayName(
   name: string,
@@ -26,7 +70,7 @@ export async function updateDisplayName(
     .eq("id", user.id);
 
   if (error) return { error: safeActionError("updateDisplayName", error) };
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   return {};
 }
 
@@ -72,7 +116,7 @@ export async function updateRestSeconds(
     .eq("id", user.id);
 
   if (error) return { error: safeActionError("updateRestSeconds", error) };
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   return {};
 }
 
@@ -91,7 +135,7 @@ export async function updateRemindersEnabled(
     .eq("id", user.id);
 
   if (error) return { error: safeActionError("updateRemindersEnabled", error) };
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   return {};
 }
 
@@ -112,7 +156,7 @@ export async function updateWeeklyGoal(
     .eq("id", user.id);
 
   if (error) return { error: safeActionError("updateWeeklyGoal", error) };
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   revalidatePath("/dashboard");
   revalidatePath("/analytics");
   return {};

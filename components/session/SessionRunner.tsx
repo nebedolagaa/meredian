@@ -41,6 +41,7 @@ import {
 } from "@/app/actions/sessions";
 import { totalVolume } from "@/lib/utils/volume";
 import { haptic } from "@/lib/utils/haptics";
+import { playFeedbackSound } from "@/lib/utils/sound";
 import { fireConfetti } from "@/lib/utils/confetti";
 import {
   recommendProgression,
@@ -140,6 +141,7 @@ export function SessionRunner({
       if (prev && !prev.completed) {
         startRestRef.current?.();
         haptic("success");
+        playFeedbackSound("tap");
       }
     }
     setExercises((exs) =>
@@ -273,9 +275,11 @@ export function SessionRunner({
     setSummaryOpen(true);
     if (prs.length > 0) {
       haptic("celebrate");
+      playFeedbackSound("celebrate");
       fireConfetti();
     } else {
       haptic("success");
+      playFeedbackSound("success");
     }
   }
 

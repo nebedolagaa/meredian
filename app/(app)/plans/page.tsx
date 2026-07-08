@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Dumbbell, ChevronRight } from "lucide-react";
+import { Plus, Dumbbell, ChevronRight, Archive, ListChecks } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -44,6 +44,9 @@ export default async function PlansPage() {
 
   const activePlans = (plans ?? []).filter((p) => !p.is_archived);
   const archivedPlans = (plans ?? []).filter((p) => p.is_archived);
+  const exerciseCount = (plan: {
+    plan_exercises: { count: number }[] | null;
+  }) => plan.plan_exercises?.[0]?.count ?? 0;
 
   return (
     <div className="flex flex-col gap-4 pb-8">
@@ -51,7 +54,7 @@ export default async function PlansPage() {
         title={t("title")}
         action={
           <Button asChild size="sm">
-            <Link href="/plans/new">
+            <Link href="/plans/new" data-tour="new-plan">
               <Plus className="h-4 w-4" /> {t("new")}
             </Link>
           </Button>
@@ -59,81 +62,87 @@ export default async function PlansPage() {
       />
 
       {(plans ?? []).length === 0 ? (
-        <Card className="flex flex-col items-center gap-4 py-12 text-center">
-          <Dumbbell className="h-8 w-8 text-bone-dim" />
-          <div className="flex flex-col gap-1">
-            <p className="text-sm text-bone">{t("noPlans")}</p>
-            <p className="text-xs text-bone-dim">{t("buildFirst")}</p>
+        <Card className="flex flex-col items-center gap-5 py-14 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-steel/10 text-steel">
+            <Dumbbell className="h-7 w-7" />
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/plans/new">{t("createPlan")}</Link>
+          <div className="flex flex-col gap-1">
+            <p className="font-medium text-bone">{t("noPlans")}</p>
+            <p className="text-sm text-bone-dim">{t("buildFirst")}</p>
+          </div>
+          <Button asChild size="sm">
+            <Link href="/plans/new">
+              <Plus className="h-4 w-4" /> {t("createPlan")}
+            </Link>
           </Button>
         </Card>
       ) : (
         <div className="flex flex-col gap-3">
-          {activePlans.map((plan) => {
-            const count =
-              (plan.plan_exercises as { count: number }[] | null)?.[0]?.count ??
-              0;
-            return (
-              <Card
-                key={plan.id}
-                className="flex items-center justify-between p-4 transition-colors hover:border-steel/40"
+          {activePlans.map((plan) => (
+            <Card
+              key={plan.id}
+              className="group flex flex-col p-0 transition-colors hover:border-steel/40"
+            >
+              <Link
+                href={`/plans/${plan.id}`}
+                className="flex items-center gap-3 p-4"
               >
-                <Link
-                  href={`/plans/${plan.id}`}
-                  className="flex min-w-0 flex-1 flex-col gap-1"
-                >
-                  <span className="font-medium text-bone">{plan.name}</span>
-                  <span className="font-num text-xs tabular-nums text-bone-dim">
-                    {t("exerciseCount", { count })}
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-steel/10 text-steel">
+                  <Dumbbell className="h-5 w-5" />
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="truncate font-medium text-bone">
+                    {plan.name}
+                  </span>
+                  <span className="flex items-center gap-1.5 font-num text-xs tabular-nums text-bone-dim">
+                    <ListChecks className="h-3.5 w-3.5" />
+                    {t("exerciseCount", { count: exerciseCount(plan) })}
                     {lastUsed.has(plan.id) && (
                       <> · {t("lastUsed", { date: lastUsed.get(plan.id)! })}</>
                     )}
                   </span>
-                </Link>
-                <div className="flex shrink-0 items-center gap-1">
-                  <DuplicatePlanButton planId={plan.id} />
-                  <ArchivePlanButton planId={plan.id} archived={false} />
-                  <DeletePlanButton planId={plan.id} />
-                  <Link href={`/plans/${plan.id}`} aria-label={plan.name}>
-                    <ChevronRight className="h-5 w-5 text-bone-dim" />
-                  </Link>
-                </div>
-              </Card>
-            );
-          })}
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-bone-dim transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <div className="flex items-center justify-end gap-1 border-t border-panel-border/70 px-3 py-1.5">
+                <DuplicatePlanButton planId={plan.id} />
+                <ArchivePlanButton planId={plan.id} archived={false} />
+                <DeletePlanButton planId={plan.id} />
+              </div>
+            </Card>
+          ))}
 
           {archivedPlans.length > 0 && (
             <>
-              <p className="mt-4 px-1 text-xs font-medium uppercase tracking-wide text-bone-dim">
+              <p className="mt-4 flex items-center gap-1.5 px-1 text-xs font-medium uppercase tracking-wide text-bone-dim">
+                <Archive className="h-3.5 w-3.5" />
                 {t("archived")}
               </p>
-              {archivedPlans.map((plan) => {
-                const count =
-                  (plan.plan_exercises as { count: number }[] | null)?.[0]
-                    ?.count ?? 0;
-                return (
-                  <Card
-                    key={plan.id}
-                    className="flex items-center justify-between p-4 opacity-60 transition-colors hover:border-steel/40"
+              {archivedPlans.map((plan) => (
+                <Card
+                  key={plan.id}
+                  className="flex items-center gap-3 p-4 opacity-60 transition-opacity hover:opacity-100"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-graphite text-bone-dim">
+                    <Archive className="h-5 w-5" />
+                  </span>
+                  <Link
+                    href={`/plans/${plan.id}`}
+                    className="flex min-w-0 flex-1 flex-col gap-0.5"
                   >
-                    <Link
-                      href={`/plans/${plan.id}`}
-                      className="flex min-w-0 flex-1 flex-col gap-1"
-                    >
-                      <span className="font-medium text-bone">{plan.name}</span>
-                      <span className="font-num text-xs tabular-nums text-bone-dim">
-                        {t("exerciseCount", { count })}
-                      </span>
-                    </Link>
-                    <div className="flex shrink-0 items-center gap-1">
-                      <ArchivePlanButton planId={plan.id} archived={true} />
-                      <DeletePlanButton planId={plan.id} />
-                    </div>
-                  </Card>
-                );
-              })}
+                    <span className="truncate font-medium text-bone">
+                      {plan.name}
+                    </span>
+                    <span className="font-num text-xs tabular-nums text-bone-dim">
+                      {t("exerciseCount", { count: exerciseCount(plan) })}
+                    </span>
+                  </Link>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <ArchivePlanButton planId={plan.id} archived={true} />
+                    <DeletePlanButton planId={plan.id} />
+                  </div>
+                </Card>
+              ))}
             </>
           )}
         </div>

@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { safeActionError } from "@/lib/utils/errors";
-
+import { onboardingSchema, firstError } from "@/lib/validation/schemas";
+import { todayISO } from "@/lib/utils/dates";
 async function requireUser() {
   const supabase = createClient();
   const {
@@ -11,6 +12,69 @@ async function requireUser() {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
   return { supabase, user };
+}
+
+export interface OnboardingInput {
+  unit: "kg" | "lb";
+  sex: "male" | "female" | null;
+  weightKg: number;
+  heightCm: number;
+  goalType: "lose_weight" | "gain_muscle" | "burn_fat";
+  goalWeightKg: number;
+  trainingLevel:
+    | "beginner"
+    | "intermediate"
+    | "advanced"
+    | "professional"
+    | null;
+}
+
+/**
+ * Persist the onboarding wizard answers: profile fields (unit, sex, height,
+ * goal) plus the starting body weight as the first body_measurements row.
+ */
+export async function completeOnboarding(
+  input: OnboardingInput,
+): Promise<{ error?: string }> {
+  try {
+    const parsed = onboardingSchema.safeParse(input);
+    if (!parsed.success) return { error: firstError(parsed) };
+
+    const { supabase, user } = await requireUser();
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({
+        unit_preference: parsed.data.unit,
+        sex: parsed.data.sex,
+        height_cm: parsed.data.heightCm,
+        goal_type: parsed.data.goalType,
+        goal_weight_kg: parsed.data.goalWeightKg,
+        training_level: parsed.data.trainingLevel,
+        onboarding_completed: true,
+      })
+      .eq("id", user.id);
+    if (profileError)
+      return { error: safeActionError("completeOnboarding", profileError) };
+
+    // Starting weight becomes the first point of the weight-tracking series.
+    const { error: weightError } = await supabase
+      .from("body_measurements")
+      .insert({
+        user_id: user.id,
+        measured_on: todayISO(),
+        weight_kg: parsed.data.weightKg,
+      });
+    if (weightError)
+      return { error: safeActionError("completeOnboarding", weightError) };
+
+    // No revalidatePath here on purpose: it would re-render /onboarding on the
+    // server, which redirects completed users to /dashboard and would skip the
+    // final wizard step. The wizard calls router.refresh() when leaving.
+    return {};
+  } catch (e) {
+    return { error: safeActionError("completeOnboarding", e) };
+  }
 }
 
 // Sensible full-body starter (targets in kg; users adjust afterwards).

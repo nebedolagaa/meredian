@@ -15,27 +15,26 @@ async function requireUser() {
 }
 
 /**
- * Live search across global + user-owned exercises (ILIKE).
+ * Full catalog (global + user-owned) for the exercise library picker.
+ * The catalog is small, so filtering/search happen client-side.
  */
-export async function searchExercises(query: string): Promise<Exercise[]> {
+export async function listExercises(): Promise<Exercise[]> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const q = query.trim();
-
-  let request = supabase
+  const { data, error } = await supabase
     .from("exercises")
     .select("*")
     .order("name", { ascending: true })
-    .limit(12);
+    .limit(500);
 
-  if (q) request = request.ilike("name", `%${q}%`);
-
-  const { data, error } = await request;
-  if (error) return [];
+  if (error) {
+    console.error("[listExercises]", error);
+    return [];
+  }
   return data ?? [];
 }
 

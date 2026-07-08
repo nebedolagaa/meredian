@@ -150,15 +150,7 @@ export default async function DashboardPage() {
       )}
       <div className="flex items-center justify-between pt-6">
         <Wordmark className="!flex-row gap-2" />
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Link
-            href="/settings"
-            className="text-xs text-bone-dim hover:text-bone"
-          >
-            {t("settings")}
-          </Link>
-        </div>
+        <ThemeToggle />
       </div>
 
       {/* Week thread */}
@@ -187,7 +179,7 @@ export default async function DashboardPage() {
 
       {/* Today's session */}
       {todaySession ? (
-        <Card>
+        <Card data-tour="today-card">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>{planName}</CardTitle>
@@ -232,7 +224,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card data-tour="today-card">
           <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
             <p className="text-sm text-bone-dim">{t("noSessionScheduled")}</p>
             {latestPlan && (

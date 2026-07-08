@@ -59,6 +59,46 @@ export const createSessionSchema = z.object({
   scheduledDate: isoDateSchema,
 });
 
+// Onboarding wizard payload. Weights/height arrive already converted to
+// metric (kg / cm); sex is optional ("prefer not to say").
+export const onboardingSchema = z.object({
+  unit: z.enum(["kg", "lb"]),
+  sex: z.enum(["male", "female"]).nullable(),
+  weightKg: z
+    .number()
+    .positive("Weight must be greater than zero.")
+    .max(1000, "That weight looks too high."),
+  heightCm: z
+    .number()
+    .positive("Height must be greater than zero.")
+    .max(300, "That height looks too high."),
+  goalType: z.enum(["lose_weight", "gain_muscle", "burn_fat"]),
+  goalWeightKg: z
+    .number()
+    .positive("Goal weight must be greater than zero.")
+    .max(1000, "That weight looks too high."),
+  trainingLevel: z
+    .enum(["beginner", "intermediate", "advanced", "professional"])
+    .nullable(),
+});
+
+// Body profile + weight goal editable from the profile page. All fields are
+// nullable ("not set yet"); metric units (kg / cm) arrive already converted.
+export const bodyGoalSchema = z.object({
+  sex: z.enum(["male", "female"]).nullable(),
+  heightCm: z
+    .number()
+    .positive("Invalid height")
+    .max(300, "Invalid height")
+    .nullable(),
+  goalType: z.enum(["lose_weight", "gain_muscle", "burn_fat"]).nullable(),
+  goalWeightKg: z
+    .number()
+    .positive("Invalid goal weight")
+    .max(1000, "Invalid goal weight")
+    .nullable(),
+});
+
 export const measurementSchema = z.object({
   weightKg: z
     .number()

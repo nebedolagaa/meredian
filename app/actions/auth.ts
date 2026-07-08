@@ -192,9 +192,9 @@ export async function updateEmail(formData: FormData): Promise<AuthResult> {
 
   const { error } = await supabase.auth.updateUser(
     { email: parsed.data },
-    { emailRedirectTo: `${siteOrigin()}/settings` },
+    { emailRedirectTo: `${siteOrigin()}/profile` },
   );
   if (error) return { error: error.message };
-  revalidatePath("/settings");
+  revalidatePath("/profile");
   return { success: "Check your inbox to confirm the new email." };
 }

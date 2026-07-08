@@ -27,7 +27,20 @@ export async function deleteAccount(): Promise<{ error?: string }> {
   }
 
   const { error } = await admin.auth.admin.deleteUser(user.id);
-  if (error) return { error: safeActionError("deleteAccount", error) };
+  if (error) {
+    // Supabase may return a generic 500 "Database error deleting user" when
+    // DB FKs block the auth user deletion.
+    if (
+      error.code === "unexpected_failure" ||
+      error.status === 500 ||
+      error.message.toLowerCase().includes("database error deleting user")
+    ) {
+      // Log the real cause server-side; the FK/cascade detail is internal
+      // infrastructure and must not leak to the client.
+      console.error("[deleteAccount] likely FK cascade issue", error);
+    }
+    return { error: safeActionError("deleteAccount", error) };
+  }
 
   await supabase.auth.signOut();
   redirect("/login");

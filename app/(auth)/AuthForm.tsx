@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { signIn, signUp, type AuthResult } from "@/app/actions/auth";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const t = useTranslations("auth");
@@ -125,6 +126,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             ? t("signIn")
             : t("createAccount")}
       </Button>
+
+      <OAuthButtons />
 
       <p className="text-center text-sm text-bone-dim">
         {mode === "login" ? (

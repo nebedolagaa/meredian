@@ -55,6 +55,18 @@ export default async function AnalyticsPage() {
     .eq("user_id", user.id)
     .order("measured_on", { ascending: true });
 
+  // Weight goal set during onboarding (migration 0010); read separately so a
+  // missing column can't break the analytics page.
+  const { data: goalWeightRow } = await supabase
+    .from("profiles")
+    .select("goal_weight_kg")
+    .eq("id", user.id)
+    .single();
+  const goalWeight =
+    goalWeightRow?.goal_weight_kg != null
+      ? toDisplayWeight(goalWeightRow.goal_weight_kg, unit)
+      : null;
+
   const measurements = (measurementRows ?? []).map((m) => ({
     id: m.id,
     date: m.measured_on,
@@ -216,6 +228,7 @@ export default async function AnalyticsPage() {
             measurements={measurements}
             unit={unit}
             unitName={unitName}
+            goalWeight={goalWeight}
           />
         </CardContent>
       </Card>

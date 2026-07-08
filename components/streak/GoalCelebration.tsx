@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { fireConfetti } from "@/lib/utils/confetti";
 import { haptic } from "@/lib/utils/haptics";
+import { playFeedbackSound } from "@/lib/utils/sound";
 
 /** ISO-week key like "2024-W31" used to celebrate the goal once per week. */
 function isoWeekKey(d = new Date()): string {
@@ -32,6 +33,7 @@ export function GoalCelebration() {
     }
     fireConfetti();
     haptic("celebrate");
+    playFeedbackSound("celebrate");
   }, []);
 
   return null;

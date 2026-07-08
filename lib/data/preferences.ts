@@ -50,3 +50,20 @@ export async function getWeeklyGoal(
   if (error || data?.weekly_goal == null) return DEFAULT_WEEKLY_GOAL;
   return data.weekly_goal;
 }
+
+/**
+ * The profile sex, used to pick the body-map figure. Read defensively so a
+ * missing column (unapplied migration) falls back to "male".
+ */
+export async function getProfileSex(
+  supabase: Supa,
+  userId: string,
+): Promise<"male" | "female"> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("sex")
+    .eq("id", userId)
+    .single();
+
+  return data?.sex === "female" ? "female" : "male";
+}

@@ -122,6 +122,20 @@
     scrollbar-width: none;
   }
 
+  /* Interactive body map (react-muscle-highlighter) */
+  [data-body-map] svg {
+    height: auto;
+    max-width: 100%;
+  }
+  [data-body-map] path {
+    transition:
+      fill 0.15s ease,
+      opacity 0.15s ease;
+  }
+  [data-body-map] path:hover {
+    opacity: 0.75;
+  }
+
   /* Toast entrance */
   @keyframes toast-in {
     from {

@@ -10,6 +10,18 @@ export type SessionStatus = "planned" | "in_progress" | "completed" | "skipped";
 
 export type WeightUnit = "kg" | "lb";
 
+export type Sex = "male" | "female";
+
+export type GoalType = "lose_weight" | "gain_muscle" | "burn_fat";
+
+export const TRAINING_LEVELS = [
+  "beginner",
+  "intermediate",
+  "advanced",
+  "professional",
+] as const;
+export type TrainingLevel = (typeof TRAINING_LEVELS)[number];
+
 export type Database = {
   public: {
     Tables: {
@@ -21,6 +33,12 @@ export type Database = {
           rest_seconds: number;
           reminders_enabled: boolean;
           weekly_goal: number;
+          sex: Sex | null;
+          height_cm: number | null;
+          goal_type: GoalType | null;
+          goal_weight_kg: number | null;
+          training_level: TrainingLevel | null;
+          onboarding_completed: boolean;
           created_at: string;
         };
         Insert: {
@@ -30,6 +48,12 @@ export type Database = {
           rest_seconds?: number;
           reminders_enabled?: boolean;
           weekly_goal?: number;
+          sex?: Sex | null;
+          height_cm?: number | null;
+          goal_type?: GoalType | null;
+          goal_weight_kg?: number | null;
+          training_level?: TrainingLevel | null;
+          onboarding_completed?: boolean;
           created_at?: string;
         };
         Update: {
@@ -39,6 +63,12 @@ export type Database = {
           rest_seconds?: number;
           reminders_enabled?: boolean;
           weekly_goal?: number;
+          sex?: Sex | null;
+          height_cm?: number | null;
+          goal_type?: GoalType | null;
+          goal_weight_kg?: number | null;
+          training_level?: TrainingLevel | null;
+          onboarding_completed?: boolean;
           created_at?: string;
         };
         Relationships: [
@@ -58,6 +88,11 @@ export type Database = {
           name: string;
           description: string | null;
           muscle_group: string | null;
+          exercise_type: string | null;
+          equipment: string | null;
+          location: string | null;
+          gif_url: string | null;
+          primary_muscle: string | null;
           created_at: string;
         };
         Insert: {
@@ -66,6 +101,11 @@ export type Database = {
           name: string;
           description?: string | null;
           muscle_group?: string | null;
+          exercise_type?: string | null;
+          equipment?: string | null;
+          location?: string | null;
+          gif_url?: string | null;
+          primary_muscle?: string | null;
           created_at?: string;
         };
         Update: {
@@ -74,6 +114,11 @@ export type Database = {
           name?: string;
           description?: string | null;
           muscle_group?: string | null;
+          exercise_type?: string | null;
+          equipment?: string | null;
+          location?: string | null;
+          gif_url?: string | null;
+          primary_muscle?: string | null;
           created_at?: string;
         };
         Relationships: [
@@ -305,6 +350,51 @@ export type Database = {
 // Convenience row aliases
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Exercise = Database["public"]["Tables"]["exercises"]["Row"];
+
+// Exercise catalog category values (mirror the CHECK constraints in 0013).
+export const MUSCLE_GROUPS = [
+  "chest",
+  "back",
+  "legs",
+  "shoulders",
+  "arms",
+  "core",
+] as const;
+export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
+
+export const EXERCISE_TYPES = ["compound", "isolation"] as const;
+export type ExerciseType = (typeof EXERCISE_TYPES)[number];
+
+export const EQUIPMENT_VALUES = [
+  "barbell",
+  "dumbbell",
+  "cable",
+  "machine",
+  "bodyweight",
+] as const;
+export type Equipment = (typeof EQUIPMENT_VALUES)[number];
+
+export const EXERCISE_LOCATIONS = ["home", "gym"] as const;
+export type ExerciseLocation = (typeof EXERCISE_LOCATIONS)[number];
+
+// Fine-grained muscles targeted on the interactive body map (0014).
+export const PRIMARY_MUSCLES = [
+  "chest",
+  "back",
+  "shoulders",
+  "biceps",
+  "triceps",
+  "forearms",
+  "abs",
+  "glutes",
+  "quads",
+  "hamstrings",
+  "calves",
+] as const;
+export type PrimaryMuscle = (typeof PRIMARY_MUSCLES)[number];
+
+/** Shared placeholder technique GIF until per-exercise GIFs are added. */
+export const EXERCISE_PLACEHOLDER_GIF = "/Dips-Between-Chairs.gif";
 export type WorkoutPlan = Database["public"]["Tables"]["workout_plans"]["Row"];
 export type PlanExercise =
   Database["public"]["Tables"]["plan_exercises"]["Row"];

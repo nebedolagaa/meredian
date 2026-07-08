@@ -4,7 +4,8 @@
     "analytics": "Analytics",
     "add": "Add",
     "plans": "Plans",
-    "settings": "Settings"
+    "settings": "Settings",
+    "profile": "Profile"
   },
   "common": {
     "settings": "Settings",
@@ -62,10 +63,51 @@
     "passwordUpdated": "Password updated. Redirecting…",
     "confirmEmailTitle": "Confirm your email",
     "confirmEmailBody": "We sent a confirmation link to {email}. Click it to activate your account, then sign in.",
-    "goToSignIn": "Go to sign in"
+    "goToSignIn": "Go to sign in",
+    "orDivider": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "oauthError": "Could not start sign-in. Try again."
+  },
+  "profilePage": {
+    "title": "Profile",
+    "noName": "Athlete",
+    "account": "Account",
+    "preferences": "Preferences",
+    "data": "Data & integrations"
+  },
+  "tour": {
+    "stepOf": "{current} of {total}",
+    "next": "Next",
+    "continue": "Continue tour",
+    "finish": "Finish",
+    "skipTour": "Skip tour",
+    "steps": {
+      "welcome": {
+        "title": "Welcome to Meridian",
+        "body": "This is your dashboard — today's workout and weekly progress live here. Let's create your first workout: open Plans below."
+      },
+      "newPlan": {
+        "title": "Create a workout plan",
+        "body": "Tap New to build your first plan — a reusable list of exercises with target sets, reps and weight."
+      },
+      "builder": {
+        "title": "Build your workout",
+        "body": "Name the plan, add exercises and set your targets. Hit Save plan when you're done."
+      },
+      "schedule": {
+        "title": "Put it on the calendar",
+        "body": "Tap + to schedule your workout on a date. Planned sessions show up on your dashboard."
+      },
+      "start": {
+        "title": "Time to train",
+        "body": "When a workout is scheduled for today it appears here — tap Start session to log your sets. You're all set!"
+      }
+    }
   },
   "dashboard": {
     "settings": "Settings",
+    "profile": "Profile",
     "thisWeek": "This week",
     "sessionsKept": "{kept} of {total} sessions kept this week",
     "session": "Session",
@@ -151,7 +193,7 @@
     "planName": "Plan name",
     "planNamePlaceholder": "Push Day A",
     "addExercise": "Add exercise",
-    "noExercises": "No exercises yet. Search above to add some.",
+    "noExercises": "No exercises yet. Tap “Add exercise” to browse the library.",
     "sets": "Sets",
     "reps": "Reps",
     "weightKg": "Weight kg",
@@ -162,13 +204,180 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "deleteExercise": "Delete exercise",
+    "startFromTemplate": "Start from template",
     "exercise": "Exercise"
   },
-  "exerciseSearch": {
-    "placeholder": "Search exercises…",
-    "addCustom": "Add custom \"{query}\"",
-    "adding": "Adding…",
-    "typeToSearch": "Type to search the catalogue"
+  "exerciseCatalog": {
+    "addExercise": "Add exercise",
+    "title": "Exercise library",
+    "searchPlaceholder": "Search exercises…",
+    "all": "All",
+    "clear": "Clear filters",
+    "results": "{count, plural, one {# exercise} other {# exercises}}",
+    "noResults": "Nothing found",
+    "noResultsHint": "Try a different search or clear the filters.",
+    "createCustom": "Create \"{query}\"",
+    "creating": "Creating…",
+    "added": "Added",
+    "add": "Add to plan",
+    "done": "Done",
+    "doneCount": "Done · {count} added",
+    "previewAlt": "{name} technique demonstration",
+    "custom": "Custom",
+    "trainTitle": "What do you want to train?",
+    "trainHint": "Tap muscles on the body — matching exercises appear below.",
+    "front": "Front",
+    "back": "Back",
+    "loading": "Loading…",
+    "noMuscleMatches": "No exercises for the selected muscles yet.",
+    "howTo": "How to perform",
+    "recommendation": {
+      "title": "Recommended for you",
+      "scheme": "{sets} × {reps} reps",
+      "timeScheme": "{sets} × {seconds} sec hold",
+      "guidance": {
+        "beginner": "Start light and own the technique — leave 3–4 reps in the tank on every set.",
+        "intermediate": "Work close to the target — keep 2–3 reps in reserve and add weight once all sets feel solid.",
+        "advanced": "Push the working sets hard — 1–2 reps in reserve — and progress the weight weekly.",
+        "professional": "Treat the target as a base for your programming — periodise intensity across the week."
+      }
+    },
+    "type": { "compound": "Compound", "isolation": "Isolation" },
+    "equipment": {
+      "barbell": "Barbell",
+      "dumbbell": "Dumbbells",
+      "cable": "Cable",
+      "machine": "Machine",
+      "bodyweight": "Bodyweight"
+    },
+    "location": { "home": "Home", "gym": "Gym" }
+  },
+  "exerciseInfo": {
+    "bench-press": {
+      "desc": "The classic barbell press for chest, front delts and triceps.",
+      "steps": "Lie on the bench, feet planted, shoulder blades pinched together.\nGrip the bar slightly wider than shoulders and unrack it over your chest.\nLower the bar to mid-chest with control, elbows about 45° from the torso.\nPress back to lockout without bouncing the bar off your chest."
+    },
+    "incline-dumbbell-press": {
+      "desc": "Pressing on an incline bench shifts the work to the upper chest.",
+      "steps": "Set the bench to a 30–45° incline and sit back with dumbbells at shoulder level.\nPress the dumbbells up and slightly together until your arms are extended.\nLower slowly until you feel a stretch across the upper chest."
+    },
+    "overhead-press": {
+      "desc": "Standing barbell press that builds shoulders, triceps and core stability.",
+      "steps": "Hold the bar at shoulder height, hands just outside shoulders, elbows under the bar.\nBrace your core and press the bar straight overhead.\nMove your head slightly back so the bar path stays vertical.\nLower under control back to the shoulders."
+    },
+    "tricep-pushdown": {
+      "desc": "Cable isolation movement for the triceps.",
+      "steps": "Stand facing the cable stack with elbows tucked at your sides.\nPush the handle down until your arms are fully extended.\nLet the handle rise slowly to a 90° elbow bend without moving your elbows."
+    },
+    "lateral-raise": {
+      "desc": "Dumbbell isolation for the side delts — key for wider shoulders.",
+      "steps": "Stand with dumbbells at your sides and a slight bend in the elbows.\nRaise your arms out to the sides until parallel with the floor.\nLower slowly — no swinging or shrugging."
+    },
+    "squat": {
+      "desc": "The king of lower-body lifts: quads, glutes and core in one movement.",
+      "steps": "Rest the bar on your upper back and stand with feet shoulder-width apart.\nBrace your core and sit down between your hips, knees tracking over the toes.\nDescend until your thighs are at least parallel to the floor.\nDrive through the whole foot to stand back up."
+    },
+    "romanian-deadlift": {
+      "desc": "Hip hinge that loads the hamstrings and glutes through a stretch.",
+      "steps": "Hold the bar at hip level with a shoulder-width grip.\nPush your hips back, letting the bar slide down your thighs.\nLower with a flat back until you feel a deep hamstring stretch.\nDrive your hips forward to return to standing."
+    },
+    "leg-press": {
+      "desc": "Machine compound for quads and glutes with minimal back load.",
+      "steps": "Sit in the machine with feet shoulder-width on the platform.\nLower the platform until your knees are near 90°, keeping your lower back on the pad.\nPress back up without locking the knees out hard."
+    },
+    "leg-curl": {
+      "desc": "Machine isolation for the hamstrings.",
+      "steps": "Set the pad just above your heels and grip the handles.\nCurl your heels toward your glutes in a controlled arc.\nReturn slowly without letting the stack slam down."
+    },
+    "calf-raise": {
+      "desc": "Standing raise that targets the gastrocnemius.",
+      "steps": "Stand with the balls of your feet on an edge, heels hanging.\nRise as high as possible onto your toes and pause.\nLower slowly until you feel a stretch in the calves."
+    },
+    "deadlift": {
+      "desc": "Full-body barbell pull — posterior chain, grip and back thickness.",
+      "steps": "Stand with mid-foot under the bar, grip just outside your legs.\nFlatten your back, brace, and push the floor away.\nKeep the bar against your body until you stand tall.\nHinge and bend your knees to lower it under control."
+    },
+    "barbell-row": {
+      "desc": "Bent-over pull for lats, mid-back and rear delts.",
+      "steps": "Hinge to roughly 45° with a flat back, bar hanging at knee level.\nPull the bar to your lower ribs, elbows driving back.\nLower with control without letting the torso drop."
+    },
+    "pull-up": {
+      "desc": "Bodyweight vertical pull for lats and biceps.",
+      "steps": "Hang from the bar with a grip slightly wider than shoulders.\nPull your chest toward the bar, elbows driving down.\nLower all the way to straight arms on every rep."
+    },
+    "seated-cable-row": {
+      "desc": "Horizontal cable pull for mid-back thickness.",
+      "steps": "Sit tall with knees slightly bent and grab the handle.\nPull the handle to your stomach, squeezing the shoulder blades together.\nLet your arms extend fully without rounding your back."
+    },
+    "face-pull": {
+      "desc": "Rope pull for rear delts and rotator-cuff health.",
+      "steps": "Set the rope at face height and grab it with thumbs pointing back.\nPull toward your face, spreading the rope past your ears.\nPause with the upper back squeezed, then return slowly."
+    },
+    "bicep-curl": {
+      "desc": "The staple biceps builder.",
+      "steps": "Stand with dumbbells at your sides, palms facing forward.\nCurl the weights up without swinging your torso.\nLower slowly to full elbow extension."
+    },
+    "hammer-curl": {
+      "desc": "Neutral-grip curl for the biceps and forearms.",
+      "steps": "Hold the dumbbells with palms facing each other.\nCurl up, keeping the neutral grip the whole way.\nLower under control without letting the elbows drift back."
+    },
+    "plank": {
+      "desc": "Isometric core hold for trunk stability.",
+      "steps": "Support yourself on forearms and toes, body in a straight line.\nBrace your abs and glutes — no sagging or piked hips.\nBreathe steadily and hold for the target time."
+    },
+    "ab-wheel-rollout": {
+      "desc": "Advanced anti-extension exercise for the entire core.",
+      "steps": "Kneel with your hands on the wheel under your shoulders.\nRoll forward as far as you can keep the lower back neutral.\nPull back with your abs — not your arms — to return."
+    },
+    "hip-thrust": {
+      "desc": "The most direct barbell exercise for glute strength.",
+      "steps": "Sit with your upper back on a bench and the bar over your hips.\nDrive through the heels until your hips are fully extended.\nSqueeze the glutes at the top, chin tucked.\nLower with control until your hips are just above the floor."
+    },
+    "glute-bridge": {
+      "desc": "Bodyweight bridge that wakes up the glutes and hamstrings.",
+      "steps": "Lie on your back with knees bent, feet flat near your glutes.\nPush through the heels and lift your hips to a straight line.\nSqueeze at the top, then lower slowly."
+    },
+    "bulgarian-split-squat": {
+      "desc": "Rear-foot-elevated single-leg squat — quads, glutes and balance.",
+      "steps": "Stand a stride ahead of a bench and rest your rear foot on it.\nLower straight down until the front thigh is parallel to the floor.\nDrive through the front heel to stand back up."
+    },
+    "wrist-curl": {
+      "desc": "Isolation for the wrist flexors on the inner forearm.",
+      "steps": "Sit with forearms on your thighs, palms up, wrists past your knees.\nLower the dumbbells by opening your hands slightly.\nCurl the wrists up as far as possible and squeeze."
+    },
+    "reverse-wrist-curl": {
+      "desc": "Isolation for the wrist extensors on the outer forearm.",
+      "steps": "Sit with forearms on your thighs, palms down.\nLift the backs of your hands upward as far as possible.\nLower slowly — use lighter weight than regular wrist curls."
+    },
+    "dips": {
+      "desc": "Bodyweight press for the triceps and lower chest.",
+      "steps": "Support yourself on parallel bars with arms locked.\nLower until your shoulders are just below the elbows, torso leaning slightly forward.\nPress back up without flaring the elbows out."
+    },
+    "push-up": {
+      "desc": "The fundamental bodyweight press for chest, shoulders and triceps.",
+      "steps": "Place your hands slightly wider than shoulders, body in a straight line.\nLower your chest to just above the floor, elbows about 45° from the torso.\nPush back up, keeping the core tight."
+    },
+    "crunch": {
+      "desc": "Short-range abdominal flexion — safe and simple.",
+      "steps": "Lie with knees bent and hands by your temples.\nCurl your shoulder blades off the floor, ribs toward the pelvis.\nLower slowly without pulling on your neck."
+    },
+    "seated-calf-raise": {
+      "desc": "Seated raise emphasising the deeper soleus muscle.",
+      "steps": "Sit with the pad on your knees and the balls of your feet on the platform.\nRaise your heels as high as possible and pause.\nLower slowly to a full stretch."
+    }
+  },
+  "muscles": {
+    "chest": "Chest",
+    "back": "Back",
+    "shoulders": "Shoulders",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "forearms": "Forearms",
+    "abs": "Abs",
+    "glutes": "Glutes",
+    "quads": "Quads",
+    "hamstrings": "Hamstrings",
+    "calves": "Calves"
   },
   "calendar": {
     "title": "Calendar",
@@ -181,7 +390,11 @@
     "session": "Session",
     "scheduledSession": "Scheduled session",
     "noSessionDay": "No session on this day",
-    "openSession": "Open session"
+    "openSession": "Open session",
+    "addToCalendar": "Add to Apple Calendar",
+    "addToGoogleCalendar": "Add to Google Calendar",
+    "calendarEventTitle": "Workout: {plan}",
+    "calendarEventDescription": "Planned in Meridian."
   },
   "quickAdd": {
     "scheduleSession": "Schedule a session",
@@ -317,6 +530,69 @@
     "cta": "Create starter plan",
     "creating": "Creating…"
   },
+  "onboardingWizard": {
+    "stepOf": "Step {step} of {total}",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Save & continue",
+    "saving": "Saving…",
+    "units": {
+      "title": "Units of measurement",
+      "description": "How do you want weights and height displayed?",
+      "kg": "kg",
+      "kgHint": "Kilograms & centimetres",
+      "lb": "lb",
+      "lbHint": "Pounds & feet/inches"
+    },
+    "sex": {
+      "title": "Your sex",
+      "description": "Used to personalise your experience.",
+      "male": "Male",
+      "female": "Female",
+      "preferNot": "Prefer not to say"
+    },
+    "weight": {
+      "title": "Your weight",
+      "description": "This becomes the first point of your weight tracking."
+    },
+    "height": {
+      "title": "Your height",
+      "description": "Used for stats and future insights.",
+      "cm": "cm",
+      "ft": "ft",
+      "in": "in"
+    },
+    "goal": {
+      "title": "Your goal",
+      "description": "We'll track your weight against this goal.",
+      "lose_weight": "Lose weight",
+      "lose_weightDesc": "Reduce overall body weight",
+      "gain_muscle": "Gain muscle",
+      "gain_muscleDesc": "Build strength and size",
+      "burn_fat": "Burn fat",
+      "burn_fatDesc": "Get leaner while keeping muscle",
+      "targetWeight": "Target weight"
+    },
+    "level": {
+      "title": "Your training experience",
+      "description": "Used to suggest starting weights and difficulty for each exercise.",
+      "beginner": "Beginner",
+      "beginnerDesc": "New to training, or less than a year of practice",
+      "intermediate": "Intermediate",
+      "intermediateDesc": "1–3 years of consistent training",
+      "advanced": "Advanced",
+      "advancedDesc": "3+ years with solid technique in the main lifts",
+      "professional": "Professional",
+      "professionalDesc": "Competitive athlete or coach level"
+    },
+    "firstWorkout": {
+      "title": "Your first workout",
+      "description": "Create your first plan now — or skip and do it later.",
+      "manual": "Build it manually",
+      "manualDesc": "Pick your own exercises and targets",
+      "skip": "Skip for now"
+    }
+  },
   "reminders": {
     "title": "Reminders",
     "description": "Get a browser notification for today's session while the app is open.",
@@ -331,7 +607,14 @@
     "date": "Date",
     "add": "Add",
     "noData": "Add at least two entries to see a trend.",
-    "invalidWeight": "Enter a valid weight."
+    "invalidWeight": "Enter a valid weight.",
+    "goal": "Goal: {goal} {unit} ·",
+    "toGoal": "{delta} {unit} to go",
+    "goalReached": "Goal reached"
+  },
+  "bodyGoal": {
+    "title": "Body & goal",
+    "description": "Your body profile and weight goal from onboarding."
   },
   "exerciseHistory": {
     "personalRecord": "Personal record",

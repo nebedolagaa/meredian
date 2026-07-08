@@ -1,0 +1,99 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+
+type Provider = "google" | "apple";
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.57 5.57 0 0 1-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A11.99 11.99 0 0 0 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.27 14.29A7.2 7.2 0 0 1 4.89 12c0-.8.14-1.57.38-2.29V6.62H1.29a11.99 11.99 0 0 0 0 10.76l3.98-3.09z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0A11.99 11.99 0 0 0 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"
+      />
+    </svg>
+  );
+}
+
+function AppleIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 fill-current"
+      aria-hidden="true"
+    >
+      <path d="M16.36 12.76c.03 3.26 2.86 4.35 2.89 4.36-.02.08-.45 1.55-1.49 3.06-.9 1.31-1.83 2.61-3.3 2.64-1.44.03-1.91-.86-3.56-.86-1.65 0-2.17.83-3.53.88-1.42.05-2.5-1.41-3.4-2.72-1.86-2.68-3.28-7.56-1.37-10.86.95-1.64 2.64-2.68 4.48-2.7 1.39-.03 2.7.94 3.56.94.85 0 2.45-1.16 4.12-.99.7.03 2.68.28 3.94 2.13-.1.06-2.35 1.38-2.33 4.12M13.66 3.8c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.4.72-3.18 1.63-.7.81-1.31 2.1-1.14 3.34 1.21.09 2.44-.61 3.2-1.53" />
+    </svg>
+  );
+}
+
+export function OAuthButtons() {
+  const t = useTranslations("auth");
+  const [pending, setPending] = useState<Provider | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function signInWith(provider: Provider) {
+    setError(null);
+    setPending(provider);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setPending(null);
+      setError(t("oauthError"));
+    }
+    // On success the browser navigates away to the provider.
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span className="h-px flex-1 bg-panel-border" />
+        <span className="text-xs uppercase tracking-wide text-bone-dim">
+          {t("orDivider")}
+        </span>
+        <span className="h-px flex-1 bg-panel-border" />
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => signInWith("google")}
+        disabled={pending !== null}
+      >
+        <GoogleIcon />
+        {t("continueWithGoogle")}
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => signInWith("apple")}
+        disabled={pending !== null}
+      >
+        <AppleIcon />
+        {t("continueWithApple")}
+      </Button>
+
+      {error && <p className="text-center text-sm text-clay">{error}</p>}
+    </div>
+  );
+}

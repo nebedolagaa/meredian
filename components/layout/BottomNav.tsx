@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { CalendarDays, BarChart3, Dumbbell, Settings } from "lucide-react";
+import { CalendarDays, BarChart3, Dumbbell, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { QuickAddTrigger } from "@/components/session/QuickAdd";
 import type { WorkoutPlan } from "@/lib/types/database";
 
 type NavItem = {
   href: string;
-  labelKey: "today" | "analytics" | "plans" | "settings";
+  labelKey: "today" | "analytics" | "plans" | "profile";
   icon: typeof CalendarDays;
   match: string[];
 };
@@ -38,10 +38,10 @@ const rightItems: NavItem[] = [
     match: ["/plans"],
   },
   {
-    href: "/settings",
-    labelKey: "settings",
-    icon: Settings,
-    match: ["/settings"],
+    href: "/profile",
+    labelKey: "profile",
+    icon: UserRound,
+    match: ["/profile", "/settings"],
   },
 ];
 
@@ -59,6 +59,7 @@ export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
         key={item.href}
         href={item.href}
         aria-current={active ? "page" : undefined}
+        data-tour={item.href === "/plans" ? "nav-plans" : undefined}
         className={cn(
           "flex flex-1 flex-col items-center gap-1 text-[10px] transition-colors",
           active ? "text-steel" : "text-bone-dim hover:text-bone",

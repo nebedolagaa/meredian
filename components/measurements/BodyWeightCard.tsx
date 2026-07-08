@@ -10,6 +10,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  ReferenceLine,
   ResponsiveContainer,
 } from "recharts";
 import { Trash2 } from "lucide-react";
@@ -58,10 +59,13 @@ export function BodyWeightCard({
   measurements,
   unit,
   unitName,
+  goalWeight,
 }: {
   measurements: MeasurementPoint[];
   unit: WeightUnit;
   unitName: string;
+  /** Target weight in the user's display unit, if a goal is set. */
+  goalWeight?: number | null;
 }) {
   const t = useTranslations("bodyWeight");
   const tCommon = useTranslations("common");
@@ -104,6 +108,14 @@ export function BodyWeightCard({
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 5);
 
+  const latest = chartData.length
+    ? chartData[chartData.length - 1].weight
+    : null;
+  const toGoal =
+    goalWeight != null && latest != null
+      ? Math.round((latest - goalWeight) * 10) / 10
+      : null;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex w-full flex-col gap-2 md:flex-row md:items-end">
@@ -139,6 +151,20 @@ export function BodyWeightCard({
 
       {error && <p className="text-xs text-red-400">{error}</p>}
 
+      {toGoal != null && goalWeight != null && (
+        <p className="font-num text-xs tabular-nums text-bone-dim">
+          {t("goal", { goal: goalWeight, unit: unitName })}{" "}
+          <span className={toGoal === 0 ? "text-moss" : "text-bone"}>
+            {toGoal === 0
+              ? t("goalReached")
+              : t("toGoal", {
+                  delta: Math.abs(toGoal),
+                  unit: unitName,
+                })}
+          </span>
+        </p>
+      )}
+
       {chartData.length >= 2 ? (
         <div className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -164,6 +190,14 @@ export function BodyWeightCard({
                 domain={["dataMin - 2", "dataMax + 2"]}
               />
               <Tooltip content={<ChartTooltip unit={unitName} />} />
+              {goalWeight != null && (
+                <ReferenceLine
+                  y={goalWeight}
+                  stroke="#6F8F6A"
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                />
+              )}
               <Line
                 type="monotone"
                 dataKey="weight"

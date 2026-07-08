@@ -3,42 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Minus, Plus, Timer, X } from "lucide-react";
-import { getHapticsEnabled, getSoundEnabled } from "@/lib/prefs/clientPrefs";
+import { getHapticsEnabled } from "@/lib/prefs/clientPrefs";
+import { playFeedbackSound } from "@/lib/utils/sound";
 
 function fmt(s: number): string {
   const m = Math.floor(s / 60);
   const sec = s % 60;
   return `${m}:${String(sec).padStart(2, "0")}`;
-}
-
-/** Short two-tone chime using the Web Audio API (no asset needed). */
-function playChime() {
-  if (typeof window === "undefined") return;
-  try {
-    const Ctx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-    if (!Ctx) return;
-    const ctx = new Ctx();
-    const now = ctx.currentTime;
-    [880, 1175].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      const start = now + i * 0.18;
-      gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.25, start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(start);
-      osc.stop(start + 0.18);
-    });
-    setTimeout(() => ctx.close(), 600);
-  } catch {
-    // Audio not available — vibration still fires.
-  }
 }
 
 /** Show a browser notification when rest ends and the tab is backgrounded. */
@@ -106,7 +77,7 @@ export function RestTimer({
           ) {
             navigator.vibrate?.([120, 60, 120]);
           }
-          if (getSoundEnabled()) playChime();
+          playFeedbackSound("restDone");
           notifyRestDone(t("done"));
           return 0;
         }
