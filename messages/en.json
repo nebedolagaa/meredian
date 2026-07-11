@@ -65,7 +65,6 @@
     "goToSignIn": "Go to sign in",
     "orDivider": "or",
     "continueWithGoogle": "Continue with Google",
-    "continueWithApple": "Continue with Apple",
     "oauthError": "Could not start sign-in. Try again."
   },
   "profilePage": {

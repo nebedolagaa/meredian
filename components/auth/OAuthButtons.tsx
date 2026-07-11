@@ -5,7 +5,10 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
-type Provider = "google" | "apple";
+// Archived: Google sign-in is temporarily hidden from the login/signup
+// screens. The implementation below is untouched — flip this to `true` to
+// restore it.
+const GOOGLE_SIGN_IN_ENABLED = false;
 
 function GoogleIcon() {
   return (
@@ -30,39 +33,29 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-4 w-4 fill-current"
-      aria-hidden="true"
-    >
-      <path d="M16.36 12.76c.03 3.26 2.86 4.35 2.89 4.36-.02.08-.45 1.55-1.49 3.06-.9 1.31-1.83 2.61-3.3 2.64-1.44.03-1.91-.86-3.56-.86-1.65 0-2.17.83-3.53.88-1.42.05-2.5-1.41-3.4-2.72-1.86-2.68-3.28-7.56-1.37-10.86.95-1.64 2.64-2.68 4.48-2.7 1.39-.03 2.7.94 3.56.94.85 0 2.45-1.16 4.12-.99.7.03 2.68.28 3.94 2.13-.1.06-2.35 1.38-2.33 4.12M13.66 3.8c.75-.91 1.26-2.18 1.12-3.44-1.08.04-2.4.72-3.18 1.63-.7.81-1.31 2.1-1.14 3.34 1.21.09 2.44-.61 3.2-1.53" />
-    </svg>
-  );
-}
-
 export function OAuthButtons() {
   const t = useTranslations("auth");
-  const [pending, setPending] = useState<Provider | null>(null);
+  const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function signInWith(provider: Provider) {
+  async function signInWithGoogle() {
     setError(null);
-    setPending(provider);
+    setPending(true);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
-      provider,
+      provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     if (error) {
-      setPending(null);
+      setPending(false);
       setError(t("oauthError"));
     }
     // On success the browser navigates away to the provider.
   }
+
+  if (!GOOGLE_SIGN_IN_ENABLED) return null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -77,20 +70,11 @@ export function OAuthButtons() {
       <Button
         type="button"
         variant="outline"
-        onClick={() => signInWith("google")}
-        disabled={pending !== null}
+        onClick={signInWithGoogle}
+        disabled={pending}
       >
         <GoogleIcon />
         {t("continueWithGoogle")}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => signInWith("apple")}
-        disabled={pending !== null}
-      >
-        <AppleIcon />
-        {t("continueWithApple")}
       </Button>
 
       {error && <p className="text-center text-sm text-clay">{error}</p>}

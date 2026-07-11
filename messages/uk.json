@@ -65,7 +65,6 @@
     "goToSignIn": "Перейти до входу",
     "orDivider": "або",
     "continueWithGoogle": "Продовжити з Google",
-    "continueWithApple": "Продовжити з Apple",
     "oauthError": "Не вдалося почати вхід. Спробуйте ще раз."
   },
   "profilePage": {

@@ -65,7 +65,6 @@
     "goToSignIn": "Gå til innlogging",
     "orDivider": "eller",
     "continueWithGoogle": "Fortsett med Google",
-    "continueWithApple": "Fortsett med Apple",
     "oauthError": "Kunne ikke starte innlogging. Prøv igjen."
   },
   "profilePage": {

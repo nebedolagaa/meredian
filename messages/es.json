@@ -65,7 +65,6 @@
     "goToSignIn": "Ir al inicio de sesión",
     "orDivider": "o",
     "continueWithGoogle": "Continuar con Google",
-    "continueWithApple": "Continuar con Apple",
     "oauthError": "No se pudo iniciar sesión. Inténtalo de nuevo."
   },
   "profilePage": {
