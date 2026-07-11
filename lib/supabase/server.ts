@@ -3,8 +3,8 @@ import { cookies } from "next/headers";
 import type { Database } from "@/lib/types/database";
 import { SUPABASE_URL, SUPABASE_KEY } from "@/lib/supabase/config";
 
-export function createClient(options?: { rememberSession?: boolean }) {
-  const cookieStore = cookies();
+export async function createClient(options?: { rememberSession?: boolean }) {
+  const cookieStore = await cookies();
   // When `rememberSession` is false, strip persistence so auth cookies become
   // session cookies that the browser clears once it's closed ("Remember me" off).
   const rememberSession = options?.rememberSession ?? true;

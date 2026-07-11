@@ -8,7 +8,7 @@ import { safeActionError } from "@/lib/utils/errors";
 import type { WeightUnit } from "@/lib/types/database";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

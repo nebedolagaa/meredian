@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { OnboardingWizard } from "./OnboardingWizard";
 
 export default async function OnboardingPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

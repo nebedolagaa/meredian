@@ -19,7 +19,7 @@ import { TemplateToggleButton } from "@/components/plans/TemplateToggleButton";
 export const dynamic = "force-dynamic";
 
 export default async function PlansPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const t = await getTranslations("plans");
   const {
     data: { user },

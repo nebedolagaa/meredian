@@ -35,7 +35,7 @@ import { toDisplayWeight, unitLabel } from "@/lib/utils/units";
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const t = await getTranslations("settings");
   const tProfile = await getTranslations("profilePage");
   const tLang = await getTranslations("language");

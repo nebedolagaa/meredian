@@ -4,7 +4,7 @@ import { CalendarView } from "./CalendarView";
 export const dynamic = "force-dynamic";
 
 export default async function CalendarPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: plans } = await supabase
     .from("workout_plans")
     .select("*")

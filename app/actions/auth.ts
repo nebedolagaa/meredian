@@ -37,13 +37,13 @@ export async function signIn(formData: FormData): Promise<AuthResult> {
   const parsed = signInSchema.safeParse({ email, password });
   if (!parsed.success) return { error: firstError(parsed) };
 
-  const limit = rateLimit(`signin:${clientIp()}`, 10, 5 * 60_000);
+  const limit = rateLimit(`signin:${await clientIp()}`, 10, 5 * 60_000);
   if (!limit.ok) {
     return { error: "Too many attempts. Please try again in a few minutes." };
   }
 
   const remember = formData.get("remember") != null;
-  const supabase = createClient({ rememberSession: remember });
+  const supabase = await createClient({ rememberSession: remember });
   const { error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -63,12 +63,12 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
   const parsed = signUpSchema.safeParse({ email, password, displayName });
   if (!parsed.success) return { error: firstError(parsed) };
 
-  const limit = rateLimit(`signup:${clientIp()}`, 5, 60 * 60_000);
+  const limit = rateLimit(`signup:${await clientIp()}`, 5, 60 * 60_000);
   if (!limit.ok) {
     return { error: "Too many attempts. Please try again later." };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -90,7 +90,7 @@ export async function signUp(formData: FormData): Promise<AuthResult> {
 }
 
 export async function signOut() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/login");
@@ -108,12 +108,12 @@ export async function requestPasswordReset(
 
   // Throttle per IP. When exceeded, return the same neutral message so the
   // limiter can't be used to probe which addresses are registered.
-  const limit = rateLimit(`reset:${clientIp()}`, 5, 15 * 60_000);
+  const limit = rateLimit(`reset:${await clientIp()}`, 5, 15 * 60_000);
   if (!limit.ok) {
     return { success: "If that email exists, a reset link is on its way." };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
     redirectTo: `${siteOrigin()}/update-password`,
   });
@@ -129,7 +129,7 @@ export async function updatePassword(formData: FormData): Promise<AuthResult> {
   const parsed = passwordSchema.safeParse(password);
   if (!parsed.success) return { error: firstError(parsed) };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data });
   if (error) return { error: error.message };
   revalidatePath("/", "layout");
@@ -148,7 +148,7 @@ export async function changePassword(formData: FormData): Promise<AuthResult> {
   if (!parsed.success) return { error: firstError(parsed) };
   if (!currentPassword) return { error: "Current password is required." };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -178,7 +178,7 @@ export async function updateEmail(formData: FormData): Promise<AuthResult> {
   if (!parsed.success) return { error: firstError(parsed) };
   if (!currentPassword) return { error: "Current password is required." };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

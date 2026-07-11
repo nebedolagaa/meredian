@@ -6,7 +6,7 @@ import { safeActionError } from "@/lib/utils/errors";
 import { uniquePlanSlug } from "@/lib/data/planSlug";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

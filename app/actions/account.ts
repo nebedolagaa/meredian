@@ -12,7 +12,7 @@ import { safeActionError } from "@/lib/utils/errors";
  * Requires SUPABASE_SERVICE_ROLE_KEY to be set on the server.
  */
 export async function deleteAccount(): Promise<{ error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

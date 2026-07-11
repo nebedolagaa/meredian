@@ -30,7 +30,7 @@ const insightIcon = {
 } as const;
 
 export default async function AnalyticsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const t = await getTranslations("analytics");
   const tInsights = await getTranslations("insights");
   const tBody = await getTranslations("bodyWeight");

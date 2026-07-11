@@ -24,9 +24,10 @@ interface PlanExerciseRow {
 export default async function EditPlanPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const supabase = createClient();
+  const { id } = await params;
+  const supabase = await createClient();
   const t = await getTranslations("planBuilder");
 
   const {
@@ -42,12 +43,12 @@ export default async function EditPlanPage({
   // The URL segment is normally a slug, but older links used the plan's UUID.
   const isUuid =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      params.id,
+      id,
     );
   const { data: plan } = await supabase
     .from("workout_plans")
     .select("id, name")
-    .eq(isUuid ? "id" : "slug", params.id)
+    .eq(isUuid ? "id" : "slug", id)
     .single();
 
   if (!plan) notFound();

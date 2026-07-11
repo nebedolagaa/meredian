@@ -25,7 +25,7 @@ export async function updateBodyGoal(
   if (!parsed.success) return { error: firstError(parsed) };
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -58,7 +58,7 @@ export async function updateDisplayName(
     return { error: "Please enter a name between 1 and 60 characters." };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -80,7 +80,7 @@ export async function updateUnitPreference(
   if (unit !== "kg" && unit !== "lb") return { error: "Invalid unit" };
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -104,7 +104,7 @@ export async function updateRestSeconds(
 ): Promise<{ error?: string }> {
   const value = Math.max(0, Math.min(900, Math.round(seconds)));
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -123,7 +123,7 @@ export async function updateRestSeconds(
 export async function updateRemindersEnabled(
   enabled: boolean,
 ): Promise<{ error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -144,7 +144,7 @@ export async function updateWeeklyGoal(
 ): Promise<{ error?: string }> {
   const value = Math.max(1, Math.min(14, Math.round(goal)));
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

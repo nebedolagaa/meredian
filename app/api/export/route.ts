@@ -34,7 +34,7 @@ function csvEscape(value: string | number | boolean): string {
  * Usage: /api/export?format=csv  |  /api/export?format=json
  */
 export async function GET(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

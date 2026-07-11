@@ -13,16 +13,17 @@ export const dynamic = "force-dynamic";
 export default async function ExerciseHistoryPage({
   params,
 }: {
-  params: { name: string };
+  params: Promise<{ name: string }>;
 }) {
-  const supabase = createClient();
+  const { name: rawName } = await params;
+  const supabase = await createClient();
   const t = await getTranslations("exerciseHistory");
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const name = decodeURIComponent(params.name);
+  const name = decodeURIComponent(rawName);
   const { unit } = await getUserPreferences(supabase, user.id);
   const unitName = unitLabel(unit);
 

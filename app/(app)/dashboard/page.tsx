@@ -40,7 +40,7 @@ interface PlanExerciseRow {
 }
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const locale = await getLocale();
   const t = await getTranslations("dashboard");
   const tCal = await getTranslations("calendar");

@@ -6,7 +6,7 @@ import { exerciseNameSchema, firstError } from "@/lib/validation/schemas";
 import { safeActionError } from "@/lib/utils/errors";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -19,7 +19,7 @@ async function requireUser() {
  * The catalog is small, so filtering/search happen client-side.
  */
 export async function listExercises(): Promise<Exercise[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -23,9 +23,10 @@ interface PlanExerciseRow {
 export default async function SessionPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const supabase = createClient();
+  const { id } = await params;
+  const supabase = await createClient();
   const t = await getTranslations("session");
 
   const {
@@ -38,7 +39,7 @@ export default async function SessionPage({
   const { data: session } = await supabase
     .from("workout_sessions")
     .select("id, plan_id, status, scheduled_date, notes, workout_plans(name)")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!session) notFound();
