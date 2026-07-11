@@ -1,0 +1,688 @@
+{
+  "nav": {
+    "today": "I dag",
+    "analytics": "Analyse",
+    "add": "Legg til",
+    "plans": "Planer",
+    "settings": "Innstillinger",
+    "profile": "Profil"
+  },
+  "common": {
+    "settings": "Innstillinger",
+    "email": "E-post",
+    "save": "Lagre",
+    "saving": "Lagrer…",
+    "saved": "Lagret",
+    "delete": "Slett",
+    "cancel": "Avbryt",
+    "pleaseWait": "Vent litt…"
+  },
+  "wordmark": {
+    "tagline": "Tren med presisjon."
+  },
+  "status": {
+    "planned": "planlagt",
+    "in_progress": "pågår",
+    "completed": "fullført",
+    "skipped": "hoppet over"
+  },
+  "theme": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "switchToLight": "Bytt til lyst tema",
+    "switchToDark": "Bytt til mørkt tema"
+  },
+  "language": {
+    "title": "Språk",
+    "description": "Velg språk for grensesnittet.",
+    "label": "Grensesnittspråk"
+  },
+  "auth": {
+    "displayName": "Visningsnavn",
+    "displayNamePlaceholder": "Alex",
+    "email": "E-post",
+    "emailPlaceholder": "deg@eksempel.no",
+    "password": "Passord",
+    "signIn": "Logg inn",
+    "createAccount": "Opprett konto",
+    "noAccount": "Ingen konto?",
+    "signUp": "Registrer deg",
+    "haveAccount": "Har du allerede en konto?",
+    "rememberMe": "Husk meg",
+    "forgotPassword": "Glemt passord?",
+    "resetTitle": "Tilbakestill passord",
+    "resetSubtitle": "Skriv inn e-posten din, så sender vi en tilbakestillingslenke.",
+    "sendResetLink": "Send tilbakestillingslenke",
+    "resetEmailSent": "Hvis den e-posten finnes, er en tilbakestillingslenke på vei.",
+    "backToSignIn": "Tilbake til innlogging",
+    "newPasswordTitle": "Velg nytt passord",
+    "newPasswordSubtitle": "Velg et nytt passord for kontoen din.",
+    "newPassword": "Nytt passord",
+    "updatePassword": "Oppdater passord",
+    "passwordUpdated": "Passord oppdatert. Videresender…",
+    "confirmEmailTitle": "Bekreft e-posten din",
+    "confirmEmailBody": "Vi sendte en bekreftelseslenke til {email}. Klikk på den for å aktivere kontoen, og logg deretter inn.",
+    "goToSignIn": "Gå til innlogging",
+    "orDivider": "eller",
+    "continueWithGoogle": "Fortsett med Google",
+    "oauthError": "Kunne ikke starte innlogging. Prøv igjen."
+  },
+  "profilePage": {
+    "title": "Profil",
+    "noName": "Utøver",
+    "account": "Konto",
+    "preferences": "Preferanser",
+    "data": "Data"
+  },
+  "tour": {
+    "stepOf": "{current} av {total}",
+    "next": "Neste",
+    "continue": "Fortsett omvisningen",
+    "finish": "Ferdig",
+    "skipTour": "Hopp over omvisning",
+    "steps": {
+      "welcome": {
+        "title": "Velkommen til Meridian",
+        "body": "Dette er dashbordet ditt — her finner du dagens økt og ukentlig fremgang. La oss lage din første treningsøkt: åpne Planer nederst."
+      },
+      "newPlan": {
+        "title": "Lag en treningsplan",
+        "body": "Trykk Ny for å lage din første plan — en liste med øvelser med mål for sett, repetisjoner og vekt."
+      },
+      "builder": {
+        "title": "Bygg økten din",
+        "body": "Gi planen et navn, legg til øvelser og sett mål. Trykk Lagre plan når du er ferdig."
+      },
+      "schedule": {
+        "title": "Legg den i kalenderen",
+        "body": "Trykk + for å planlegge økten på en dato. Planlagte økter vises på dashbordet."
+      },
+      "start": {
+        "title": "På tide å trene",
+        "body": "Når en økt er planlagt for i dag vises den her — trykk Start økt for å logge settene dine. Alt klart!"
+      }
+    }
+  },
+  "dashboard": {
+    "settings": "Innstillinger",
+    "profile": "Profil",
+    "thisWeek": "Denne uken",
+    "sessionsKept": "{kept} av {total} økter gjennomført denne uken",
+    "session": "Økt",
+    "exercise": "Øvelse",
+    "noExercises": "Denne økten har ingen øvelser ennå.",
+    "continue": "Fortsett",
+    "startSession": "Start økt",
+    "noSessionScheduled": "Ingen økt planlagt. Planlegg den neste.",
+    "goToPlans": "Gå til planer",
+    "openFullCalendar": "Åpne hele kalenderen →",
+    "logNow": "Logg en økt nå",
+    "logNowPending": "Starter…",
+    "goalProgress": "{kept} av {goal} økter denne uken",
+    "plannedVolume": "Planlagt volum: {volume} {unit}"
+  },
+  "streak": {
+    "weeks": "{count, plural, =0 {Ingen aktiv rekke} one {# ukes rekke} other {# ukers rekke}}",
+    "keepGoing": "Hold tempoet oppe",
+    "startCta": "Nå ukesmålet for å starte en rekke",
+    "best": "Best",
+    "thisWeek": "Denne uken",
+    "progress": "{done}/{goal} økter"
+  },
+  "settings": {
+    "title": "Innstillinger",
+    "appearance": "Utseende",
+    "appearanceDesc": "Velg hvordan Meridian ser ut på denne enheten.",
+    "profile": "Profil",
+    "displayName": "Visningsnavn",
+    "displayNamePlaceholder": "Navnet ditt",
+    "email": "E-post",
+    "signOut": "Logg ut",
+    "googleCalendarTitle": "Google Kalender-synk",
+    "googleCalendarDesc": "Send planlagte økter til Google Kalender.",
+    "appleCalendarTitle": "Apple Kalender-synk",
+    "appleCalendarDesc": "Toveis synk med Apple Kalender-appen."
+  },
+  "analytics": {
+    "title": "Analyse",
+    "subtitle": "Plan mot virkelighet, over tid",
+    "volume": "Fremgang",
+    "volumeDesc": "Faktisk mot planlagt per økt · siste 30 dager",
+    "actual": "Faktisk",
+    "planned": "Planlagt",
+    "exerciseProgress": "Øvelsesfremgang",
+    "exerciseProgressDesc": "Tyngste arbeidsvekt over tid · PR-er i mosegrønt",
+    "records": "Personlige rekorder",
+    "recordsDesc": "Beste vekt og estimert 1RM per øvelse",
+    "noRecords": "Logg noen økter for å begynne å spore rekorder.",
+    "oneRepMax": "1RM {value}{unit}",
+    "frequency": "Treningsfrekvens",
+    "frequencyDesc": "Fullførte økter per uke · siste 8 uker",
+    "frequencyEmpty": "Fullfør økter for å se ukentlig frekvens",
+    "muscleBalanceEmpty": "Fullfør økter for å se muskelbalansen din",
+    "muscleBalance": "Muskelbalanse",
+    "muscleBalanceDesc": "Andel av fullført volum per muskelgruppe",
+    "muscleMap": "Nylig trent",
+    "muscleMapDesc": "Musklene som er mest trent i dine fullførte økter",
+    "prTimeline": "Rekordhistorikk",
+    "prTimelineDesc": "Hver gang du setter en ny estimert 1RM",
+    "share": "Del rekord",
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
+  },
+  "plans": {
+    "title": "Planer",
+    "new": "Ny",
+    "noPlans": "Ingen planer ennå",
+    "buildFirst": "Lag din første treningsmal.",
+    "createPlan": "Opprett en plan",
+    "exerciseCount": "{count, plural, one {# øvelse} other {# øvelser}}",
+    "lastUsed": "sist {date}",
+    "duplicate": "Dupliser plan",
+    "saveAsTemplate": "Lagre som mal",
+    "removeFromTemplates": "Fjern fra maler",
+    "archive": "Arkiver plan",
+    "unarchive": "Gjenopprett plan",
+    "archived": "Arkivert",
+    "delete": "Slett plan",
+    "deleteConfirm": "Slette denne planen?",
+    "deleting": "Sletter…"
+  },
+  "planBuilder": {
+    "editPlan": "Rediger plan",
+    "newPlan": "Ny plan",
+    "planName": "Plannavn",
+    "planNamePlaceholder": "Push-dag A",
+    "addExercise": "Legg til øvelse",
+    "noExercises": "Ingen øvelser ennå. Trykk «Legg til øvelse» for å bla i biblioteket.",
+    "sets": "Sett",
+    "reps": "Reps",
+    "weightKg": "Vekt kg",
+    "weight": "Vekt ({unit})",
+    "restSeconds": "Pause (sek)",
+    "restSecondsAuto": "Auto",
+    "savePlan": "Lagre plan",
+    "saving": "Lagrer…",
+    "nameRequired": "Plannavn er påkrevd.",
+    "moveUp": "Flytt opp",
+    "moveDown": "Flytt ned",
+    "dragToReorder": "Dra for å endre rekkefølge",
+    "deleteExercise": "Slett øvelse",
+    "startFromTemplate": "Start fra en mal",
+    "exercise": "Øvelse"
+  },
+  "exerciseCatalog": {
+    "addExercise": "Legg til øvelse",
+    "title": "Øvelsesbibliotek",
+    "searchPlaceholder": "Søk etter øvelser…",
+    "all": "Alle",
+    "clear": "Nullstill filtre",
+    "results": "{count, plural, one {# øvelse} other {# øvelser}}",
+    "noResults": "Ingen treff",
+    "noResultsHint": "Prøv et annet søk eller nullstill filtrene.",
+    "createCustom": "Opprett «{query}»",
+    "creating": "Oppretter…",
+    "added": "Lagt til",
+    "add": "Legg til i planen",
+    "done": "Ferdig",
+    "doneCount": "Ferdig · {count} lagt til",
+    "previewAlt": "Teknikkdemonstrasjon: {name}",
+    "custom": "Egendefinert",
+    "trainTitle": "Hva vil du trene?",
+    "trainHint": "Trykk på musklene på kroppen – passende øvelser vises under.",
+    "front": "Forside",
+    "back": "Bakside",
+    "loading": "Laster…",
+    "noMuscleMatches": "Ingen øvelser for de valgte musklene ennå.",
+    "howTo": "Slik utfører du øvelsen",
+    "recommendation": {
+      "title": "Anbefalt for deg",
+      "scheme": "{sets} × {reps} reps",
+      "timeScheme": "{sets} × {seconds} sek",
+      "guidance": {
+        "beginner": "Start lett og lær teknikken — ha 3–4 reps igjen i tanken på hvert sett.",
+        "intermediate": "Jobb nær målet — hold 2–3 reps i reserve og øk vekten når alle settene sitter.",
+        "advanced": "Kjør arbeidssettene hardt — 1–2 reps i reserve — og øk vekten ukentlig.",
+        "professional": "Bruk målet som utgangspunkt for programmet — perioder intensiteten gjennom uken."
+      }
+    },
+    "type": { "compound": "Baseøvelse", "isolation": "Isolasjon" },
+    "equipment": {
+      "barbell": "Vektstang",
+      "dumbbell": "Manualer",
+      "cable": "Kabel",
+      "machine": "Maskin",
+      "bodyweight": "Kroppsvekt"
+    },
+    "location": { "home": "Hjemme", "gym": "Treningssenter" }
+  },
+  "exerciseInfo": {
+    "bench-press": {
+      "desc": "Det klassiske stangløftet for bryst, fremre skuldre og triceps.",
+      "steps": "Ligg på benken med føttene i gulvet og skulderbladene samlet.\nGrip stangen litt bredere enn skuldrene og løft den ut over brystet.\nSenk stangen kontrollert til midten av brystet, albuene ca. 45° fra kroppen.\nPress opp til strake armer uten å sprette stangen fra brystet."
+    },
+    "incline-dumbbell-press": {
+      "desc": "Skråbenkpress flytter arbeidet til øvre del av brystet.",
+      "steps": "Still benken på 30–45° og sett deg med manualene i skulderhøyde.\nPress manualene opp og litt mot hverandre til armene er strake.\nSenk sakte til du kjenner strekk øverst i brystet."
+    },
+    "overhead-press": {
+      "desc": "Stående stangpress som bygger skuldre, triceps og kjernestabilitet.",
+      "steps": "Hold stangen i skulderhøyde, hendene like utenfor skuldrene, albuene under stangen.\nStram kjernen og press stangen rett opp.\nFør hodet litt bakover så banen holder seg vertikal.\nSenk kontrollert tilbake til skuldrene."
+    },
+    "tricep-pushdown": {
+      "desc": "Isolasjonsøvelse for triceps i kabel.",
+      "steps": "Stå mot kabeltrekket med albuene inntil siden.\nPress håndtaket ned til armene er helt strake.\nLa håndtaket gå sakte opp til 90° i albuen uten å flytte albuene."
+    },
+    "lateral-raise": {
+      "desc": "Isolasjon med manualer for midtre skulder — nøkkelen til bredere skuldre.",
+      "steps": "Stå med manualer langs siden og lett bøy i albuene.\nLøft armene ut til siden til de er parallelle med gulvet.\nSenk sakte — uten sving eller skuldertrekk."
+    },
+    "squat": {
+      "desc": "Kongen av underkroppsøvelser: lår, sete og kjerne i én bevegelse.",
+      "steps": "Legg stangen på øvre del av ryggen og stå med føttene i skulderbredde.\nStram kjernen og sett deg ned, knærne i retning tærne.\nGå minst ned til lårene er parallelle med gulvet.\nPress gjennom hele foten for å reise deg."
+    },
+    "romanian-deadlift": {
+      "desc": "Hoftehengsel som belaster baksiden av lårene og setet gjennom strekk.",
+      "steps": "Hold stangen i hoftehøyde med grep i skulderbredde.\nSkyv hoftene bakover og la stangen gli langs lårene.\nSenk med rett rygg til du kjenner et kraftig strekk på baksiden av lårene.\nDriv hoftene frem for å komme tilbake til stående."
+    },
+    "leg-press": {
+      "desc": "Baseøvelse i maskin for lår og sete med lite belastning på ryggen.",
+      "steps": "Sett deg i maskinen med føttene i skulderbredde på plattformen.\nSenk plattformen til ca. 90° i knærne med korsryggen mot ryggstøtten.\nPress tilbake uten å låse knærne hardt."
+    },
+    "leg-curl": {
+      "desc": "Isolasjon for baksiden av lårene i maskin.",
+      "steps": "Still puten rett over hælene og grip håndtakene.\nTrekk hælene mot setet i en kontrollert bue.\nGå sakte tilbake uten å slippe vekten."
+    },
+    "calf-raise": {
+      "desc": "Stående tåhev som treffer den ytre leggmuskelen.",
+      "steps": "Stå med tærne på en kant med hælene hengende.\nLøft deg så høyt som mulig opp på tærne og hold.\nSenk sakte til du kjenner strekk i leggene."
+    },
+    "deadlift": {
+      "desc": "Markøftet — hele bakre kjede, grep og ryggtykkelse.",
+      "steps": "Stå med midten av foten under stangen, grep like utenfor bena.\nRett ryggen, stram og press gulvet vekk med bena.\nHold stangen inntil kroppen til du står helt oppreist.\nSenk kontrollert ved å bøye hofter og knær."
+    },
+    "barbell-row": {
+      "desc": "Foroverbøyd roing for brede ryggmuskler, midtrygg og bakre skuldre.",
+      "steps": "Bøy deg til ca. 45° med rett rygg, stangen i knehøyde.\nTrekk stangen mot nedre del av magen, albuene bakover.\nSenk kontrollert uten å slippe overkroppen lavere."
+    },
+    "pull-up": {
+      "desc": "Vertikalt trekk med kroppsvekt — brede ryggmuskler og biceps.",
+      "steps": "Heng i stangen med grep litt bredere enn skuldrene.\nTrekk brystet mot stangen med albuene nedover.\nSenk deg helt ned til strake armer på hver repetisjon."
+    },
+    "seated-cable-row": {
+      "desc": "Horisontal kabelroing for tykkelse i midtryggen.",
+      "steps": "Sitt oppreist med lett bøyde knær og grip håndtaket.\nTrekk håndtaket mot magen og klem skulderbladene sammen.\nLa armene strekkes helt uten å runde ryggen."
+    },
+    "face-pull": {
+      "desc": "Taudrag mot ansiktet — bakre skuldre og skulderhelse.",
+      "steps": "Still tauet i ansiktshøyde og grip med tomlene bakover.\nTrekk mot ansiktet og spre tauet forbi ørene.\nHold med øvre rygg sammenklemt, og gå sakte tilbake."
+    },
+    "bicep-curl": {
+      "desc": "Standardøvelsen for biceps.",
+      "steps": "Stå med manualer langs siden, håndflatene frem.\nBøy armene uten å svinge overkroppen.\nSenk sakte til helt strake armer."
+    },
+    "hammer-curl": {
+      "desc": "Curl med nøytralt grep — biceps og underarmer.",
+      "steps": "Hold manualene med håndflatene mot hverandre.\nBøy armene og hold det nøytrale grepet hele veien.\nSenk kontrollert uten å la albuene gli bakover."
+    },
+    "plank": {
+      "desc": "Isometrisk hold for kjernestabilitet.",
+      "steps": "Støtt deg på underarmer og tær, kroppen i rett linje.\nStram mage og sete — ingen svai eller hev i hoftene.\nPust rolig og hold måltiden."
+    },
+    "ab-wheel-rollout": {
+      "desc": "Avansert øvelse for hele kjernen med hjul.",
+      "steps": "Knæ i gulvet, hendene på hjulet under skuldrene.\nRull fremover så langt du klarer å holde korsryggen nøytral.\nTrekk deg tilbake med magen — ikke armene."
+    },
+    "hip-thrust": {
+      "desc": "Den mest direkte stangøvelsen for setestyrke.",
+      "steps": "Sitt med øvre rygg mot en benk og stangen over hoftene.\nPress gjennom hælene til hoftene er helt utstrakt.\nKlem setet på toppen med haken inn.\nSenk kontrollert uten å la hoftene berøre gulvet."
+    },
+    "glute-bridge": {
+      "desc": "Brø med kroppsvekt som aktiverer sete og bakside lår.",
+      "steps": "Ligg på ryggen med bøyde knær og føttene nær setet.\nPress gjennom hælene og løft hoftene til en rett linje.\nKlem på toppen og senk sakte."
+    },
+    "bulgarian-split-squat": {
+      "desc": "Ettbens knebøy med bakre fot hevet — lår, sete og balanse.",
+      "steps": "Stå et steg foran en benk og legg bakre fot på den.\nSenk deg rett ned til fremre lår er parallelt med gulvet.\nPress gjennom fremre hæl for å reise deg."
+    },
+    "wrist-curl": {
+      "desc": "Isolasjon for håndleddsbøyerne på innsiden av underarmen.",
+      "steps": "Sitt med underarmene på lårene, håndflatene opp, håndleddene forbi knærne.\nSenk manualene ved å åpne hendene litt.\nBøy håndleddene så høyt som mulig og klem."
+    },
+    "reverse-wrist-curl": {
+      "desc": "Isolasjon for håndleddsstrekkerne på utsiden av underarmen.",
+      "steps": "Sitt med underarmene på lårene, håndflatene ned.\nLøft håndbakene så høyt som mulig.\nSenk sakte — bruk lettere vekt enn i vanlig håndleddscurl."
+    },
+    "dips": {
+      "desc": "Kroppsvektpress for triceps og nedre bryst.",
+      "steps": "Støtt deg på parallelle stænger med strake armer.\nSenk deg til skuldrene er like under albuene, overkroppen lett fremoverlent.\nPress opp uten å sprike med albuene."
+    },
+    "push-up": {
+      "desc": "Det grunnleggende kroppsvektpresset — bryst, skuldre og triceps.",
+      "steps": "Hendene litt bredere enn skuldrene, kroppen i rett linje.\nSenk brystet nesten til gulvet, albuene ca. 45° fra kroppen.\nPress opp igjen med stram kjerne."
+    },
+    "crunch": {
+      "desc": "Magekrunsj med kort bevegelsesbane — enkel og trygg.",
+      "steps": "Ligg med bøyde knær og hendene ved tinningene.\nLøft skulderbladene fra gulvet, ribbeina mot bekkenet.\nSenk sakte uten å dra i nakken."
+    },
+    "seated-calf-raise": {
+      "desc": "Sittende tåhev som treffer den dype soleus-muskelen.",
+      "steps": "Sitt med puten på knærne og tærne på plattformen.\nLøft hælene så høyt som mulig og hold.\nSenk sakte til fullt strekk."
+    }
+  },
+  "muscles": {
+    "chest": "Bryst",
+    "back": "Rygg",
+    "shoulders": "Skuldre",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "forearms": "Underarmer",
+    "abs": "Mage",
+    "glutes": "Setemuskler",
+    "quads": "Framside lår",
+    "hamstrings": "Bakside lår",
+    "calves": "Legger"
+  },
+  "calendar": {
+    "title": "Kalender",
+    "prevMonth": "Forrige måned",
+    "nextMonth": "Neste måned",
+    "addSession": "Legg til økt",
+    "done": "Ferdig",
+    "missed": "Bommet",
+    "planned": "Planlagt",
+    "session": "Økt",
+    "scheduledSession": "Planlagt økt",
+    "noSessionDay": "Ingen økt denne dagen",
+    "openSession": "Åpne økt",
+    "addToCalendar": "Legg til i Apple/Outlook-kalender",
+    "addToGoogleCalendar": "Legg til i Google Kalender",
+    "calendarEventTitle": "Økt: {plan}",
+    "calendarEventDescription": "Planlagt i Meridian."
+  },
+  "quickAdd": {
+    "scheduleSession": "Planlegg en økt",
+    "scheduleDesc": "Velg en plan og en dato. Økten starter som planlagt.",
+    "plan": "Plan",
+    "noPlans": "Ingen planer ennå — opprett en først under Planer.",
+    "selectPlan": "Velg en plan",
+    "noPlan": "Ingen plan (fri økt)",
+    "date": "Dato",
+    "repeatWeekly": "Gjenta ukentlig",
+    "repeatWeeks": "Antall uker",
+    "scheduling": "Planlegger…",
+    "addSession": "Legg til økt"
+  },
+  "session": {
+    "target": "Mål: {sets}×{reps} @ {weight}{unit}",
+    "lastTime": "Forrige gang: {weight}{unit} × {reps}",
+    "e1rm": "Est. 1RM {weight}{unit}",
+    "progressSuggest": "RPE {rpe} — øk",
+    "newPR": "{count, plural, one {Ny personlig rekord!} other {# nye personlige rekorder!}}",
+    "rpe": "RPE",
+    "setDetails": "Settdetaljer",
+    "exerciseDetails": "Øvelsesdetaljer",
+    "setNotePlaceholder": "Notat",
+    "startSession": "Start økt",
+    "noExercises": "Denne planen har ingen øvelser.",
+    "volume": "{volume} {unit} vol",
+    "setsDone": "{done}/{total} sett gjort",
+    "finishWorkout": "Fullfør økten",
+    "saving": "Lagrer…",
+    "saveChanges": "Lagre endringer",
+    "sessionComplete": "Økt fullført",
+    "totalVolume": "Totalt volum",
+    "setsCompleted": "Sett fullført",
+    "backToDashboard": "Tilbake til dashbordet",
+    "session": "Økt",
+    "exercise": "Øvelse",
+    "manage": "Administrer økt",
+    "reschedule": "Endre tidspunkt",
+    "move": "Flytt",
+    "skipSession": "Hopp over økten",
+    "deleteSession": "Slett økten",
+    "sessionNotes": "Hvordan gikk det?",
+    "sessionNotesPlaceholder": "Legg til et notat om denne økten…"
+  },
+  "progression": {
+    "increaseEasy": "Det føltes lett sist — øk vekten",
+    "increaseHit": "Du klarte alle reps — på tide å øke vekten",
+    "hold": "Gjenta vekten og jakt på flere reps",
+    "deloadHard": "Forrige økt tok deg til maks — trapp ned for å bygge opp igjen",
+    "deloadMissed": "Du kom til kort på reps — senk vekten og finn flyten",
+    "suggested": "Foreslått {weight}{unit}",
+    "apply": "Sett {weight}{unit}"
+  },
+  "exerciseRow": {
+    "plan": "Plan {sets}×{reps} @ {weight}{unit}",
+    "actual": "Faktisk {sets}×{reps} @ {weight}{unit}"
+  },
+  "restTimer": {
+    "startRest": "Hviletimer ({seconds}s)",
+    "defaultRest": "Standard hvile",
+    "seconds": "sekunder",
+    "add": "Legg til 15 sekunder",
+    "subtract": "Trekk fra 15 sekunder",
+    "dismiss": "Lukk",
+    "done": "Hvilen er over — tilbake til arbeidet"
+  },
+  "units": {
+    "title": "Enheter",
+    "description": "Velg hvordan vekter vises og legges inn.",
+    "kg": "Kilogram",
+    "lb": "Pund"
+  },
+  "goal": {
+    "title": "Ukesmål",
+    "description": "Antall økter per uke for å holde rekken i live.",
+    "label": "Økter per uke",
+    "perWeek": "/ uke"
+  },
+  "security": {
+    "title": "Sikkerhet",
+    "description": "Oppdater e-post og passord.",
+    "changeEmail": "Endre e-post",
+    "changePassword": "Endre passord",
+    "emailConfirmSent": "Sjekk innboksen for å bekrefte den nye e-posten.",
+    "passwordChanged": "Passord endret.",
+    "currentPassword": "Nåværende passord"
+  },
+  "dataExport": {
+    "title": "Dataene dine",
+    "description": "Eksporter de loggførte øktene dine.",
+    "csv": "Eksporter CSV",
+    "json": "Eksporter JSON"
+  },
+  "templates": {
+    "title": "Start fra en mal",
+    "description": "Velg et forhåndsdefinert program — juster øvelsene etterpå.",
+    "creating": "Oppretter…",
+    "myTemplates": "Mine maler",
+    "full_body": {
+      "name": "Helkropp",
+      "desc": "5 baseøvelser, 3× per uke"
+    },
+    "upper": { "name": "Overkropp", "desc": "Bryst, rygg, skuldre, armer" },
+    "lower": { "name": "Underkropp", "desc": "Bein og bakside" },
+    "push": { "name": "Push-dag", "desc": "Bryst, skuldre, triceps" },
+    "pull": { "name": "Pull-dag", "desc": "Rygg og biceps" }
+  },
+  "errors": {
+    "title": "Noe gikk galt",
+    "description": "En uventet feil oppstod. Prøv igjen.",
+    "retry": "Prøv igjen"
+  },
+  "notFound": {
+    "title": "Siden ble ikke funnet",
+    "description": "Siden du leter etter, finnes ikke.",
+    "backHome": "Tilbake til dashbordet"
+  },
+  "insight": {
+    "label": "Innsikt"
+  },
+  "insights": {
+    "progressTrend": "Plangjennomføringen er ned {pct}% de siste 2 ukene",
+    "stalled": "{name} har stått stille i 3 økter — vurder nedtrapping eller endret progresjon",
+    "missedSets": "Du bommer stadig på de siste settene — utmattelse eller for ambisiøs planlegging?",
+    "streak": "{weeks, plural, one {# uke} other {# uker}} på rad — jevnhet gir resultater"
+  },
+  "account": {
+    "dangerZone": "Faresone",
+    "dangerZoneDesc": "Ugjenkallelige kontohandlinger.",
+    "deleteAccount": "Slett konto",
+    "deleteConfirm": "Dette sletter kontoen din og alle dataene permanent. Dette kan ikke angres.",
+    "deleteConfirmCta": "Ja, slett alt",
+    "deleting": "Sletter…",
+    "cancel": "Avbryt"
+  },
+  "onboarding": {
+    "title": "Start med en plan",
+    "description": "Lag en balansert helkropps-startplan du kan kjøre i dag og justere når som helst.",
+    "cta": "Opprett startplan",
+    "creating": "Oppretter…",
+    "stepPlan": "Lag en startplan",
+    "stepSchedule": "Planlegg uken din",
+    "stepLog": "Loggfør din første økt"
+  },
+  "onboardingWizard": {
+    "stepOf": "Steg {step} av {total}",
+    "next": "Neste",
+    "back": "Tilbake",
+    "finish": "Lagre og fortsett",
+    "saving": "Lagrer…",
+    "units": {
+      "title": "Måleenheter",
+      "description": "Hvordan vil du vise vekt og høyde?",
+      "kg": "kg",
+      "kgHint": "Kilogram og centimeter",
+      "lb": "lb",
+      "lbHint": "Pund og fot/tommer"
+    },
+    "sex": {
+      "title": "Ditt kjønn",
+      "description": "Brukes til å tilpasse opplevelsen din.",
+      "male": "Mann",
+      "female": "Kvinne",
+      "preferNot": "Foretrekker å ikke oppgi"
+    },
+    "weight": {
+      "title": "Din vekt",
+      "description": "Dette blir det første punktet i vektsporingen din."
+    },
+    "height": {
+      "title": "Din høyde",
+      "description": "Brukes til statistikk og fremtidige innsikter.",
+      "cm": "cm",
+      "ft": "ft",
+      "in": "in"
+    },
+    "goal": {
+      "title": "Ditt mål",
+      "description": "Vi sporer vekten din mot dette målet.",
+      "lose_weight": "Gå ned i vekt",
+      "lose_weightDesc": "Redusere total kroppsvekt",
+      "gain_muscle": "Bygge muskler",
+      "gain_muscleDesc": "Bygge styrke og størrelse",
+      "burn_fat": "Forbrenne fett",
+      "burn_fatDesc": "Bli slankere og beholde muskler",
+      "targetWeight": "Målvekt"
+    },
+    "level": {
+      "title": "Din treningserfaring",
+      "description": "Brukes til å foreslå startvekter og vanskelighetsgrad for hver øvelse.",
+      "beginner": "Nybegynner",
+      "beginnerDesc": "Ny til trening, eller under ett år med erfaring",
+      "intermediate": "Middels",
+      "intermediateDesc": "1–3 år med jevn trening",
+      "advanced": "Avansert",
+      "advancedDesc": "3+ år med solid teknikk i baseøvelsene",
+      "professional": "Profesjonell",
+      "professionalDesc": "Nivå som konkurranseutøver eller trener"
+    },
+    "firstWorkout": {
+      "title": "Din første økt",
+      "description": "Lag din første plan nå — eller hopp over og gjør det senere.",
+      "manual": "Lag manuelt",
+      "manualDesc": "Velg dine egne øvelser og mål",
+      "skip": "Hopp over"
+    }
+  },
+  "reminders": {
+    "title": "Påminnelser",
+    "description": "Få et nettleservarsel for dagens økt mens appen er åpen.",
+    "enable": "Aktiver øktpåminnelser",
+    "notificationTitle": "Dagens økt",
+    "notificationBody": "{plan} er planlagt for i dag. På tide å trene."
+  },
+  "bodyWeight": {
+    "title": "Kroppsvekt",
+    "description": "Følg vekten din over tid.",
+    "weight": "Vekt ({unit})",
+    "date": "Dato",
+    "add": "Legg til",
+    "noData": "Legg til minst to oppføringer for å se en trend.",
+    "invalidWeight": "Skriv inn en gyldig vekt.",
+    "goal": "Mål: {goal} {unit} ·",
+    "toGoal": "{delta} {unit} igjen",
+    "goalReached": "Mål nådd"
+  },
+  "bodyGoal": {
+    "title": "Kropp og mål",
+    "description": "Kroppsprofilen og vektmålet ditt fra oppstarten."
+  },
+  "exerciseHistory": {
+    "personalRecord": "Personlig rekord",
+    "max": "Tyngst",
+    "oneRepMax": "Est. 1RM",
+    "progress": "Fremgang",
+    "noData": "Ingen loggførte data for denne øvelsen ennå.",
+    "sessions": "{count, plural, =0 {Ingen økter} one {# økt} other {# økter}}"
+  },
+  "muscleGroups": {
+    "chest": "Bryst",
+    "back": "Rygg",
+    "legs": "Bein",
+    "shoulders": "Skuldre",
+    "arms": "Armer",
+    "core": "Kjerne"
+  },
+  "install": {
+    "title": "Installer Meridian",
+    "subtitle": "Legg til på startskjermen for fullskjermtilgang",
+    "action": "Installer",
+    "dismiss": "Lukk"
+  },
+  "toast": {
+    "undo": "Angre",
+    "planArchived": "Plan arkivert",
+    "planRestored": "Plan gjenopprettet",
+    "planDeleted": "Plan slettet",
+    "planDuplicated": "Plan kopiert",
+    "templateSaved": "Lagret som mal",
+    "templateRemoved": "Fjernet fra maler"
+  },
+  "plates": {
+    "open": "Skiver",
+    "title": "Skivekalkulator",
+    "description": "Skiver å laste på hver side av stangen.",
+    "total": "Total vekt",
+    "barbell": "Stang",
+    "perSide": "Per side",
+    "justBar": "Bare stangen — ingen skiver trengs.",
+    "off": "Mangler {weight}{unit} med tilgjengelige skiver"
+  },
+  "feedback": {
+    "title": "Vibrasjon og lyd",
+    "description": "Vibrasjon og lyd for sett og pauser.",
+    "haptics": "Vibrasjon",
+    "hapticsDesc": "Vibrer når du fullfører et sett eller setter rekord.",
+    "sound": "Lyd",
+    "soundDesc": "Spill en lyd når pausetimeren er ferdig."
+  },
+  "heatmap": {
+    "title": "Konsistens",
+    "description": "Fullførte økter de siste 26 ukene.",
+    "totalDays": "{count, plural, one {# aktiv dag} other {# aktive dager}}",
+    "less": "Mindre",
+    "more": "Mer"
+  }
+}

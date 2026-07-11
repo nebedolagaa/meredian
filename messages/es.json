@@ -1,0 +1,691 @@
+{
+  "nav": {
+    "today": "Hoy",
+    "analytics": "Analíticas",
+    "add": "Añadir",
+    "plans": "Planes",
+    "settings": "Ajustes",
+    "profile": "Perfil"
+  },
+  "common": {
+    "settings": "Ajustes",
+    "email": "Correo",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "pleaseWait": "Espera…"
+  },
+  "wordmark": {
+    "tagline": "Entrena con precisión."
+  },
+  "status": {
+    "planned": "planificada",
+    "in_progress": "en curso",
+    "completed": "completada",
+    "skipped": "omitida"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "switchToLight": "Cambiar a tema claro",
+    "switchToDark": "Cambiar a tema oscuro"
+  },
+  "language": {
+    "title": "Idioma",
+    "description": "Elige el idioma de la interfaz.",
+    "label": "Idioma de la interfaz"
+  },
+  "auth": {
+    "displayName": "Nombre visible",
+    "displayNamePlaceholder": "Alex",
+    "email": "Correo",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "createAccount": "Crear cuenta",
+    "noAccount": "¿No tienes cuenta?",
+    "signUp": "Regístrate",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "rememberMe": "Recuérdame",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetTitle": "Restablecer contraseña",
+    "resetSubtitle": "Introduce tu correo y te enviaremos un enlace para restablecerla.",
+    "sendResetLink": "Enviar enlace de restablecimiento",
+    "resetEmailSent": "Si ese correo existe, el enlace para restablecer va en camino.",
+    "backToSignIn": "Volver al inicio de sesión",
+    "newPasswordTitle": "Establece una nueva contraseña",
+    "newPasswordSubtitle": "Elige una nueva contraseña para tu cuenta.",
+    "newPassword": "Nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "passwordUpdated": "Contraseña actualizada. Redirigiendo…",
+    "confirmEmailTitle": "Confirma tu correo",
+    "confirmEmailBody": "Enviamos un enlace de confirmación a {email}. Haz clic en él para activar tu cuenta y luego inicia sesión.",
+    "goToSignIn": "Ir al inicio de sesión",
+    "orDivider": "o",
+    "continueWithGoogle": "Continuar con Google",
+    "oauthError": "No se pudo iniciar sesión. Inténtalo de nuevo."
+  },
+  "profilePage": {
+    "title": "Perfil",
+    "noName": "Atleta",
+    "account": "Cuenta",
+    "preferences": "Preferencias",
+    "data": "Datos"
+  },
+  "tour": {
+    "stepOf": "{current} de {total}",
+    "next": "Siguiente",
+    "continue": "Continuar el tour",
+    "finish": "Listo",
+    "skipTour": "Omitir tour",
+    "steps": {
+      "welcome": {
+        "title": "Bienvenido a Meridian",
+        "body": "Este es tu panel: aquí vive el entrenamiento de hoy y tu progreso semanal. Creemos tu primer entrenamiento: abre Planes abajo."
+      },
+      "newPlan": {
+        "title": "Crea un plan de entrenamiento",
+        "body": "Toca Nuevo para crear tu primer plan: una lista de ejercicios con series, repeticiones y peso objetivo."
+      },
+      "builder": {
+        "title": "Arma tu entrenamiento",
+        "body": "Ponle nombre, añade ejercicios y define objetivos. Cuando termines, pulsa Guardar plan."
+      },
+      "schedule": {
+        "title": "Ponlo en el calendario",
+        "body": "Toca + para programar tu entrenamiento en una fecha. Las sesiones planificadas aparecen en tu panel."
+      },
+      "start": {
+        "title": "Hora de entrenar",
+        "body": "Cuando haya un entrenamiento programado para hoy aparecerá aquí: toca Iniciar sesión para registrar tus series. ¡Todo listo!"
+      }
+    }
+  },
+  "dashboard": {
+    "settings": "Ajustes",
+    "profile": "Perfil",
+    "thisWeek": "Esta semana",
+    "sessionsKept": "{kept} de {total} sesiones cumplidas esta semana",
+    "session": "Sesión",
+    "exercise": "Ejercicio",
+    "noExercises": "Esta sesión aún no tiene ejercicios.",
+    "continue": "Continuar",
+    "startSession": "Empezar sesión",
+    "noSessionScheduled": "No hay sesión programada. Planifica la siguiente.",
+    "goToPlans": "Ir a planes",
+    "openFullCalendar": "Abrir calendario completo →",
+    "logNow": "Registrar un entrenamiento ahora",
+    "logNowPending": "Iniciando…",
+    "goalProgress": "{kept} de {goal} sesiones semanales",
+    "plannedVolume": "Volumen previsto: {volume} {unit}"
+  },
+  "streak": {
+    "weeks": "{count, plural, =0 {Sin racha activa} one {Racha de # semana} other {Racha de # semanas}}",
+    "keepGoing": "Mantén el ritmo",
+    "startCta": "Cumple tu meta semanal para empezar una racha",
+    "best": "Mejor",
+    "thisWeek": "Esta semana",
+    "progress": "{done}/{goal} sesiones"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "appearance": "Apariencia",
+    "appearanceDesc": "Elige cómo se ve Meridian en este dispositivo.",
+    "profile": "Perfil",
+    "displayName": "Nombre visible",
+    "displayNamePlaceholder": "Tu nombre",
+    "email": "Correo",
+    "signOut": "Cerrar sesión",
+    "googleCalendarTitle": "Sincronización con Google Calendar",
+    "googleCalendarDesc": "Envía las sesiones programadas a tu Google Calendar.",
+    "appleCalendarTitle": "Sincronización con Apple Calendar",
+    "appleCalendarDesc": "Sincronización bidireccional con la app Apple Calendar."
+  },
+  "analytics": {
+    "title": "Analíticas",
+    "subtitle": "Plan frente a realidad, a lo largo del tiempo",
+    "volume": "Progreso",
+    "volumeDesc": "Real vs planificado por sesión · últimos 30 días",
+    "actual": "Real",
+    "planned": "Planificado",
+    "exerciseProgress": "Progreso del ejercicio",
+    "exerciseProgressDesc": "Mayor peso de trabajo a lo largo del tiempo · PR en verde musgo",
+    "records": "Récords personales",
+    "recordsDesc": "Mejor peso y 1RM estimado por ejercicio",
+    "noRecords": "Registra algunas sesiones para empezar a seguir récords.",
+    "oneRepMax": "1RM {value}{unit}",
+    "frequency": "Frecuencia de entrenamiento",
+    "frequencyDesc": "Sesiones completadas por semana · últimas 8 semanas",
+    "frequencyEmpty": "Completa sesiones para ver tu frecuencia semanal",
+    "muscleBalanceEmpty": "Completa sesiones para ver tu balance muscular",
+    "muscleBalance": "Equilibrio muscular",
+    "muscleBalanceDesc": "Porcentaje del volumen completado por grupo muscular",
+    "muscleMap": "Entrenado recientemente",
+    "muscleMapDesc": "Músculos más trabajados en tus sesiones completadas",
+    "prTimeline": "Cronología de récords",
+    "prTimelineDesc": "Cada vez que logras un nuevo 1RM estimado",
+    "share": "Compartir récord",
+    "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meridian"
+  },
+  "plans": {
+    "title": "Planes",
+    "new": "Nuevo",
+    "noPlans": "Aún no hay planes",
+    "buildFirst": "Crea tu primera plantilla de entrenamiento.",
+    "createPlan": "Crear un plan",
+    "exerciseCount": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+    "lastUsed": "último {date}",
+    "duplicate": "Duplicar plan",
+    "saveAsTemplate": "Guardar como plantilla",
+    "removeFromTemplates": "Quitar de plantillas",
+    "archive": "Archivar plan",
+    "unarchive": "Restaurar plan",
+    "archived": "Archivado",
+    "delete": "Eliminar plan",
+    "deleteConfirm": "¿Eliminar este plan?",
+    "deleting": "Eliminando…"
+  },
+  "planBuilder": {
+    "editPlan": "Editar plan",
+    "newPlan": "Nuevo plan",
+    "planName": "Nombre del plan",
+    "planNamePlaceholder": "Día de empuje A",
+    "addExercise": "Añadir ejercicio",
+    "noExercises": "Aún no hay ejercicios. Pulsa «Añadir ejercicio» para explorar el catálogo.",
+    "sets": "Series",
+    "reps": "Reps",
+    "weightKg": "Peso kg",
+    "weight": "Peso ({unit})",
+    "restSeconds": "Descanso (seg)",
+    "restSecondsAuto": "Auto",
+    "savePlan": "Guardar plan",
+    "saving": "Guardando…",
+    "nameRequired": "El nombre del plan es obligatorio.",
+    "moveUp": "Mover arriba",
+    "moveDown": "Mover abajo",
+    "dragToReorder": "Arrastra para reordenar",
+    "deleteExercise": "Eliminar ejercicio",
+    "startFromTemplate": "Empezar con una plantilla",
+    "exercise": "Ejercicio"
+  },
+  "exerciseCatalog": {
+    "addExercise": "Añadir ejercicio",
+    "title": "Catálogo de ejercicios",
+    "searchPlaceholder": "Buscar ejercicios…",
+    "all": "Todos",
+    "clear": "Borrar filtros",
+    "results": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+    "noResults": "No se encontró nada",
+    "noResultsHint": "Prueba otra búsqueda o borra los filtros.",
+    "createCustom": "Crear «{query}»",
+    "creating": "Creando…",
+    "added": "Añadido",
+    "add": "Añadir al plan",
+    "done": "Listo",
+    "doneCount": "Listo · {count} añadidos",
+    "previewAlt": "Demostración de técnica: {name}",
+    "custom": "Personalizado",
+    "trainTitle": "¿Qué quieres entrenar?",
+    "trainHint": "Toca los músculos del cuerpo: los ejercicios aparecerán abajo.",
+    "front": "Frente",
+    "back": "Detrás",
+    "loading": "Cargando…",
+    "noMuscleMatches": "Aún no hay ejercicios para los músculos seleccionados.",
+    "howTo": "Cómo realizarlo",
+    "recommendation": {
+      "title": "Recomendado para ti",
+      "scheme": "{sets} × {reps} reps",
+      "timeScheme": "{sets} × {seconds} seg",
+      "guidance": {
+        "beginner": "Empieza ligero y domina la técnica: deja 3–4 repeticiones en reserva en cada serie.",
+        "intermediate": "Trabaja cerca del objetivo: mantén 2–3 repeticiones en reserva y sube el peso cuando todas las series salgan sólidas.",
+        "advanced": "Exige las series de trabajo — 1–2 repeticiones en reserva — y progresa el peso semanalmente.",
+        "professional": "Usa el objetivo como base de tu programación: periodiza la intensidad a lo largo de la semana."
+      }
+    },
+    "type": { "compound": "Compuesto", "isolation": "Aislamiento" },
+    "equipment": {
+      "barbell": "Barra",
+      "dumbbell": "Mancuernas",
+      "cable": "Polea",
+      "machine": "Máquina",
+      "bodyweight": "Peso corporal"
+    },
+    "location": { "home": "Casa", "gym": "Gimnasio" }
+  },
+  "exerciseInfo": {
+    "bench-press": {
+      "desc": "El press de banca clásico para pecho, deltoides frontales y tríceps.",
+      "steps": "Túmbate en el banco, pies apoyados y escápulas juntas.\nAgarra la barra algo más ancho que los hombros y sácala sobre el pecho.\nBaja la barra al centro del pecho con control, codos a unos 45° del torso.\nEmpuja hasta extender los brazos sin rebotar la barra en el pecho."
+    },
+    "incline-dumbbell-press": {
+      "desc": "El press inclinado traslada el trabajo a la parte superior del pecho.",
+      "steps": "Ajusta el banco a 30–45° y siéntate con las mancuernas a la altura de los hombros.\nEmpuja las mancuernas hacia arriba y ligeramente juntas hasta extender los brazos.\nBaja despacio hasta notar el estiramiento en el pecho superior."
+    },
+    "overhead-press": {
+      "desc": "Press de barra de pie que desarrolla hombros, tríceps y estabilidad del core.",
+      "steps": "Sostén la barra a la altura de los hombros, manos algo más anchas, codos bajo la barra.\nAprieta el core y empuja la barra en vertical sobre la cabeza.\nLleva la cabeza ligeramente atrás para mantener la trayectoria vertical.\nBaja con control hasta los hombros."
+    },
+    "tricep-pushdown": {
+      "desc": "Ejercicio de aislamiento en polea para el tríceps.",
+      "steps": "De pie frente a la polea, codos pegados a los costados.\nEmpuja el agarre hacia abajo hasta extender por completo los brazos.\nDeja subir despacio hasta 90° de codo sin mover los codos."
+    },
+    "lateral-raise": {
+      "desc": "Aislamiento con mancuernas para el deltoides lateral, clave para hombros anchos.",
+      "steps": "De pie con mancuernas a los lados y codos ligeramente flexionados.\nEleva los brazos a los lados hasta quedar paralelos al suelo.\nBaja despacio, sin balanceos ni encoger los hombros."
+    },
+    "squat": {
+      "desc": "El rey del tren inferior: cuádriceps, glúteos y core en un solo movimiento.",
+      "steps": "Apoya la barra en la parte alta de la espalda, pies al ancho de hombros.\nAprieta el core y baja sentándote, rodillas en línea con los pies.\nDesciende al menos hasta que los muslos queden paralelos al suelo.\nEmpuja con todo el pie para volver a subir."
+    },
+    "romanian-deadlift": {
+      "desc": "Bisagra de cadera que carga isquiotibiales y glúteos con estiramiento.",
+      "steps": "Sostén la barra a la altura de la cadera con agarre al ancho de hombros.\nLleva la cadera atrás dejando que la barra deslice por los muslos.\nBaja con la espalda recta hasta notar un fuerte estiramiento en los isquios.\nEmpuja la cadera adelante para volver a la posición inicial."
+    },
+    "leg-press": {
+      "desc": "Ejercicio compuesto en máquina para cuádriceps y glúteos con poca carga lumbar.",
+      "steps": "Siéntate en la máquina con los pies al ancho de hombros en la plataforma.\nBaja la plataforma hasta unos 90° de rodilla, con la zona lumbar pegada al respaldo.\nEmpuja de vuelta sin bloquear las rodillas bruscamente."
+    },
+    "leg-curl": {
+      "desc": "Aislamiento en máquina para los isquiotibiales.",
+      "steps": "Coloca el rodillo justo sobre los talones y agarra las asas.\nFlexiona llevando los talones hacia los glúteos con control.\nVuelve despacio sin dejar caer la carga."
+    },
+    "calf-raise": {
+      "desc": "Elevación de talones de pie centrada en el gastrocnemio.",
+      "steps": "Ponte con la punta de los pies en un borde, talones colgando.\nSube lo más alto posible sobre las puntas y aguanta un instante.\nBaja despacio hasta notar el estiramiento en los gemelos."
+    },
+    "deadlift": {
+      "desc": "Tirón de barra de cuerpo completo: cadena posterior, agarre y grosor de espalda.",
+      "steps": "Colócate con la mitad del pie bajo la barra, agarre justo fuera de las piernas.\nEndereza la espalda, aprieta y empuja el suelo con las piernas.\nMantén la barra pegada al cuerpo hasta quedar erguido.\nBaja con control flexionando cadera y rodillas."
+    },
+    "barbell-row": {
+      "desc": "Remo inclinado para dorsales, espalda media y deltoides posteriores.",
+      "steps": "Inclínate a unos 45° con la espalda recta, barra a la altura de las rodillas.\nTira de la barra hacia el abdomen bajo, codos hacia atrás.\nBaja con control sin dejar caer el torso."
+    },
+    "pull-up": {
+      "desc": "Tirón vertical con el peso corporal para dorsales y bíceps.",
+      "steps": "Cuélgate de la barra con agarre algo más ancho que los hombros.\nTira del pecho hacia la barra, codos hacia abajo.\nBaja hasta extender por completo los brazos en cada repetición."
+    },
+    "seated-cable-row": {
+      "desc": "Remo horizontal en polea para el grosor de la espalda media.",
+      "steps": "Siéntate erguido con las rodillas algo flexionadas y agarra el maneral.\nTira hacia el abdomen juntando las escápulas.\nExtiende los brazos por completo sin redondear la espalda."
+    },
+    "face-pull": {
+      "desc": "Tirón de cuerda a la cara para deltoides posteriores y salud del hombro.",
+      "steps": "Coloca la cuerda a la altura de la cara y agarra con los pulgares hacia atrás.\nTira hacia la cara abriendo la cuerda más allá de las orejas.\nPausa apretando la espalda alta y vuelve despacio."
+    },
+    "bicep-curl": {
+      "desc": "El ejercicio básico para el bíceps.",
+      "steps": "De pie con mancuernas a los lados, palmas al frente.\nFlexiona los codos sin balancear el torso.\nBaja despacio hasta extender por completo."
+    },
+    "hammer-curl": {
+      "desc": "Curl con agarre neutro para bíceps y antebrazos.",
+      "steps": "Sostén las mancuernas con las palmas enfrentadas.\nFlexiona manteniendo el agarre neutro todo el recorrido.\nBaja con control sin dejar que los codos se vayan atrás."
+    },
+    "plank": {
+      "desc": "Isometría de core para la estabilidad del tronco.",
+      "steps": "Apóyate en antebrazos y puntas de los pies, cuerpo en línea recta.\nAprieta abdomen y glúteos: sin hundir ni elevar la cadera.\nRespira de forma constante y aguanta el tiempo objetivo."
+    },
+    "ab-wheel-rollout": {
+      "desc": "Ejercicio avanzado anti-extensión para todo el core.",
+      "steps": "Arrodíllate con las manos en la rueda bajo los hombros.\nRueda hacia delante mientras la zona lumbar se mantenga neutra.\nVuelve tirando con el abdomen, no con los brazos."
+    },
+    "hip-thrust": {
+      "desc": "El ejercicio con barra más directo para la fuerza de glúteos.",
+      "steps": "Siéntate con la espalda alta apoyada en un banco y la barra sobre la cadera.\nEmpuja con los talones hasta extender la cadera por completo.\nAprieta los glúteos arriba con la barbilla recogida.\nBaja con control sin apoyar la cadera en el suelo."
+    },
+    "glute-bridge": {
+      "desc": "Puente con el peso corporal que activa glúteos e isquiotibiales.",
+      "steps": "Túmbate boca arriba con rodillas flexionadas y pies cerca de los glúteos.\nEmpuja con los talones y eleva la cadera hasta formar una línea recta.\nAprieta arriba y baja despacio."
+    },
+    "bulgarian-split-squat": {
+      "desc": "Sentadilla a una pierna con el pie trasero elevado: cuádriceps, glúteos y equilibrio.",
+      "steps": "Colócate a un paso del banco y apoya el pie trasero en él.\nBaja en vertical hasta que el muslo delantero quede paralelo al suelo.\nEmpuja con el talón delantero para subir."
+    },
+    "wrist-curl": {
+      "desc": "Aislamiento de los flexores de muñeca en el antebrazo interno.",
+      "steps": "Siéntate con los antebrazos sobre los muslos, palmas arriba, muñecas por delante de las rodillas.\nBaja las mancuernas abriendo ligeramente las manos.\nFlexiona las muñecas hacia arriba al máximo y aprieta."
+    },
+    "reverse-wrist-curl": {
+      "desc": "Aislamiento de los extensores de muñeca en el antebrazo externo.",
+      "steps": "Siéntate con los antebrazos sobre los muslos, palmas abajo.\nEleva el dorso de las manos lo máximo posible.\nBaja despacio: usa menos peso que en el curl normal."
+    },
+    "dips": {
+      "desc": "Fondos con el peso corporal para tríceps y pecho inferior.",
+      "steps": "Apóyate en las paralelas con los brazos extendidos.\nBaja hasta que los hombros queden justo bajo los codos, torso algo inclinado.\nEmpuja hacia arriba sin abrir los codos."
+    },
+    "push-up": {
+      "desc": "El empuje fundamental con peso corporal: pecho, hombros y tríceps.",
+      "steps": "Manos algo más anchas que los hombros, cuerpo en línea recta.\nBaja el pecho casi hasta el suelo, codos a unos 45°.\nEmpuja hacia arriba manteniendo el core firme."
+    },
+    "crunch": {
+      "desc": "Flexión abdominal de recorrido corto: simple y segura.",
+      "steps": "Túmbate con las rodillas flexionadas y las manos en las sienes.\nDespega las escápulas del suelo llevando las costillas a la pelvis.\nBaja despacio sin tirar del cuello."
+    },
+    "seated-calf-raise": {
+      "desc": "Elevación de talones sentado que enfatiza el sóleo profundo.",
+      "steps": "Siéntate con el rodillo sobre las rodillas y las puntas en la plataforma.\nEleva los talones lo máximo posible y aguanta.\nBaja despacio hasta el estiramiento completo."
+    }
+  },
+  "muscles": {
+    "chest": "Pecho",
+    "back": "Espalda",
+    "shoulders": "Hombros",
+    "biceps": "Bíceps",
+    "triceps": "Tríceps",
+    "forearms": "Antebrazos",
+    "abs": "Abdominales",
+    "glutes": "Glúteos",
+    "quads": "Cuádriceps",
+    "hamstrings": "Isquiotibiales",
+    "calves": "Gemelos"
+  },
+  "calendar": {
+    "title": "Calendario",
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "addSession": "Añadir sesión",
+    "done": "Hecha",
+    "missed": "Perdida",
+    "planned": "Planificada",
+    "session": "Sesión",
+    "scheduledSession": "Sesión programada",
+    "noSessionDay": "No hay sesión este día",
+    "openSession": "Abrir sesión",
+    "addToCalendar": "Añadir a Apple/Outlook Calendar",
+    "addToGoogleCalendar": "Añadir a Google Calendar",
+    "calendarEventTitle": "Entrenamiento: {plan}",
+    "calendarEventDescription": "Planificado en Meridian."
+  },
+  "quickAdd": {
+    "scheduleSession": "Programar una sesión",
+    "scheduleDesc": "Elige un plan y una fecha. La sesión empieza como planificada.",
+    "plan": "Plan",
+    "noPlans": "Aún no hay planes — crea uno primero en Planes.",
+    "selectPlan": "Selecciona un plan",
+    "noPlan": "Sin plan (libre)",
+    "date": "Fecha",
+    "repeatWeekly": "Repetir cada semana",
+    "repeatWeeks": "Número de semanas",
+    "scheduling": "Programando…",
+    "addSession": "Añadir sesión"
+  },
+  "session": {
+    "target": "Objetivo: {sets}×{reps} @ {weight}{unit}",
+    "lastTime": "La última vez: {weight}{unit} × {reps}",
+    "e1rm": "1RM est. {weight}{unit}",
+    "progressSuggest": "RPE {rpe} — sube",
+    "newPR": "{count, plural, one {¡Nuevo récord personal!} other {¡# nuevos récords personales!}}",
+    "rpe": "RPE",
+    "setDetails": "Detalles de la serie",
+    "exerciseDetails": "Detalles del ejercicio",
+    "setNotePlaceholder": "Nota",
+    "startSession": "Empezar sesión",
+    "noExercises": "Este plan no tiene ejercicios.",
+    "volume": "{volume} {unit} vol",
+    "setsDone": "{done}/{total} series hechas",
+    "finishWorkout": "Terminar entrenamiento",
+    "saving": "Guardando…",
+    "saveChanges": "Guardar cambios",
+    "sessionComplete": "Sesión completada",
+    "totalVolume": "Volumen total",
+    "setsCompleted": "Series completadas",
+    "backToDashboard": "Volver al panel",
+    "session": "Sesión",
+    "exercise": "Ejercicio",
+    "manage": "Gestionar sesión",
+    "reschedule": "Reprogramar",
+    "move": "Mover",
+    "skipSession": "Omitir sesión",
+    "deleteSession": "Eliminar sesión",
+    "sessionNotes": "¿Qué tal fue?",
+    "sessionNotesPlaceholder": "Añade una nota sobre esta sesión…"
+  },
+  "progression": {
+    "increaseEasy": "La última vez fue fácil — sube el peso",
+    "increaseHit": "Lograste todas las reps — hora de subir el peso",
+    "hold": "Repite el peso y busca más reps",
+    "deloadHard": "La última sesión te llevó al límite — baja para recuperarte",
+    "deloadMissed": "Te quedaste corto en reps — baja el peso y afina la técnica",
+    "suggested": "Sugerido {weight}{unit}",
+    "apply": "Poner {weight}{unit}"
+  },
+  "exerciseRow": {
+    "plan": "Plan {sets}×{reps} @ {weight}{unit}",
+    "actual": "Real {sets}×{reps} @ {weight}{unit}"
+  },
+  "restTimer": {
+    "startRest": "Temporizador de descanso ({seconds}s)",
+    "defaultRest": "Descanso predeterminado",
+    "seconds": "segundos",
+    "add": "Añadir 15 segundos",
+    "subtract": "Restar 15 segundos",
+    "dismiss": "Cerrar",
+    "done": "Descanso terminado — a seguir"
+  },
+  "units": {
+    "title": "Unidades",
+    "description": "Elige cómo se muestran e introducen los pesos.",
+    "kg": "Kilogramos",
+    "lb": "Libras"
+  },
+  "goal": {
+    "title": "Meta semanal",
+    "description": "Sesiones por semana para mantener viva tu racha.",
+    "label": "Sesiones por semana",
+    "perWeek": "/ semana"
+  },
+  "security": {
+    "title": "Seguridad",
+    "description": "Actualiza tu correo y contraseña.",
+    "changeEmail": "Cambiar correo",
+    "changePassword": "Cambiar contraseña",
+    "emailConfirmSent": "Revisa tu bandeja para confirmar el nuevo correo.",
+    "passwordChanged": "Contraseña cambiada.",
+    "currentPassword": "Contraseña actual"
+  },
+  "dataExport": {
+    "title": "Tus datos",
+    "description": "Exporta tus entrenamientos registrados.",
+    "csv": "Exportar CSV",
+    "json": "Exportar JSON"
+  },
+  "templates": {
+    "title": "Empezar desde una plantilla",
+    "description": "Elige un programa predefinido — ajusta los ejercicios después.",
+    "creating": "Creando…",
+    "myTemplates": "Mis plantillas",
+    "full_body": {
+      "name": "Cuerpo completo",
+      "desc": "5 ejercicios compuestos, 3× por semana"
+    },
+    "upper": {
+      "name": "Tren superior",
+      "desc": "Pecho, espalda, hombros, brazos"
+    },
+    "lower": { "name": "Tren inferior", "desc": "Piernas y cadena posterior" },
+    "push": { "name": "Día de empuje", "desc": "Pecho, hombros, tríceps" },
+    "pull": { "name": "Día de tirón", "desc": "Espalda y bíceps" }
+  },
+  "errors": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado. Inténtalo de nuevo.",
+    "retry": "Reintentar"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe.",
+    "backHome": "Volver al panel"
+  },
+  "insight": {
+    "label": "Información"
+  },
+  "insights": {
+    "progressTrend": "El cumplimiento del plan ha bajado un {pct}% en las últimas 2 semanas",
+    "stalled": "{name} lleva 3 sesiones estancado — considera una descarga o cambio de progresión",
+    "missedSets": "Fallas constantemente las últimas series — ¿fatiga o exceso de planificación?",
+    "streak": "{weeks, plural, one {# semana} other {# semanas}} seguidas — la constancia da frutos"
+  },
+  "account": {
+    "dangerZone": "Zona de peligro",
+    "dangerZoneDesc": "Acciones de cuenta irreversibles.",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteConfirm": "Esto elimina permanentemente tu cuenta y todos tus datos. No se puede deshacer.",
+    "deleteConfirmCta": "Sí, eliminar todo",
+    "deleting": "Eliminando…",
+    "cancel": "Cancelar"
+  },
+  "onboarding": {
+    "title": "Empieza con un plan",
+    "description": "Crea un plan inicial de cuerpo completo equilibrado que puedes usar hoy y ajustar cuando quieras.",
+    "cta": "Crear plan inicial",
+    "creating": "Creando…",
+    "stepPlan": "Crea un plan inicial",
+    "stepSchedule": "Programa tu semana",
+    "stepLog": "Registra tu primera sesión"
+  },
+  "onboardingWizard": {
+    "stepOf": "Paso {step} de {total}",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "finish": "Guardar y continuar",
+    "saving": "Guardando…",
+    "units": {
+      "title": "Unidades de medida",
+      "description": "¿Cómo quieres ver el peso y la altura?",
+      "kg": "kg",
+      "kgHint": "Kilogramos y centímetros",
+      "lb": "lb",
+      "lbHint": "Libras y pies/pulgadas"
+    },
+    "sex": {
+      "title": "Tu sexo",
+      "description": "Se usa para personalizar tu experiencia.",
+      "male": "Hombre",
+      "female": "Mujer",
+      "preferNot": "Prefiero no decirlo"
+    },
+    "weight": {
+      "title": "Tu peso",
+      "description": "Será el primer punto de tu seguimiento de peso."
+    },
+    "height": {
+      "title": "Tu altura",
+      "description": "Se usa para estadísticas y futuras recomendaciones.",
+      "cm": "cm",
+      "ft": "ft",
+      "in": "in"
+    },
+    "goal": {
+      "title": "Tu objetivo",
+      "description": "Seguiremos tu peso respecto a este objetivo.",
+      "lose_weight": "Perder peso",
+      "lose_weightDesc": "Reducir el peso corporal total",
+      "gain_muscle": "Ganar músculo",
+      "gain_muscleDesc": "Desarrollar fuerza y tamaño",
+      "burn_fat": "Quemar grasa",
+      "burn_fatDesc": "Definirte manteniendo el músculo",
+      "targetWeight": "Peso objetivo"
+    },
+    "level": {
+      "title": "Tu experiencia de entrenamiento",
+      "description": "Se usa para sugerir pesos iniciales y dificultad en cada ejercicio.",
+      "beginner": "Principiante",
+      "beginnerDesc": "Empiezo ahora o llevo menos de un año entrenando",
+      "intermediate": "Intermedio",
+      "intermediateDesc": "1–3 años de entrenamiento constante",
+      "advanced": "Avanzado",
+      "advancedDesc": "Más de 3 años con técnica sólida en los básicos",
+      "professional": "Profesional",
+      "professionalDesc": "Nivel de atleta competitivo o entrenador"
+    },
+    "firstWorkout": {
+      "title": "Tu primer entrenamiento",
+      "description": "Crea tu primer plan ahora — o sáltalo y hazlo más tarde.",
+      "manual": "Crear manualmente",
+      "manualDesc": "Elige tus propios ejercicios y objetivos",
+      "skip": "Omitir por ahora"
+    }
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "description": "Recibe una notificación del navegador para la sesión de hoy mientras la app está abierta.",
+    "enable": "Activar recordatorios de sesión",
+    "notificationTitle": "Sesión de hoy",
+    "notificationBody": "{plan} está programado para hoy. Hora de entrenar."
+  },
+  "bodyWeight": {
+    "title": "Peso corporal",
+    "description": "Sigue tu peso a lo largo del tiempo.",
+    "weight": "Peso ({unit})",
+    "date": "Fecha",
+    "add": "Añadir",
+    "noData": "Añade al menos dos registros para ver una tendencia.",
+    "invalidWeight": "Introduce un peso válido.",
+    "goal": "Objetivo: {goal} {unit} ·",
+    "toGoal": "faltan {delta} {unit}",
+    "goalReached": "Objetivo alcanzado"
+  },
+  "bodyGoal": {
+    "title": "Cuerpo y objetivo",
+    "description": "Tu perfil corporal y objetivo de peso del registro inicial."
+  },
+  "exerciseHistory": {
+    "personalRecord": "Récord personal",
+    "max": "Más pesado",
+    "oneRepMax": "1RM est.",
+    "progress": "Progreso",
+    "noData": "Aún no hay datos registrados para este ejercicio.",
+    "sessions": "{count, plural, =0 {Sin sesiones} one {# sesión} other {# sesiones}}"
+  },
+  "muscleGroups": {
+    "chest": "Pecho",
+    "back": "Espalda",
+    "legs": "Piernas",
+    "shoulders": "Hombros",
+    "arms": "Brazos",
+    "core": "Core"
+  },
+  "install": {
+    "title": "Instalar Meridian",
+    "subtitle": "Añádelo a tu pantalla de inicio para acceso a pantalla completa",
+    "action": "Instalar",
+    "dismiss": "Cerrar"
+  },
+  "toast": {
+    "undo": "Deshacer",
+    "planArchived": "Plan archivado",
+    "planRestored": "Plan restaurado",
+    "planDeleted": "Plan eliminado",
+    "planDuplicated": "Plan duplicado",
+    "templateSaved": "Guardado como plantilla",
+    "templateRemoved": "Quitado de plantillas"
+  },
+  "plates": {
+    "open": "Discos",
+    "title": "Calculadora de discos",
+    "description": "Discos a cargar en cada lado de la barra.",
+    "total": "Peso total",
+    "barbell": "Barra",
+    "perSide": "Por lado",
+    "justBar": "Solo la barra — no hacen falta discos.",
+    "off": "Faltan {weight}{unit} con los discos disponibles"
+  },
+  "feedback": {
+    "title": "Vibración y sonido",
+    "description": "Señales de vibración y sonido para series y descanso.",
+    "haptics": "Vibración",
+    "hapticsDesc": "Vibra al completar una serie o lograr un récord.",
+    "sound": "Sonido",
+    "soundDesc": "Suena un aviso cuando termina el descanso."
+  },
+  "heatmap": {
+    "title": "Constancia",
+    "description": "Tus sesiones completadas en las últimas 26 semanas.",
+    "totalDays": "{count, plural, one {# día activo} other {# días activos}}",
+    "less": "Menos",
+    "more": "Más"
+  }
+}
