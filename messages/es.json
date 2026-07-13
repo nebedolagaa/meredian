@@ -82,7 +82,7 @@
     "skipTour": "Omitir tour",
     "steps": {
       "welcome": {
-        "title": "Bienvenido a Meridian",
+        "title": "Bienvenido a Meredian",
         "body": "Este es tu panel: aquí vive el entrenamiento de hoy y tu progreso semanal. Creemos tu primer entrenamiento: abre Planes abajo."
       },
       "newPlan": {
@@ -132,7 +132,7 @@
   "settings": {
     "title": "Ajustes",
     "appearance": "Apariencia",
-    "appearanceDesc": "Elige cómo se ve Meridian en este dispositivo.",
+    "appearanceDesc": "Elige cómo se ve Meredian en este dispositivo.",
     "profile": "Perfil",
     "displayName": "Nombre visible",
     "displayNamePlaceholder": "Tu nombre",
@@ -167,7 +167,7 @@
     "prTimeline": "Cronología de récords",
     "prTimelineDesc": "Cada vez que logras un nuevo 1RM estimado",
     "share": "Compartir récord",
-    "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meridian"
+    "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meredian"
   },
   "plans": {
     "title": "Planes",
@@ -397,7 +397,7 @@
     "addToCalendar": "Añadir a Apple/Outlook Calendar",
     "addToGoogleCalendar": "Añadir a Google Calendar",
     "calendarEventTitle": "Entrenamiento: {plan}",
-    "calendarEventDescription": "Planificado en Meridian."
+    "calendarEventDescription": "Planificado en Meredian."
   },
   "quickAdd": {
     "scheduleSession": "Programar una sesión",
@@ -649,7 +649,7 @@
     "core": "Core"
   },
   "install": {
-    "title": "Instalar Meridian",
+    "title": "Instalar Meredian",
     "subtitle": "Añádelo a tu pantalla de inicio para acceso a pantalla completa",
     "action": "Instalar",
     "dismiss": "Cerrar"

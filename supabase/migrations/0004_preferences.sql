@@ -1,4 +1,4 @@
--- Meridian — user preferences (units + default rest timer)
+-- Meredian — user preferences (units + default rest timer)
 -- Adds columns used by the units system and the in-session rest timer.
 
 alter table profiles

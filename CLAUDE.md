@@ -1,10 +1,10 @@
-# CLAUDE.md — Meridian
+# CLAUDE.md — Meredian
 
 Guidance for Claude Code (and any AI agent) working in this repository.
 
 ## What this is
 
-Meridian is a **workout planning & tracking PWA**. Users build workout plans,
+Meredian is a **workout planning & tracking PWA**. Users build workout plans,
 schedule sessions on a calendar, log sets, track body measurements, and view
 analytics. Mobile-first, installable PWA with offline shell.
 
@@ -135,7 +135,7 @@ export async function doThing(...): Promise<{ error?: string; id?: string }> {
 - **Body map**: `components/exercises/BodyMap.tsx` wraps `react-muscle-highlighter`;
   `MUSCLE_TO_SLUGS` / `MUSCLE_COLORS` in `lib/types/database.ts`.
 - **Guided tour**: `components/tour/GuidedTour.tsx`, route-aware coach marks,
-  state in localStorage `meridian.tour`. Anchors via `data-tour` attrs.
+  state in localStorage `meredian.tour`. Anchors via `data-tour` attrs.
 - **Calendar**: `app/(app)/calendar/CalendarView.tsx` — .ics download + Google
   Calendar link per session.
 

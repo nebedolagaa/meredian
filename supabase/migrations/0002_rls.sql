@@ -1,4 +1,4 @@
--- Meridian — Row Level Security policies
+-- Meredian — Row Level Security policies
 -- Users can only read/write their own rows.
 -- Global exercises (user_id is null) are readable by everyone.
 

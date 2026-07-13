@@ -1,7 +1,7 @@
-# Meridian
+# Meredian
 
 **Train with precision.** A fitness training planner and analytics tool. Create
-structured workout plans, log what you actually completed, and let Meridian
+structured workout plans, log what you actually completed, and let Meredian
 compare **plan versus reality** to surface insights about your training over time.
 
 This is a training analytics platform, not a simple logger. The visual identity

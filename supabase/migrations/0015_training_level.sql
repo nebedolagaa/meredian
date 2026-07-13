@@ -1,4 +1,4 @@
--- Meridian — training level for personalised exercise recommendations
+-- Meredian — training level for personalised exercise recommendations
 -- Adds profiles.training_level, asked during onboarding after height/weight/
 -- sex. Used together with body weight, height and sex to suggest working
 -- weights and difficulty for each exercise.

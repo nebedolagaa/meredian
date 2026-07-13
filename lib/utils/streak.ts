@@ -1,5 +1,5 @@
 /**
- * Weekly-goal streak engine for Meridian.
+ * Weekly-goal streak engine for Meredian.
  *
  * A "week" (Monday-based) counts toward the streak when the number of completed
  * sessions inside it meets the user's weekly goal. The current, in-progress week

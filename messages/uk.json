@@ -82,7 +82,7 @@
     "skipTour": "Пропустити тур",
     "steps": {
       "welcome": {
-        "title": "Вітаємо в Meridian",
+        "title": "Вітаємо в Meredian",
         "body": "Це ваш дашборд — тут тренування на сьогодні та тижневий прогрес. Створімо перше тренування: відкрийте Плани внизу."
       },
       "newPlan": {
@@ -132,7 +132,7 @@
   "settings": {
     "title": "Налаштування",
     "appearance": "Оформлення",
-    "appearanceDesc": "Оберіть, як Meridian виглядає на цьому пристрої.",
+    "appearanceDesc": "Оберіть, як Meredian виглядає на цьому пристрої.",
     "profile": "Профіль",
     "displayName": "Відображуване ім'я",
     "displayNamePlaceholder": "Ваше ім'я",
@@ -167,7 +167,7 @@
     "prTimeline": "Історія рекордів",
     "prTimelineDesc": "Кожного разу, коли ви досягаєте нового розрахункового 1ПМ",
     "share": "Поділитися рекордом",
-    "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meridian"
+    "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meredian"
   },
   "plans": {
     "title": "Плани",
@@ -397,7 +397,7 @@
     "addToCalendar": "Додати в Apple/Outlook календар",
     "addToGoogleCalendar": "Додати в Google Календар",
     "calendarEventTitle": "Тренування: {plan}",
-    "calendarEventDescription": "Заплановано в Meridian."
+    "calendarEventDescription": "Заплановано в Meredian."
   },
   "quickAdd": {
     "scheduleSession": "Запланувати тренування",
@@ -646,7 +646,7 @@
     "core": "Кор"
   },
   "install": {
-    "title": "Встановити Meridian",
+    "title": "Встановити Meredian",
     "subtitle": "Додайте на екран для повноекранного доступу",
     "action": "Встановити",
     "dismiss": "Закрити"

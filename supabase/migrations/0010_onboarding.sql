@@ -1,4 +1,4 @@
--- Meridian — onboarding profile fields
+-- Meredian — onboarding profile fields
 -- Sex, height, goal (type + target weight) and an onboarding-completed flag.
 -- Starting body weight is stored as the first row in body_measurements.
 

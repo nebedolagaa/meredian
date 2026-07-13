@@ -1,4 +1,4 @@
--- Meridian — weekly training goal
+-- Meredian — weekly training goal
 -- Sessions-per-week target that powers the streak system and weekly progress.
 
 alter table profiles

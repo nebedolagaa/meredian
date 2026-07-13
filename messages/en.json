@@ -82,7 +82,7 @@
     "skipTour": "Skip tour",
     "steps": {
       "welcome": {
-        "title": "Welcome to Meridian",
+        "title": "Welcome to Meredian",
         "body": "This is your dashboard — today's workout and weekly progress live here. Let's create your first workout: open Plans below."
       },
       "newPlan": {
@@ -132,7 +132,7 @@
   "settings": {
     "title": "Settings",
     "appearance": "Appearance",
-    "appearanceDesc": "Choose how Meridian looks on this device.",
+    "appearanceDesc": "Choose how Meredian looks on this device.",
     "profile": "Profile",
     "displayName": "Display name",
     "displayNamePlaceholder": "Your name",
@@ -167,7 +167,7 @@
     "prTimeline": "PR timeline",
     "prTimelineDesc": "Every time you set a new estimated 1RM",
     "share": "Share record",
-    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian"
   },
   "plans": {
     "title": "Plans",
@@ -397,7 +397,7 @@
     "addToCalendar": "Add to Apple Calendar",
     "addToGoogleCalendar": "Add to Google Calendar",
     "calendarEventTitle": "Workout: {plan}",
-    "calendarEventDescription": "Planned in Meridian."
+    "calendarEventDescription": "Planned in Meredian."
   },
   "quickAdd": {
     "scheduleSession": "Schedule a session",
@@ -646,7 +646,7 @@
     "core": "Core"
   },
   "install": {
-    "title": "Install Meridian",
+    "title": "Install Meredian",
     "subtitle": "Add to your home screen for full-screen access",
     "action": "Install",
     "dismiss": "Dismiss"

@@ -1,9 +1,9 @@
-// Meridian service worker — app-shell + offline fallback.
+// Meredian service worker — app-shell + offline fallback.
 // Strategy: network-first for navigations (so dynamic, authed pages stay fresh),
 // cache-first for static assets, and an offline fallback page when the network
 // is unavailable.
 
-const CACHE = "meridian-v1";
+const CACHE = "meredian-v1";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE = [OFFLINE_URL, "/icon.svg", "/manifest.webmanifest"];
 

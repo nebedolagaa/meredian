@@ -26,7 +26,7 @@ export function SessionReminder({
 
     // Only notify once per day per device.
     const today = new Date().toISOString().slice(0, 10);
-    const key = "meridian-reminder-shown";
+    const key = "meredian-reminder-shown";
     if (localStorage.getItem(key) === today) return;
     localStorage.setItem(key, today);
 

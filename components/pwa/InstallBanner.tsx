@@ -9,7 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "meridian-install-dismissed";
+const DISMISS_KEY = "meredian-install-dismissed";
 
 /**
  * Shows an "Add to home screen" banner on Android/desktop Chromium where the

@@ -18,7 +18,7 @@ import {
  * palette when selected.
  */
 
-/** Per-group accent colors (Tailwind 500 hues around the Meridian palette). */
+/** Per-group accent colors (Tailwind 500 hues around the Meredian palette). */
 export const MUSCLE_COLORS: Record<PrimaryMuscle, string> = {
   chest: "#6366F1", // indigo — brand steel
   back: "#8B5CF6", // violet

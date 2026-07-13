@@ -10,7 +10,7 @@ import {
 
 export type Theme = "dark" | "light";
 
-const STORAGE_KEY = "meridian-theme";
+const STORAGE_KEY = "meredian-theme";
 
 type ThemeContextValue = {
   theme: Theme;

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Meridian raw palette — LIGHT theme (default). "Indigo Pulse".
+    /* Meredian raw palette — LIGHT theme (default). "Indigo Pulse".
        Palette colors are stored as space-separated RGB channels so Tailwind
        opacity modifiers (e.g. bg-steel/90) keep working. */
     --carbon: 245 246 250; /* page background #F5F6FA */
@@ -47,7 +47,7 @@
   }
 
   .dark {
-    /* Meridian raw palette — DARK theme. "Indigo Pulse". */
+    /* Meredian raw palette — DARK theme. "Indigo Pulse". */
     --carbon: 15 16 21; /* carbon #0F1015 */
     --graphite: 24 26 33; /* graphite #181A21 */
     --panel-border: rgba(255, 255, 255, 0.08);

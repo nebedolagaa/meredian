@@ -1,4 +1,4 @@
--- Meridian — opt-in session reminders
+-- Meredian — opt-in session reminders
 -- When enabled, the app shows a browser notification for a session scheduled
 -- today that hasn't been completed yet (delivered while the app is open).
 

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
  * actually perform each step (create the plan, schedule it, start it).
  */
 
-export const TOUR_KEY = "meridian.tour";
+export const TOUR_KEY = "meredian.tour";
 
 export function startGuidedTour() {
   try {
