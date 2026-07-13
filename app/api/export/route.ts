@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(JSON.stringify(rows, null, 2), {
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="meridian-export-${stamp}.json"`,
+        "Content-Disposition": `attachment; filename="meredian-export-${stamp}.json"`,
       },
     });
   }
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(lines.join("\n"), {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="meridian-export-${stamp}.csv"`,
+      "Content-Disposition": `attachment; filename="meredian-export-${stamp}.csv"`,
     },
   });
 }

@@ -1,4 +1,4 @@
--- Meridian — body-map muscle targeting
+-- Meredian — body-map muscle targeting
 -- Adds exercises.primary_muscle with fine-grained values used by the
 -- interactive body illustration in the plan builder, backfills the seed
 -- catalog and adds a few new global exercises so every muscle region has

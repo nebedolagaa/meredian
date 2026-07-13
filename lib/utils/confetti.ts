@@ -3,7 +3,7 @@
 /**
  * Dependency-free confetti burst built with the Web Animations API. Respects
  * `prefers-reduced-motion` and cleans up after itself. Colours default to the
- * Meridian accent palette.
+ * Meredian accent palette.
  */
 export function fireConfetti(options?: { count?: number; colors?: string[] }) {
   if (typeof document === "undefined") return;

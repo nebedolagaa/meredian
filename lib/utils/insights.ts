@@ -1,5 +1,5 @@
 /**
- * Rule-based insight engine for Meridian.
+ * Rule-based insight engine for Meredian.
  *
  * Pure functions over normalised session data. No DB access here —
  * callers assemble the input shape and render the resulting insights.

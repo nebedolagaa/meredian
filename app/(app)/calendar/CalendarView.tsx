@@ -184,10 +184,10 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
     const lines = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Meridian//Workout Calendar//EN",
+      "PRODID:-//Meredian//Workout Calendar//EN",
       "CALSCALE:GREGORIAN",
       "BEGIN:VEVENT",
-      `UID:${session.id}@meridian.app`,
+      `UID:${session.id}@meredian.fit`,
       `DTSTAMP:${stamp}`,
       `DTSTART;VALUE=DATE:${start}`,
       `DTEND;VALUE=DATE:${end}`,
@@ -203,7 +203,7 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `meridian-workout-${session.scheduled_date}.ics`;
+    a.download = `meredian-workout-${session.scheduled_date}.ics`;
     document.body.appendChild(a);
     a.click();
     a.remove();

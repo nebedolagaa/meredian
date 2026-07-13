@@ -1,4 +1,4 @@
--- Meridian — body weight / measurements tracking
+-- Meredian — body weight / measurements tracking
 -- A lightweight log of the user's body weight over time (stored in kg).
 
 create table if not exists body_measurements (

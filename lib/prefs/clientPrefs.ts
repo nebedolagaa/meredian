@@ -5,8 +5,8 @@
  * require a database migration. Used for tactile/audio feedback toggles.
  */
 
-const HAPTICS_KEY = "meridian.haptics";
-const SOUND_KEY = "meridian.sound";
+const HAPTICS_KEY = "meredian.haptics";
+const SOUND_KEY = "meredian.sound";
 
 function read(key: string): boolean {
   if (typeof localStorage === "undefined") return true;

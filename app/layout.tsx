@@ -28,15 +28,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Meridian — Train with precision.",
+  title: "Meredian — Train with precision.",
   description:
     "A training planner and analytics tool. Plan your workouts, log reality, and surface insights over time.",
   manifest: "/manifest.webmanifest",
-  applicationName: "Meridian",
+  applicationName: "Meredian",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Meridian",
+    title: "Meredian",
   },
   icons: {
     icon: "/icon.svg",

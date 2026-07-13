@@ -1,4 +1,4 @@
--- Meridian — exercise catalog metadata
+-- Meredian — exercise catalog metadata
 -- Adds category columns used by the exercise library filters:
 --   exercise_type  : 'compound' | 'isolation'
 --   equipment      : 'barbell' | 'dumbbell' | 'cable' | 'machine' | 'bodyweight'

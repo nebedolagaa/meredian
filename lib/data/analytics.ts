@@ -61,7 +61,7 @@ export interface AnalyticsData {
   recordTimeline: RecordEvent[];
   /** Weekly-goal streak summary for the retention card. */
   streak: StreakResult;
-  /** ISO dates of completed sessions over the last 26 weeks (for the heatmap). */
+  /** ISO dates of completed sessions over the last 52 weeks (for the heatmap). */
   completedDates: string[];
 }
 
@@ -208,7 +208,7 @@ export async function getAnalyticsData(
   // Weekly-goal streak over a longer window than the 60-day analytics view so
   // longest-streak detection isn't artificially capped.
   const streakSince = new Date();
-  streakSince.setDate(streakSince.getDate() - 26 * 7);
+  streakSince.setDate(streakSince.getDate() - 52 * 7);
   const { data: streakRows } = await supabase
     .from("workout_sessions")
     .select("scheduled_date")

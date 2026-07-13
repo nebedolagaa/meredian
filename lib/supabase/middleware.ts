@@ -48,19 +48,28 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/update-password") ||
     pathname.startsWith("/auth/callback");
 
+  // Redirect responses must carry the refreshed session cookies, otherwise the
+  // browser keeps its expired tokens and every follow-up request redirects
+  // again — an infinite reload loop.
+  const redirectTo = (path: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = path;
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies
+      .getAll()
+      .forEach((cookie) => response.cookies.set(cookie));
+    return response;
+  };
+
   // Unauthenticated users trying to reach app routes -> login
   if (!user && !isPublicRoute && pathname !== "/") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return redirectTo("/login");
   }
 
   // Authenticated users on the login/signup screens -> dashboard.
   // (The password recovery routes stay reachable while signed in.)
   if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    return redirectTo("/dashboard");
   }
 
   return supabaseResponse;

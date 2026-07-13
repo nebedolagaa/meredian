@@ -1,5 +1,5 @@
 /**
- * Rule-based progressive-overload engine for Meridian.
+ * Rule-based progressive-overload engine for Meredian.
  *
  * Given how an exercise went in the most recent completed session, recommend the
  * working weight for the next one. This is the deterministic core behind the

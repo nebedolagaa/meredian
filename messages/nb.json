@@ -82,7 +82,7 @@
     "skipTour": "Hopp over omvisning",
     "steps": {
       "welcome": {
-        "title": "Velkommen til Meridian",
+        "title": "Velkommen til Meredian",
         "body": "Dette er dashbordet ditt — her finner du dagens økt og ukentlig fremgang. La oss lage din første treningsøkt: åpne Planer nederst."
       },
       "newPlan": {
@@ -132,7 +132,7 @@
   "settings": {
     "title": "Innstillinger",
     "appearance": "Utseende",
-    "appearanceDesc": "Velg hvordan Meridian ser ut på denne enheten.",
+    "appearanceDesc": "Velg hvordan Meredian ser ut på denne enheten.",
     "profile": "Profil",
     "displayName": "Visningsnavn",
     "displayNamePlaceholder": "Navnet ditt",
@@ -167,7 +167,7 @@
     "prTimeline": "Rekordhistorikk",
     "prTimelineDesc": "Hver gang du setter en ny estimert 1RM",
     "share": "Del rekord",
-    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meridian"
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian"
   },
   "plans": {
     "title": "Planer",
@@ -397,7 +397,7 @@
     "addToCalendar": "Legg til i Apple/Outlook-kalender",
     "addToGoogleCalendar": "Legg til i Google Kalender",
     "calendarEventTitle": "Økt: {plan}",
-    "calendarEventDescription": "Planlagt i Meridian."
+    "calendarEventDescription": "Planlagt i Meredian."
   },
   "quickAdd": {
     "scheduleSession": "Planlegg en økt",
@@ -646,7 +646,7 @@
     "core": "Kjerne"
   },
   "install": {
-    "title": "Installer Meridian",
+    "title": "Installer Meredian",
     "subtitle": "Legg til på startskjermen for fullskjermtilgang",
     "action": "Installer",
     "dismiss": "Lukk"

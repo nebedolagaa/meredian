@@ -17,7 +17,7 @@ export function Wordmark({
           className="block h-3 w-3 rounded-full border-2 border-steel"
         />
         <span className="font-display text-2xl font-bold tracking-tight text-bone">
-          Meridian
+          Meredian
         </span>
       </div>
       {showTagline && (

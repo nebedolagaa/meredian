@@ -15,7 +15,7 @@ const config: Config = {
     },
     extend: {
       colors: {
-        // Meridian palette — theme-aware (driven by CSS variables in globals.css)
+        // Meredian palette — theme-aware (driven by CSS variables in globals.css)
         carbon: "rgb(var(--carbon) / <alpha-value>)",
         graphite: "rgb(var(--graphite) / <alpha-value>)",
         bone: {

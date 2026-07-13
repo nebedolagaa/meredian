@@ -1,4 +1,4 @@
--- Meridian — seed global exercises (user_id = null)
+-- Meredian — seed global exercises (user_id = null)
 -- Idempotent: only inserts a global exercise if no global row with that name exists.
 
 insert into exercises (name, muscle_group)

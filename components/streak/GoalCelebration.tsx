@@ -23,7 +23,7 @@ function isoWeekKey(d = new Date()): string {
  */
 export function GoalCelebration() {
   useEffect(() => {
-    const storeKey = "meridian.goalCelebrated";
+    const storeKey = "meredian.goalCelebrated";
     const week = isoWeekKey();
     try {
       if (localStorage.getItem(storeKey) === week) return;

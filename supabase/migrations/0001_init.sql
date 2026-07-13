@@ -1,4 +1,4 @@
--- Meridian — initial schema
+-- Meredian — initial schema
 -- Run in the Supabase SQL editor or via the Supabase CLI.
 
 -- ─────────────────────────────────────────────────────────────
