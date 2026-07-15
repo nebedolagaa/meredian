@@ -18,11 +18,17 @@ export function FeedbackToggles() {
   const t = useTranslations("feedback");
   const [haptics, setHaptics] = useState(true);
   const [sound, setSound] = useState(true);
+  const [vibrationSupported, setVibrationSupported] = useState(true);
 
-  // Preferences live in localStorage, so read them after mount.
+  // Preferences live in localStorage, so read them after mount. Vibration
+  // support is a device fact: iOS Safari/WebKit has no Vibration API at all,
+  // so on iPhone/iPad the toggle would be a lie — say so instead.
   useEffect(() => {
     setHaptics(getHapticsEnabled());
     setSound(getSoundEnabled());
+    setVibrationSupported(
+      typeof navigator !== "undefined" && "vibrate" in navigator,
+    );
   }, []);
 
   function toggleHaptics() {
@@ -44,8 +50,11 @@ export function FeedbackToggles() {
       <ToggleRow
         icon={Vibrate}
         label={t("haptics")}
-        description={t("hapticsDesc")}
-        enabled={haptics}
+        description={
+          vibrationSupported ? t("hapticsDesc") : t("hapticsUnsupported")
+        }
+        enabled={vibrationSupported && haptics}
+        disabled={!vibrationSupported}
         onToggle={toggleHaptics}
       />
       <ToggleRow
@@ -64,12 +73,14 @@ function ToggleRow({
   label,
   description,
   enabled,
+  disabled = false,
   onToggle,
 }: {
   icon: ComponentType<{ className?: string }>;
   label: string;
   description: string;
   enabled: boolean;
+  disabled?: boolean;
   onToggle: () => void;
 }) {
   return (
@@ -86,9 +97,10 @@ function ToggleRow({
         role="switch"
         aria-checked={enabled}
         aria-label={label}
+        disabled={disabled}
         onClick={onToggle}
         className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
+          "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:opacity-40",
           enabled ? "bg-moss" : "bg-carbon border border-panel-border",
         )}
       >

@@ -15,7 +15,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/app/actions/auth";
+import { SignOutForm } from "@/components/auth/SignOutForm";
 import { DisplayNameForm } from "@/components/settings/DisplayNameForm";
 import { ThemeSegmented } from "@/components/theme/ThemeToggle";
 import { LanguageSelect } from "@/components/i18n/LanguageSelect";
@@ -217,12 +217,12 @@ export default async function ProfilePage() {
         </SettingRow>
       </SettingsGroup>
 
-      <form action={signOut}>
+      <SignOutForm>
         <Button type="submit" variant="destructive" className="w-full">
           <LogOut className="h-4 w-4" />
           {t("signOut")}
         </Button>
-      </form>
+      </SignOutForm>
 
       <SettingsGroup title={tAccount("dangerZone")}>
         <div className="p-4">

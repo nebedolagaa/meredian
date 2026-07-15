@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   CheckCircle2,
+  Check,
+  ChevronsDownUp,
   Flag,
+  Flame,
   MoreVertical,
+  Share2,
   Trash2,
   SkipForward,
   Trophy,
@@ -14,13 +19,20 @@ import {
   TrendingDown,
   RotateCcw,
   ChevronDown,
+  ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast/store";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { SetInput, type SetState } from "@/components/session/SetInput";
+import {
+  SetInput,
+  type SetState,
+  type SetInputMode,
+} from "@/components/session/SetInput";
 import { RestTimer } from "@/components/session/RestTimer";
 import { PlateCalculator } from "@/components/session/PlateCalculator";
 import { RescheduleControl } from "@/components/session/RescheduleControl";
@@ -37,6 +49,8 @@ import {
   startSession,
   deleteSession,
   setSessionStatus,
+  updateSessionNotes,
+  swapPlanExercise,
   type LogInput,
 } from "@/app/actions/sessions";
 import { totalVolume } from "@/lib/utils/volume";
@@ -48,15 +62,21 @@ import {
   type ProgressionResult,
 } from "@/lib/utils/progression";
 import { estimateOneRepMax } from "@/lib/utils/records";
+import { durationMinutes, formatDuration } from "@/lib/utils/duration";
 import {
   formatVolume,
   toDisplayWeight,
+  toKg,
   unitLabel,
   type WeightUnit,
 } from "@/lib/utils/units";
 
 export interface RunnerExercise {
   plan_exercise_id: string;
+  exercise_id?: string | null;
+  primary_muscle?: string | null;
+  equipment?: string | null;
+  superset_group?: number | null;
   name: string;
   target_sets: number;
   target_reps: number;
@@ -71,28 +91,77 @@ export interface RunnerExercise {
 export interface SessionRunnerProps {
   sessionId: string;
   planName: string;
+  /** ISO date — used for logic (reschedule control). */
   date: string;
+  /** Localized date for display; falls back to the ISO date. */
+  dateLabel?: string;
   status: string;
   exercises: RunnerExercise[];
   unit?: WeightUnit;
   restSeconds?: number;
   notes?: string | null;
+  /** When the session actually started (ISO timestamp) — drives duration. */
+  startedAt?: string | null;
 }
+
+interface SessionDraft {
+  v: 1;
+  notes: string;
+  sets: Record<string, SetState[]>;
+}
+
+const draftKey = (sessionId: string) => `meredian.sessionDraft.${sessionId}`;
+
+function loadDraft(sessionId: string): SessionDraft | null {
+  try {
+    const raw = localStorage.getItem(draftKey(sessionId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SessionDraft;
+    return parsed && parsed.v === 1 ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft(sessionId: string) {
+  try {
+    localStorage.removeItem(draftKey(sessionId));
+  } catch {
+    // ignore
+  }
+}
+
+/** Warm-up ramp: fraction of the working weight × reps. */
+const WARMUP_STEPS = [
+  { fraction: 0.4, reps: 8 },
+  { fraction: 0.6, reps: 5 },
+  { fraction: 0.8, reps: 3 },
+];
+
+function roundToPlate(kg: number): number {
+  return Math.max(0, Math.round(kg / 2.5) * 2.5);
+}
+
+const restTimerKey = (planExerciseId: string) =>
+  `meredian.restTimer.${planExerciseId}`;
 
 export function SessionRunner({
   sessionId,
   planName,
   date,
+  dateLabel,
   status,
   exercises: initial,
   unit = "kg",
   restSeconds = 90,
   notes,
+  startedAt,
 }: SessionRunnerProps) {
   const router = useRouter();
   const t = useTranslations("session");
   const tProg = useTranslations("progression");
   const tStatus = useTranslations("status");
+  const tToast = useTranslations("toast");
   const [exercises, setExercises] = useState<RunnerExercise[]>(initial);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -101,13 +170,91 @@ export function SessionRunner({
   const [manageOpen, setManageOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [sessionNotes, setSessionNotes] = useState(notes ?? "");
+  const [started, setStarted] = useState(false);
+  const [swapFor, setSwapFor] = useState<RunnerExercise | null>(null);
+  const [durationMin, setDurationMin] = useState<number | null>(null);
   const completed = status === "completed";
+  const inProgress = !completed && (started || status === "in_progress");
   const startRestRefs = useRef<Map<string, () => void>>(new Map());
+  const restoredRef = useRef(false);
+  const displayDate = dateLabel ?? date;
+
+  const setInputMode = (ex: RunnerExercise): SetInputMode =>
+    ex.equipment === "bodyweight" ? "bodyweight" : "weight";
+
+  // Restore an unsent draft (the browser may have unloaded the PWA mid-set).
+  // localStorage is client-only, so this runs after hydration; the state
+  // update is deferred a tick to keep the effect body synchronous-free.
+  useEffect(() => {
+    if (completed) {
+      // Finished elsewhere (or revisited later): the draft is obsolete —
+      // clean it up so meredian.sessionDraft.* keys don't accumulate.
+      clearDraft(sessionId);
+      restoredRef.current = true;
+      return;
+    }
+    const draft = loadDraft(sessionId);
+    if (!draft) {
+      restoredRef.current = true;
+      return;
+    }
+    const id = window.setTimeout(() => {
+      setExercises((exs) =>
+        exs.map((ex) => {
+          const saved = draft.sets[ex.plan_exercise_id];
+          // The draft may hold MORE sets than the server-built list (warm-ups
+          // are client-only until finish) — a superset draft wins.
+          return saved && saved.length >= ex.sets.length
+            ? { ...ex, sets: saved }
+            : ex;
+        }),
+      );
+      if (draft.notes) setSessionNotes(draft.notes);
+      restoredRef.current = true;
+
+      // Jump back to where the workout left off: the first exercise that
+      // still has an open set.
+      const firstOpen = Object.entries(draft.sets).find(([, sets]) =>
+        sets.some((s) => !s.completed),
+      );
+      const hasProgress = Object.values(draft.sets).some((sets) =>
+        sets.some((s) => s.completed),
+      );
+      if (hasProgress) {
+        const targetId = firstOpen?.[0];
+        requestAnimationFrame(() => {
+          document
+            .getElementById(targetId ? `ex-${targetId}` : "session-finish-bar")
+            ?.scrollIntoView({ block: "center", behavior: "smooth" });
+        });
+      }
+    }, 0);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave every edit so nothing is lost until the session is finished.
+  useEffect(() => {
+    if (completed || !restoredRef.current) return;
+    try {
+      const draft: SessionDraft = {
+        v: 1,
+        notes: sessionNotes,
+        sets: Object.fromEntries(
+          exercises.map((ex) => [ex.plan_exercise_id, ex.sets]),
+        ),
+      };
+      localStorage.setItem(draftKey(sessionId), JSON.stringify(draft));
+    } catch {
+      // Quota errors are non-fatal — worst case the draft is stale.
+    }
+  }, [exercises, sessionNotes, completed, sessionId]);
 
   // Keep the screen awake while a workout is actively in progress.
   useEffect(() => {
-    if (status !== "in_progress") return;
+    if (!inProgress) return;
     if (typeof navigator === "undefined" || !("wakeLock" in navigator)) return;
 
     let lock: WakeLockSentinel | null = null;
@@ -131,7 +278,7 @@ export function SessionRunner({
       document.removeEventListener("visibilitychange", onVisibility);
       lock?.release().catch(() => {});
     };
-  }, [status]);
+  }, [inProgress]);
 
   function updateSet(
     exId: string,
@@ -146,6 +293,20 @@ export function SessionRunner({
         startRestRefs.current.get(exId)?.();
         haptic("success");
         playFeedbackSound("tap");
+        // First completed set implicitly starts the session — no extra tap.
+        if (!completed && !started && status === "planned") {
+          setStarted(true);
+          startSession(sessionId).catch(() => {});
+        }
+        // Collapse the card once its last set is done.
+        if (
+          ex &&
+          ex.sets.every((s) =>
+            s.set_number === setNumber ? true : s.completed,
+          )
+        ) {
+          setCollapsedIds((prevIds) => new Set(prevIds).add(exId));
+        }
       }
     }
     setExercises((exs) =>
@@ -171,7 +332,18 @@ export function SessionRunner({
     });
   }
 
-  function bumpWeight(exId: string, delta: number) {
+  function toggleCollapsed(exId: string) {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(exId)) next.delete(exId);
+      else next.add(exId);
+      return next;
+    });
+  }
+
+  function bumpWeight(exId: string, displayDelta: number) {
+    // The delta arrives in the user's display unit (kg or lb).
+    const deltaKg = toKg(displayDelta, unit);
     setExercises((exs) =>
       exs.map((ex) =>
         ex.plan_exercise_id !== exId
@@ -183,7 +355,7 @@ export function SessionRunner({
                   ? s
                   : {
                       ...s,
-                      weight: Math.max(0, +(s.weight + delta).toFixed(2)),
+                      weight: Math.max(0, +(s.weight + deltaKg).toFixed(2)),
                     },
               ),
             },
@@ -208,11 +380,40 @@ export function SessionRunner({
     );
   }
 
+  // Prepend a 40/60/80% ramp before the working sets.
+  function addWarmup(exId: string) {
+    setExercises((exs) =>
+      exs.map((ex) => {
+        if (ex.plan_exercise_id !== exId) return ex;
+        const working =
+          ex.sets.find((s) => !s.completed)?.weight ?? ex.target_weight;
+        if (working <= 0) return ex;
+        const warmups: SetState[] = WARMUP_STEPS.map((step, i) => ({
+          set_number: i + 1,
+          reps: step.reps,
+          weight: roundToPlate(working * step.fraction),
+          completed: false,
+          rpe: null,
+          note: null,
+        }));
+        const renumbered = ex.sets.map((s, i) => ({
+          ...s,
+          set_number: warmups.length + i + 1,
+        }));
+        return { ...ex, sets: [...warmups, ...renumbered] };
+      }),
+    );
+    haptic("tap");
+  }
+
   // Progression recommendations are derived from prior performance (props), so
   // compute them once from the initial data rather than on every set edit.
   const recById = useMemo(() => {
     const map = new Map<string, ProgressionResult>();
     for (const ex of initial) {
+      // Bodyweight moves have no weight field to apply a suggestion to (see
+      // setInputMode below) — don't recommend a weight bump for them.
+      if (ex.equipment === "bodyweight") continue;
       const rec = recommendProgression({
         lastWeight: ex.lastResult?.weight ?? null,
         lastReps: ex.lastResult?.reps ?? null,
@@ -223,6 +424,19 @@ export function SessionRunner({
     }
     return map;
   }, [initial]);
+
+  // Consecutive exercises sharing a non-null superset_group render together
+  // with a single rest timer for the whole group.
+  const exerciseGroups = useMemo(() => {
+    const groups: { group: number | null; items: RunnerExercise[] }[] = [];
+    for (const ex of exercises) {
+      const last = groups[groups.length - 1];
+      const g = ex.superset_group ?? null;
+      if (last && g !== null && last.group === g) last.items.push(ex);
+      else groups.push({ group: g, items: [ex] });
+    }
+    return groups;
+  }, [exercises]);
 
   const allLogs = useMemo<LogInput[]>(
     () =>
@@ -269,10 +483,11 @@ export function SessionRunner({
   const completedSets = allLogs.filter((l) => l.completed).length;
   const totalSets = allLogs.length;
 
-  async function onStart() {
-    await startSession(sessionId);
-    router.refresh();
-  }
+  // "Exercise 3 of 6" — the first exercise that still has open sets.
+  const currentExerciseIndex = useMemo(() => {
+    const i = exercises.findIndex((ex) => ex.sets.some((s) => !s.completed));
+    return i === -1 ? exercises.length : i + 1;
+  }, [exercises]);
 
   async function onFinish() {
     setError(null);
@@ -284,6 +499,8 @@ export function SessionRunner({
       setError(result.error);
       return;
     }
+    clearDraft(sessionId);
+    setDurationMin(durationMinutes(startedAt, new Date().toISOString()));
     setNewPRs(prs);
     setSummaryOpen(true);
     if (prs.length > 0) {
@@ -313,6 +530,7 @@ export function SessionRunner({
       setError(result.error);
       return;
     }
+    clearDraft(sessionId);
     router.push("/dashboard");
     router.refresh();
   }
@@ -325,21 +543,273 @@ export function SessionRunner({
       setError(result.error);
       return;
     }
+    clearDraft(sessionId);
     setManageOpen(false);
     router.push("/dashboard");
     router.refresh();
+  }
+
+  async function shareSummary() {
+    const lines = [
+      `${planName} — ${displayDate}`,
+      t("shareVolume", {
+        volume: formatVolume(completedVolume, unit),
+        unit: unitLabel(unit),
+      }),
+      t("setsDone", { done: completedSets, total: totalSets }),
+    ];
+    if (durationMin != null)
+      lines.push(t("shareDuration", { duration: formatDuration(durationMin) }));
+    if (newPRs.length > 0)
+      lines.push(`${t("newPR", { count: newPRs.length })} ${newPRs.join(", ")}`);
+    lines.push("💪 Meredian");
+    const text = lines.join("\n");
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch {
+      // Share sheet dismissed — fall through to the clipboard.
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(tToast("summaryCopied"));
+    } catch {
+      // No clipboard access — show the text so it can be copied by hand.
+      toast(text, { duration: 0 });
+    }
+  }
+
+  function renderExercise(ex: RunnerExercise, options: { withTimer: boolean }) {
+    const rec = recById.get(ex.plan_exercise_id);
+    const mode = setInputMode(ex);
+    const workingWeight =
+      ex.sets.find((s) => !s.completed)?.weight ?? ex.target_weight;
+    const bestE1rm = Math.max(
+      0,
+      ...ex.sets
+        .filter((s) => s.completed && s.weight > 0)
+        .map((s) => estimateOneRepMax(s.weight, s.reps)),
+    );
+    const doneSets = ex.sets.filter((s) => s.completed).length;
+    const allDone = doneSets === ex.sets.length && ex.sets.length > 0;
+    const collapsed = !completed && collapsedIds.has(ex.plan_exercise_id);
+    const hasWarmup = ex.sets.length > ex.target_sets;
+
+    if (collapsed) {
+      return (
+        <div key={ex.plan_exercise_id} id={`ex-${ex.plan_exercise_id}`}>
+          <button
+            type="button"
+            onClick={() => toggleCollapsed(ex.plan_exercise_id)}
+            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-panel-border bg-graphite p-4 text-left transition-colors hover:border-steel/40"
+          >
+            <span className="flex min-w-0 items-center gap-2.5">
+              {allDone && (
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-moss/15 text-moss">
+                  <Check className="h-4 w-4" />
+                </span>
+              )}
+              <span className="truncate font-semibold text-bone">
+                {ex.name}
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center gap-2 font-num text-xs tabular-nums text-bone-dim">
+              {t("setsDone", { done: doneSets, total: ex.sets.length })}
+              <ChevronDown className="h-4 w-4" />
+            </span>
+          </button>
+          {/* Keep a (visually idle-hidden) timer mounted so the rest started
+              by the final set survives the auto-collapse. */}
+          {!completed && options.withTimer && (
+            <RestTimer
+              defaultSeconds={ex.rest_seconds ?? restSeconds}
+              storageKey={restTimerKey(ex.plan_exercise_id)}
+              hideIdle
+              registerStart={(fn) =>
+                startRestRefs.current.set(ex.plan_exercise_id, fn)
+              }
+            />
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        key={ex.plan_exercise_id}
+        id={`ex-${ex.plan_exercise_id}`}
+        className="rounded-2xl border border-panel-border bg-graphite p-4"
+      >
+        <div className="mb-2 flex flex-col gap-0.5">
+          <div className="flex items-center justify-between gap-2">
+            {/* Name links to the exercise's PR + progress page. */}
+            <Link
+              href={`/exercise/${encodeURIComponent(ex.name)}`}
+              className="min-w-0 truncate text-lg font-semibold text-bone transition-colors hover:text-steel"
+            >
+              {ex.name}
+            </Link>
+            <div className="flex shrink-0 items-center gap-0.5">
+              {!completed && ex.exercise_id && (
+                <button
+                  type="button"
+                  aria-label={t("replaceExercise")}
+                  onClick={() => setSwapFor(ex)}
+                  className="rounded-md p-1 text-bone-dim transition-colors hover:text-bone"
+                >
+                  <ArrowLeftRight className="h-4 w-4" />
+                </button>
+              )}
+              {!completed && allDone && (
+                <button
+                  type="button"
+                  aria-label={t("collapseExercise")}
+                  onClick={() => toggleCollapsed(ex.plan_exercise_id)}
+                  className="rounded-md p-1 text-bone-dim transition-colors hover:text-bone"
+                >
+                  <ChevronsDownUp className="h-4 w-4" />
+                </button>
+              )}
+              {(bestE1rm > 0 || workingWeight > 0) && (
+                <button
+                  type="button"
+                  aria-label={t("exerciseDetails")}
+                  aria-expanded={expandedIds.has(ex.plan_exercise_id)}
+                  onClick={() => toggleDetails(ex.plan_exercise_id)}
+                  className="rounded-md p-1 text-bone-dim transition-colors hover:text-bone"
+                >
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform",
+                      expandedIds.has(ex.plan_exercise_id) && "rotate-180",
+                    )}
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+          <p className="font-num text-xs tabular-nums text-bone-dim">
+            {t("target", {
+              sets: ex.target_sets,
+              reps: ex.target_reps,
+              weight: ex.target_weight,
+              unit: unitLabel(unit),
+            })}
+          </p>
+          {ex.lastResult && (
+            <p className="font-num text-xs tabular-nums text-steel">
+              {t("lastTime", {
+                weight: toDisplayWeight(ex.lastResult.weight, unit),
+                unit: unitLabel(unit),
+                reps: ex.lastResult.reps,
+              })}
+            </p>
+          )}
+          {expandedIds.has(ex.plan_exercise_id) && (
+            <>
+              {bestE1rm > 0 && (
+                <p className="font-num text-xs tabular-nums text-moss">
+                  {t("e1rm", {
+                    weight: toDisplayWeight(bestE1rm, unit),
+                    unit: unitLabel(unit),
+                  })}
+                </p>
+              )}
+              <div className="mt-1">
+                <PlateCalculator weightKg={workingWeight} unit={unit} />
+              </div>
+            </>
+          )}
+          {!completed && rec && (
+            <ProgressionBanner
+              rec={rec}
+              label={tProg(rec.reasonKey)}
+              suggestedLabel={tProg("suggested", {
+                weight: toDisplayWeight(rec.suggestedWeightKg, unit),
+                unit: unitLabel(unit),
+              })}
+              applyLabel={tProg("apply", {
+                weight: toDisplayWeight(rec.suggestedWeightKg, unit),
+                unit: unitLabel(unit),
+              })}
+              onApply={() =>
+                applyWeight(ex.plan_exercise_id, rec.suggestedWeightKg)
+              }
+            />
+          )}
+          {!completed && mode === "weight" && (
+            <div className="mt-1 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => bumpWeight(ex.plan_exercise_id, -2.5)}
+                className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
+              >
+                -2.5
+              </button>
+              <button
+                type="button"
+                onClick={() => bumpWeight(ex.plan_exercise_id, 2.5)}
+                className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
+              >
+                +2.5{unitLabel(unit)}
+              </button>
+              {!hasWarmup && doneSets === 0 && workingWeight > 0 && (
+                <button
+                  type="button"
+                  onClick={() => addWarmup(ex.plan_exercise_id)}
+                  className="flex items-center gap-1 rounded-lg border border-panel-border px-2 py-0.5 text-xs text-bone-dim transition-colors hover:text-bone"
+                >
+                  <Flame className="h-3 w-3" />
+                  {t("addWarmup")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="divide-y divide-panel-border">
+          {ex.sets.map((s) => (
+            <SetInput
+              key={s.set_number}
+              set={s}
+              targetReps={ex.target_reps}
+              targetWeight={ex.target_weight}
+              unit={unit}
+              mode={mode}
+              onChange={(patch) =>
+                updateSet(ex.plan_exercise_id, s.set_number, patch)
+              }
+            />
+          ))}
+        </div>
+        {!completed && options.withTimer && (
+          <div className="mt-2 flex justify-center">
+            <RestTimer
+              defaultSeconds={ex.rest_seconds ?? restSeconds}
+              storageKey={restTimerKey(ex.plan_exercise_id)}
+              registerStart={(fn) =>
+                startRestRefs.current.set(ex.plan_exercise_id, fn)
+              }
+            />
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-5 pb-28">
       <PageHeader
         title={planName}
-        subtitle={date}
+        subtitle={displayDate}
         backHref="/dashboard"
         action={
           <div className="flex items-center gap-2">
             <Badge variant={completed ? "moss" : "steel"}>
-              {tStatus(status)}
+              {tStatus(
+                inProgress && status === "planned" ? "in_progress" : status,
+              )}
             </Badge>
             <button
               type="button"
@@ -353,145 +823,43 @@ export function SessionRunner({
         }
       />
 
-      {status === "planned" && (
-        <Button onClick={onStart} variant="outline">
-          {t("startSession")}
-        </Button>
-      )}
-
       <div className="flex flex-col gap-5">
-        {exercises.map((ex) => {
-          const rec = recById.get(ex.plan_exercise_id);
-          const workingWeight =
-            ex.sets.find((s) => !s.completed)?.weight ?? ex.target_weight;
-          const bestE1rm = Math.max(
-            0,
-            ...ex.sets
-              .filter((s) => s.completed && s.weight > 0)
-              .map((s) => estimateOneRepMax(s.weight, s.reps)),
-          );
-          return (
+        {exerciseGroups.map((group, gi) =>
+          group.items.length > 1 ? (
             <div
-              key={ex.plan_exercise_id}
-              className="rounded-2xl border border-panel-border bg-graphite p-4"
+              key={`group-${gi}`}
+              className="flex flex-col gap-3 rounded-2xl border border-steel/30 p-2"
             >
-              <div className="mb-2 flex flex-col gap-0.5">
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-lg font-semibold text-bone">
-                    {ex.name}
-                  </h3>
-                  {(bestE1rm > 0 || workingWeight > 0) && (
-                    <button
-                      type="button"
-                      aria-label={t("exerciseDetails")}
-                      aria-expanded={expandedIds.has(ex.plan_exercise_id)}
-                      onClick={() => toggleDetails(ex.plan_exercise_id)}
-                      className="rounded-md p-1 text-bone-dim transition-colors hover:text-bone"
-                    >
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 transition-transform",
-                          expandedIds.has(ex.plan_exercise_id) && "rotate-180",
-                        )}
-                      />
-                    </button>
-                  )}
-                </div>
-                <p className="font-num text-xs tabular-nums text-bone-dim">
-                  {t("target", {
-                    sets: ex.target_sets,
-                    reps: ex.target_reps,
-                    weight: ex.target_weight,
-                    unit: unitLabel(unit),
-                  })}
-                </p>
-                {ex.lastResult && (
-                  <p className="font-num text-xs tabular-nums text-steel">
-                    {t("lastTime", {
-                      weight: toDisplayWeight(ex.lastResult.weight, unit),
-                      unit: unitLabel(unit),
-                      reps: ex.lastResult.reps,
-                    })}
-                  </p>
-                )}
-                {expandedIds.has(ex.plan_exercise_id) && (
-                  <>
-                    {bestE1rm > 0 && (
-                      <p className="font-num text-xs tabular-nums text-moss">
-                        {t("e1rm", {
-                          weight: toDisplayWeight(bestE1rm, unit),
-                          unit: unitLabel(unit),
-                        })}
-                      </p>
-                    )}
-                    <div className="mt-1">
-                      <PlateCalculator weightKg={workingWeight} unit={unit} />
-                    </div>
-                  </>
-                )}
-                {!completed && rec && (
-                  <ProgressionBanner
-                    rec={rec}
-                    label={tProg(rec.reasonKey)}
-                    suggestedLabel={tProg("suggested", {
-                      weight: toDisplayWeight(rec.suggestedWeightKg, unit),
-                      unit: unitLabel(unit),
-                    })}
-                    applyLabel={tProg("apply", {
-                      weight: toDisplayWeight(rec.suggestedWeightKg, unit),
-                      unit: unitLabel(unit),
-                    })}
-                    onApply={() =>
-                      applyWeight(ex.plan_exercise_id, rec.suggestedWeightKg)
-                    }
-                  />
-                )}
-                {!completed && (
-                  <div className="mt-1 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => bumpWeight(ex.plan_exercise_id, -2.5)}
-                      className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
-                    >
-                      -2.5
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => bumpWeight(ex.plan_exercise_id, 2.5)}
-                      className="rounded-lg border border-panel-border px-2 py-0.5 font-num text-xs tabular-nums text-bone-dim transition-colors hover:text-bone"
-                    >
-                      +2.5{unitLabel(unit)}
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="divide-y divide-panel-border">
-                {ex.sets.map((s) => (
-                  <SetInput
-                    key={s.set_number}
-                    set={s}
-                    targetReps={ex.target_reps}
-                    targetWeight={ex.target_weight}
-                    unit={unit}
-                    onChange={(patch) =>
-                      updateSet(ex.plan_exercise_id, s.set_number, patch)
-                    }
-                  />
-                ))}
-              </div>
+              <span className="flex items-center gap-1.5 px-2 pt-1 text-[10px] font-medium uppercase tracking-wide text-steel">
+                <ArrowLeftRight className="h-3 w-3" />
+                {t("superset")}
+              </span>
+              {group.items.map((ex) =>
+                renderExercise(ex, { withTimer: false }),
+              )}
+              {/* One shared rest timer per superset — rest after the round. */}
               {!completed && (
-                <div className="mt-2 flex justify-center">
+                <div className="flex justify-center pb-1">
                   <RestTimer
-                    defaultSeconds={ex.rest_seconds ?? restSeconds}
-                    registerStart={(fn) =>
-                      startRestRefs.current.set(ex.plan_exercise_id, fn)
+                    defaultSeconds={
+                      group.items[0].rest_seconds ?? restSeconds
                     }
+                    storageKey={restTimerKey(
+                      group.items[0].plan_exercise_id,
+                    )}
+                    registerStart={(fn) => {
+                      for (const ex of group.items) {
+                        startRestRefs.current.set(ex.plan_exercise_id, fn);
+                      }
+                    }}
                   />
                 </div>
               )}
             </div>
-          );
-        })}
+          ) : (
+            renderExercise(group.items[0], { withTimer: true })
+          ),
+        )}
 
         {exercises.length === 0 && (
           <p className="rounded-2xl border border-dashed border-panel-border py-8 text-center text-sm text-bone-dim">
@@ -521,7 +889,19 @@ export function SessionRunner({
 
       {/* Sticky finish bar */}
       {!completed && exercises.length > 0 && (
-        <div className="fixed inset-x-0 bottom-16 z-30 border-t border-panel-border bg-carbon/95 backdrop-blur">
+        <div
+          id="session-finish-bar"
+          className="fixed inset-x-0 bottom-16 z-30 border-t border-panel-border bg-carbon/95 backdrop-blur"
+        >
+          {/* Thin session progress along the bar's top edge */}
+          <div className="absolute inset-x-0 top-[-1px] h-0.5 bg-panel-border">
+            <div
+              className="h-full bg-moss transition-[width] duration-300"
+              style={{
+                width: `${totalSets > 0 ? (completedSets / totalSets) * 100 : 0}%`,
+              }}
+            />
+          </div>
           <div className="mx-auto flex max-w-sm items-center justify-between gap-3 px-4 py-3 md:max-w-2xl">
             <div className="flex flex-col">
               <span className="font-num text-sm tabular-nums text-bone">
@@ -532,6 +912,11 @@ export function SessionRunner({
               </span>
               <span className="font-num text-[10px] tabular-nums text-bone-dim">
                 {t("setsDone", { done: completedSets, total: totalSets })}
+                {" · "}
+                {t("exerciseOf", {
+                  current: Math.min(currentExerciseIndex, exercises.length),
+                  total: exercises.length,
+                })}
               </span>
             </div>
             <Button onClick={onFinish} disabled={finishing}>
@@ -542,13 +927,38 @@ export function SessionRunner({
         </div>
       )}
 
+      {/* Exercise swap sheet — keyed so its state resets per exercise */}
+      <SwapExerciseSheet
+        key={swapFor?.plan_exercise_id ?? "none"}
+        exercise={swapFor}
+        onClose={() => setSwapFor(null)}
+        onSwapped={(slotId, candidate) => {
+          // Patch local state too: `exercises` was seeded from props and a
+          // router.refresh() alone won't reach it.
+          setExercises((exs) =>
+            exs.map((ex) =>
+              ex.plan_exercise_id !== slotId
+                ? ex
+                : {
+                    ...ex,
+                    name: candidate.name,
+                    exercise_id: candidate.id,
+                    equipment: candidate.equipment,
+                  },
+            ),
+          );
+          setSwapFor(null);
+          router.refresh();
+        }}
+      />
+
       {/* Manage sheet */}
       <Sheet open={manageOpen} onOpenChange={setManageOpen}>
         <SheetContent side="bottom">
           <SheetHeader>
             <SheetTitle>{t("manage")}</SheetTitle>
             <SheetDescription>
-              {planName} · {date}
+              {planName} · {displayDate}
             </SheetDescription>
           </SheetHeader>
 
@@ -595,7 +1005,7 @@ export function SessionRunner({
               {t("sessionComplete")}
             </SheetTitle>
             <SheetDescription>
-              {planName} · {date}
+              {planName} · {displayDate}
             </SheetDescription>
           </SheetHeader>
 
@@ -612,6 +1022,12 @@ export function SessionRunner({
                 <CountUp value={completedSets} />/{totalSets}
               </span>
             </div>
+            {durationMin != null && (
+              <SummaryStat
+                label={t("duration")}
+                value={formatDuration(durationMin)}
+              />
+            )}
           </div>
 
           {newPRs.length > 0 && (
@@ -644,22 +1060,148 @@ export function SessionRunner({
             />
           </div>
 
-          <Button
-            className="mt-6 w-full"
-            onClick={async () => {
-              if (sessionNotes.trim().length > 0) {
-                await completeSession(sessionId, allLogs, sessionNotes);
-              }
-              setSummaryOpen(false);
-              router.push("/dashboard");
-              router.refresh();
-            }}
-          >
-            {t("backToDashboard")}
-          </Button>
+          <div className="mt-6 flex flex-col gap-2">
+            <Button variant="outline" onClick={shareSummary}>
+              <Share2 className="h-4 w-4" />
+              {t("shareWorkout")}
+            </Button>
+            <Button
+              className="w-full"
+              onClick={async () => {
+                if (sessionNotes.trim() !== (notes ?? "").trim()) {
+                  await updateSessionNotes(sessionId, sessionNotes);
+                }
+                setSummaryOpen(false);
+                router.push("/dashboard");
+                router.refresh();
+              }}
+            >
+              {t("backToDashboard")}
+            </Button>
+          </div>
         </SheetContent>
       </Sheet>
     </div>
+  );
+}
+
+interface SwapCandidate {
+  id: string;
+  name: string;
+  equipment: string | null;
+}
+
+const KNOWN_EQUIPMENT = new Set([
+  "barbell",
+  "dumbbell",
+  "cable",
+  "machine",
+  "bodyweight",
+]);
+
+/**
+ * Pick a similar exercise (same primary muscle) to replace the current one —
+ * the machine is taken, gear is missing, etc. Updates the plan slot, so
+ * already-logged sets stay attached. Note: the slot's PAST logs move with it
+ * too (history resolves names through the slot) — the sheet says so.
+ */
+function SwapExerciseSheet({
+  exercise,
+  onClose,
+  onSwapped,
+}: {
+  exercise: RunnerExercise | null;
+  onClose: () => void;
+  onSwapped: (slotId: string, candidate: SwapCandidate) => void;
+}) {
+  const t = useTranslations("session");
+  const tEquip = useTranslations("exerciseCatalog.equipment");
+  const supabase = useMemo(() => createClient(), []);
+  const [candidates, setCandidates] = useState<SwapCandidate[] | null>(null);
+  const [swapping, setSwapping] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // No sync setState here: the sheet remounts per exercise (keyed), so
+  // `candidates` already starts as null while loading.
+  const load = useCallback(async () => {
+    if (!exercise) return;
+    let query = supabase
+      .from("exercises")
+      .select("id, name, equipment")
+      .neq("id", exercise.exercise_id ?? "")
+      .order("name")
+      .limit(12);
+    if (exercise.primary_muscle) {
+      query = query.eq("primary_muscle", exercise.primary_muscle);
+    }
+    const { data } = await query;
+    setCandidates((data ?? []) as SwapCandidate[]);
+  }, [supabase, exercise]);
+
+  useEffect(() => {
+    if (!exercise) return;
+    const id = window.setTimeout(load, 0);
+    return () => clearTimeout(id);
+  }, [exercise, load]);
+
+  async function pick(candidate: SwapCandidate) {
+    if (!exercise) return;
+    setSwapping(true);
+    setError(null);
+    const result = await swapPlanExercise(
+      exercise.plan_exercise_id,
+      candidate.id,
+    );
+    setSwapping(false);
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+    onSwapped(exercise.plan_exercise_id, candidate);
+  }
+
+  return (
+    <Sheet open={!!exercise} onOpenChange={(o) => !o && onClose()}>
+      <SheetContent side="bottom">
+        <SheetHeader>
+          <SheetTitle>{t("replaceExercise")}</SheetTitle>
+          <SheetDescription>
+            {exercise?.name} — {t("replaceExerciseDesc")}{" "}
+            {t("replaceExerciseHistoryNote")}
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-5 flex max-h-[50dvh] flex-col gap-2 overflow-y-auto">
+          {candidates === null ? (
+            <p className="py-6 text-center text-sm text-bone-dim">…</p>
+          ) : candidates.length === 0 ? (
+            <p className="py-6 text-center text-sm text-bone-dim">
+              {t("noAlternatives")}
+            </p>
+          ) : (
+            candidates.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                disabled={swapping}
+                onClick={() => pick(c)}
+                className="flex items-center justify-between gap-3 rounded-xl border border-panel-border bg-carbon p-3 text-left transition-colors hover:border-steel/40 disabled:opacity-50"
+              >
+                <span className="truncate text-sm text-bone">{c.name}</span>
+                {c.equipment && (
+                  <span className="shrink-0 rounded-full bg-graphite px-2 py-0.5 text-[10px] text-bone-dim">
+                    {KNOWN_EQUIPMENT.has(c.equipment)
+                      ? tEquip(c.equipment)
+                      : c.equipment}
+                  </span>
+                )}
+              </button>
+            ))
+          )}
+          {error && <p className="text-sm text-clay">{error}</p>}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

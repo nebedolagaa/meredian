@@ -139,6 +139,7 @@ export type Database = {
           slug: string | null;
           is_archived: boolean;
           is_template: boolean;
+          share_token: string | null;
           created_at: string;
         };
         Insert: {
@@ -148,6 +149,7 @@ export type Database = {
           slug?: string | null;
           is_archived?: boolean;
           is_template?: boolean;
+          share_token?: string | null;
           created_at?: string;
         };
         Update: {
@@ -157,6 +159,7 @@ export type Database = {
           slug?: string | null;
           is_archived?: boolean;
           is_template?: boolean;
+          share_token?: string | null;
           created_at?: string;
         };
         Relationships: [
@@ -179,6 +182,7 @@ export type Database = {
           target_reps: number;
           target_weight: number;
           rest_seconds: number | null;
+          superset_group: number | null;
         };
         Insert: {
           id?: string;
@@ -189,6 +193,7 @@ export type Database = {
           target_reps: number;
           target_weight: number;
           rest_seconds?: number | null;
+          superset_group?: number | null;
         };
         Update: {
           id?: string;
@@ -199,6 +204,7 @@ export type Database = {
           target_reps?: number;
           target_weight?: number;
           rest_seconds?: number | null;
+          superset_group?: number | null;
         };
         Relationships: [
           {
@@ -224,6 +230,7 @@ export type Database = {
           user_id: string;
           status: SessionStatus;
           scheduled_date: string;
+          started_at: string | null;
           completed_at: string | null;
           notes: string | null;
         };
@@ -233,6 +240,7 @@ export type Database = {
           user_id: string;
           status?: SessionStatus;
           scheduled_date: string;
+          started_at?: string | null;
           completed_at?: string | null;
           notes?: string | null;
         };
@@ -242,6 +250,7 @@ export type Database = {
           user_id?: string;
           status?: SessionStatus;
           scheduled_date?: string;
+          started_at?: string | null;
           completed_at?: string | null;
           notes?: string | null;
         };
@@ -319,6 +328,9 @@ export type Database = {
           user_id: string;
           measured_on: string;
           weight_kg: number;
+          waist_cm: number | null;
+          chest_cm: number | null;
+          arm_cm: number | null;
           note: string | null;
           created_at: string;
         };
@@ -327,6 +339,9 @@ export type Database = {
           user_id: string;
           measured_on: string;
           weight_kg: number;
+          waist_cm?: number | null;
+          chest_cm?: number | null;
+          arm_cm?: number | null;
           note?: string | null;
           created_at?: string;
         };
@@ -335,12 +350,50 @@ export type Database = {
           user_id?: string;
           measured_on?: string;
           weight_kg?: number;
+          waist_cm?: number | null;
+          chest_cm?: number | null;
+          arm_cm?: number | null;
           note?: string | null;
           created_at?: string;
         };
         Relationships: [
           {
             foreignKeyName: "body_measurements_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      push_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          endpoint?: string;
+          p256dh?: string;
+          auth?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";

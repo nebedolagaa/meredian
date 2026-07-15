@@ -16,11 +16,15 @@ create index if not exists idx_body_measurements_user
 -- Row Level Security: users only see and edit their own measurements.
 alter table body_measurements enable row level security;
 
+drop policy if exists "body_measurements_select_own" on body_measurements;
 create policy "body_measurements_select_own" on body_measurements
   for select using (auth.uid() = user_id);
+drop policy if exists "body_measurements_insert_own" on body_measurements;
 create policy "body_measurements_insert_own" on body_measurements
   for insert with check (auth.uid() = user_id);
+drop policy if exists "body_measurements_update_own" on body_measurements;
 create policy "body_measurements_update_own" on body_measurements
   for update using (auth.uid() = user_id);
+drop policy if exists "body_measurements_delete_own" on body_measurements;
 create policy "body_measurements_delete_own" on body_measurements
   for delete using (auth.uid() = user_id);

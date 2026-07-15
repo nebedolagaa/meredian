@@ -45,11 +45,14 @@ export default async function EditPlanPage({
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
       id,
     );
-  const { data: plan } = await supabase
+  // Explicit user_id scope in addition to RLS (defence in depth — see
+  // CLAUDE.md's server-action conventions).
+  let planQuery = supabase
     .from("workout_plans")
     .select("id, name")
-    .eq(isUuid ? "id" : "slug", id)
-    .single();
+    .eq(isUuid ? "id" : "slug", id);
+  if (user) planQuery = planQuery.eq("user_id", user.id);
+  const { data: plan } = await planQuery.single();
 
   if (!plan) notFound();
 
@@ -61,8 +64,23 @@ export default async function EditPlanPage({
     .eq("plan_id", plan.id)
     .order("order_index", { ascending: true });
 
-  const rows = ((planExercises ?? []) as unknown as PlanExerciseRow[]).map(
-    (pe, i) => ({
+  // Superset groups (migration 0019) — read separately so a missing column
+  // can't break the editor.
+  const supersetByPe = new Map<string, number | null>();
+  const { data: groupRows } = await supabase
+    .from("plan_exercises")
+    .select("id, superset_group")
+    .eq("plan_id", plan.id);
+  for (const g of groupRows ?? []) {
+    supersetByPe.set(g.id, g.superset_group);
+  }
+
+  const typedRows = (planExercises ?? []) as unknown as PlanExerciseRow[];
+  const rows = typedRows.map((pe, i) => {
+    const group = supersetByPe.get(pe.id) ?? null;
+    const prevGroup =
+      i > 0 ? (supersetByPe.get(typedRows[i - 1].id) ?? null) : null;
+    return {
       key: `existing-${pe.id}-${i}`,
       exercise_id: pe.exercise_id ?? "",
       name: pe.exercises?.name ?? t("exercise"),
@@ -72,8 +90,13 @@ export default async function EditPlanPage({
       target_reps: pe.target_reps,
       target_weight: pe.target_weight,
       rest_seconds: pe.rest_seconds,
-    }),
-  );
+      // Superset links anchor to the previous row's key (see PlanBuilder).
+      supersetWithKey:
+        group !== null && group === prevGroup
+          ? `existing-${typedRows[i - 1].id}-${i - 1}`
+          : null,
+    };
+  });
 
   return (
     <PlanBuilder

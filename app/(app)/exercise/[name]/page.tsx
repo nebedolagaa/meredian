@@ -3,8 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExerciseHistoryChart } from "@/components/charts/ExerciseHistoryChart";
-import { getAnalyticsData, getExerciseProgress } from "@/lib/data/analytics";
+import { InfoHint } from "@/components/ui/InfoHint";
+import { ExerciseMetricSwitcher } from "@/components/charts/ExerciseMetricSwitcher";
+import { getAnalyticsData, getExerciseSeries } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
 import { toDisplayWeight, unitLabel } from "@/lib/utils/units";
 
@@ -28,13 +29,15 @@ export default async function ExerciseHistoryPage({
   const unitName = unitLabel(unit);
 
   const [rawPoints, { records }] = await Promise.all([
-    getExerciseProgress(supabase, user.id, name),
+    getExerciseSeries(supabase, user.id, name),
     getAnalyticsData(supabase, user.id),
   ]);
 
   const points = rawPoints.map((p) => ({
     date: p.date,
     weight: toDisplayWeight(p.weight, unit),
+    e1rm: toDisplayWeight(p.e1rm, unit),
+    volume: toDisplayWeight(p.volume, unit),
   }));
   const record = records.find((r) => r.name === name);
 
@@ -62,7 +65,10 @@ export default async function ExerciseHistoryPage({
               </span>
             </div>
             <div className="flex flex-col gap-0.5 text-right">
-              <span className="text-xs text-bone-dim">{t("oneRepMax")}</span>
+              <span className="flex items-center justify-end gap-1 text-xs text-bone-dim">
+                {t("oneRepMax")}
+                <InfoHint text={t("oneRepMaxHint")} />
+              </span>
               <span className="font-num text-lg tabular-nums text-moss">
                 {toDisplayWeight(record.bestOneRepMax, unit)} {unitName}
               </span>
@@ -79,7 +85,7 @@ export default async function ExerciseHistoryPage({
           </p>
         </CardHeader>
         <CardContent>
-          <ExerciseHistoryChart points={points} unitName={unitName} />
+          <ExerciseMetricSwitcher points={points} unitName={unitName} />
         </CardContent>
       </Card>
     </div>

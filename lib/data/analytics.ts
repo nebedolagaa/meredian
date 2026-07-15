@@ -10,6 +10,7 @@ import { setVolume } from "@/lib/utils/volume";
 import {
   computePersonalRecords,
   computeRecordTimeline,
+  estimateOneRepMax,
   type PersonalRecord,
   type RecordEvent,
 } from "@/lib/utils/records";
@@ -328,6 +329,225 @@ export async function getAnalyticsData(
     streak,
     completedDates: (streakRows ?? []).map((r) => r.scheduled_date),
   };
+}
+
+/**
+ * Lean reader for the dashboard: weekly-goal streak + top insight only.
+ * Skips the records/muscle/frequency work (and their joins) that the full
+ * analytics page needs — the dashboard is the most-hit route in the app.
+ */
+export async function getDashboardData(
+  supabase: Supa,
+  userId: string,
+  weeklyGoal: number = DEFAULT_WEEKLY_GOAL,
+): Promise<{ streak: StreakResult; insights: Insight[] }> {
+  // Streak from completed dates only (52 weeks, single light column).
+  const streakSince = new Date();
+  streakSince.setDate(streakSince.getDate() - 52 * 7);
+  const { data: streakRows } = await supabase
+    .from("workout_sessions")
+    .select("scheduled_date")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .gte("scheduled_date", streakSince.toISOString().slice(0, 10));
+  const streak = computeStreak(
+    (streakRows ?? []).map((r) => r.scheduled_date),
+    weeklyGoal,
+    todayISO(),
+  );
+
+  // Insights need the last ~30 days of sessions + logs (lean join: name only).
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+  const { data: sessionRows } = await supabase
+    .from("workout_sessions")
+    .select("id, scheduled_date, status, plan_id")
+    .eq("user_id", userId)
+    .gte("scheduled_date", since.toISOString().slice(0, 10))
+    .order("scheduled_date", { ascending: true });
+  const sessions = (sessionRows ?? []) as SessionRow[];
+  const sessionIds = sessions.map((s) => s.id);
+
+  const planIds = Array.from(
+    new Set(sessions.map((s) => s.plan_id).filter((x): x is string => !!x)),
+  );
+  const plannedSetsByPlan = new Map<string, number>();
+  const plannedVolumeByPlan = new Map<string, number>();
+  if (planIds.length > 0) {
+    const { data: planEx } = await supabase
+      .from("plan_exercises")
+      .select("plan_id, target_sets, target_reps, target_weight")
+      .in("plan_id", planIds);
+    for (const row of planEx ?? []) {
+      plannedSetsByPlan.set(
+        row.plan_id,
+        (plannedSetsByPlan.get(row.plan_id) ?? 0) + row.target_sets,
+      );
+      plannedVolumeByPlan.set(
+        row.plan_id,
+        (plannedVolumeByPlan.get(row.plan_id) ?? 0) +
+          row.target_sets * row.target_reps * row.target_weight,
+      );
+    }
+  }
+
+  interface LeanLogRow {
+    session_id: string;
+    actual_reps: number | null;
+    actual_weight: number | null;
+    completed: boolean;
+    plan_exercises: { exercises: { name: string } | null } | null;
+  }
+  let logs: LeanLogRow[] = [];
+  if (sessionIds.length > 0) {
+    const { data: logRows } = await supabase
+      .from("session_logs")
+      .select(
+        "session_id, actual_reps, actual_weight, completed, plan_exercises(exercises(name))",
+      )
+      .in("session_id", sessionIds);
+    logs = (logRows ?? []) as unknown as LeanLogRow[];
+  }
+
+  const volumeBySession = new Map<string, number>();
+  const completedSetsBySession = new Map<string, number>();
+  const exerciseSessionMax = new Map<string, Map<string, number>>();
+  for (const log of logs) {
+    if (log.completed) {
+      volumeBySession.set(
+        log.session_id,
+        (volumeBySession.get(log.session_id) ?? 0) +
+          setVolume(log.actual_reps, log.actual_weight),
+      );
+      completedSetsBySession.set(
+        log.session_id,
+        (completedSetsBySession.get(log.session_id) ?? 0) + 1,
+      );
+    }
+    const name = log.plan_exercises?.exercises?.name;
+    if (name && log.actual_weight != null) {
+      let perSession = exerciseSessionMax.get(name);
+      if (!perSession) {
+        perSession = new Map();
+        exerciseSessionMax.set(name, perSession);
+      }
+      perSession.set(
+        log.session_id,
+        Math.max(perSession.get(log.session_id) ?? 0, log.actual_weight),
+      );
+    }
+  }
+
+  const summaries: SessionSummary[] = sessions.map((s) => {
+    const actualVolume = volumeBySession.get(s.id) ?? 0;
+    const plannedVolume = s.plan_id
+      ? (plannedVolumeByPlan.get(s.plan_id) ?? 0)
+      : 0;
+    const progress =
+      plannedVolume > 0
+        ? Math.round((actualVolume / plannedVolume) * 100)
+        : actualVolume > 0
+          ? 100
+          : 0;
+    return {
+      date: s.scheduled_date,
+      volume: actualVolume,
+      progress,
+      plannedSets: s.plan_id ? (plannedSetsByPlan.get(s.plan_id) ?? 0) : 0,
+      completedSets: completedSetsBySession.get(s.id) ?? 0,
+      completed: s.status === "completed",
+    };
+  });
+
+  const orderedSessionIds = sessions.map((s) => s.id);
+  const history: ExerciseHistory[] = Array.from(
+    exerciseSessionMax.entries(),
+  ).map(([name, perSession]) => ({
+    name,
+    maxWeights: orderedSessionIds
+      .filter((id) => perSession.has(id))
+      .map((id) => perSession.get(id)!),
+  }));
+
+  const insights = generateInsights({
+    sessions: summaries.filter((s) => s.completed),
+    history,
+    streakWeeks: streak.current,
+  });
+
+  return { streak, insights };
+}
+
+export interface ExerciseSeriesPoint {
+  date: string;
+  /** Heaviest completed set that day (kg). */
+  weight: number;
+  /** Best estimated 1RM that day (kg). */
+  e1rm: number;
+  /** Total completed volume that day (kg). */
+  volume: number;
+}
+
+/**
+ * Per-exercise daily series (max weight, best e1RM, total volume) for the
+ * metric switcher on the exercise page. Ordered oldest -> newest.
+ */
+export async function getExerciseSeries(
+  supabase: Supa,
+  userId: string,
+  exerciseName: string,
+): Promise<ExerciseSeriesPoint[]> {
+  const { data: sessionRows } = await supabase
+    .from("workout_sessions")
+    .select("id, scheduled_date, status")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .order("scheduled_date", { ascending: true });
+
+  const sessions = (sessionRows ?? []) as {
+    id: string;
+    scheduled_date: string;
+  }[];
+  if (sessions.length === 0) return [];
+
+  const ids = sessions.map((s) => s.id);
+  const { data: logRows } = await supabase
+    .from("session_logs")
+    .select(
+      "session_id, actual_reps, actual_weight, completed, plan_exercises(exercises(name))",
+    )
+    .in("session_id", ids);
+
+  interface SeriesLogRow {
+    session_id: string;
+    actual_reps: number | null;
+    actual_weight: number | null;
+    completed: boolean;
+    plan_exercises: { exercises: { name: string } | null } | null;
+  }
+  const logs = (logRows ?? []) as unknown as SeriesLogRow[];
+  const dateById = new Map(sessions.map((s) => [s.id, s.scheduled_date]));
+  const byDate = new Map<string, ExerciseSeriesPoint>();
+
+  for (const log of logs) {
+    if (!log.completed || log.actual_weight == null) continue;
+    if (log.plan_exercises?.exercises?.name !== exerciseName) continue;
+    const date = dateById.get(log.session_id);
+    if (!date) continue;
+    const point = byDate.get(date) ?? { date, weight: 0, e1rm: 0, volume: 0 };
+    const reps = log.actual_reps ?? 0;
+    point.weight = Math.max(point.weight, log.actual_weight);
+    point.e1rm = Math.max(
+      point.e1rm,
+      estimateOneRepMax(log.actual_weight, reps),
+    );
+    point.volume += log.actual_weight * reps;
+    byDate.set(date, point);
+  }
+
+  return Array.from(byDate.values()).sort((a, b) =>
+    a.date.localeCompare(b.date),
+  );
 }
 
 /**

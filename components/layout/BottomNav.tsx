@@ -45,7 +45,13 @@ const rightItems: NavItem[] = [
   },
 ];
 
-export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
+export function BottomNav({
+  plans,
+  hasPendingToday = false,
+}: {
+  plans: WorkoutPlan[];
+  hasPendingToday?: boolean;
+}) {
   const pathname = usePathname();
   const t = useTranslations("nav");
 
@@ -54,6 +60,7 @@ export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
 
   const renderLink = (item: NavItem) => {
     const active = isActive(item.match);
+    const showDot = item.labelKey === "today" && hasPendingToday && !active;
     return (
       <Link
         key={item.href}
@@ -65,13 +72,19 @@ export function BottomNav({ plans }: { plans: WorkoutPlan[] }) {
           active ? "text-steel" : "text-bone-dim hover:text-bone",
         )}
       >
-        <item.icon
-          className={cn(
-            "h-5 w-5 transition-transform duration-200",
-            active && "scale-110",
+        <span className="relative">
+          <item.icon
+            className={cn(
+              "h-5 w-5 transition-transform duration-200",
+              active && "scale-110",
+            )}
+            strokeWidth={active ? 2.5 : 2}
+          />
+          {/* "A session is waiting today" indicator */}
+          {showDot && (
+            <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-steel" />
           )}
-          strokeWidth={active ? 2.5 : 2}
-        />
+        </span>
         {t(item.labelKey)}
       </Link>
     );

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { updateRemindersEnabled } from "@/app/actions/profile";
+import { enablePush, disablePush } from "@/lib/push/client";
 
 export function RemindersToggle({ initial }: { initial: boolean }) {
   const t = useTranslations("reminders");
@@ -23,7 +24,10 @@ export function RemindersToggle({ initial }: { initial: boolean }) {
         } catch {
           // Ignore — the toggle still records the preference.
         }
+        // Background reminders via web push (no-op when unsupported or in dev).
+        await enablePush();
       }
+      if (!next) await disablePush();
       await updateRemindersEnabled(next);
       router.refresh();
     });

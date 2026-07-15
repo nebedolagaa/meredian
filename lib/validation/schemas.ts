@@ -48,6 +48,7 @@ export const planExerciseSchema = z.object({
   target_reps: z.number().int().min(1).max(1000),
   target_weight: z.number().min(0).max(10000),
   rest_seconds: z.number().int().min(0).max(600).nullable().optional(),
+  superset_group: z.number().int().min(1).max(100).nullable().optional(),
 });
 
 export const savePlanSchema = z.object({
@@ -100,6 +101,13 @@ export const bodyGoalSchema = z.object({
     .nullable(),
 });
 
+const girthSchema = z
+  .number()
+  .positive("Invalid measurement")
+  .max(500, "Invalid measurement")
+  .nullable()
+  .optional();
+
 export const measurementSchema = z.object({
   weightKg: z
     .number()
@@ -107,6 +115,9 @@ export const measurementSchema = z.object({
     .max(1000, "That weight looks too high."),
   measuredOn: isoDateSchema,
   note: z.string().trim().max(280).optional(),
+  waistCm: girthSchema,
+  chestCm: girthSchema,
+  armCm: girthSchema,
 });
 
 // Per-set logs persisted when finishing a session. Bounds keep untrusted client
