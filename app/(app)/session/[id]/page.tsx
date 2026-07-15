@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getUserPreferences } from "@/lib/data/preferences";
 import {
@@ -17,7 +17,12 @@ interface PlanExerciseRow {
   target_reps: number;
   target_weight: number;
   rest_seconds: number | null;
-  exercises: { name: string } | null;
+  exercises: {
+    id: string;
+    name: string;
+    primary_muscle: string | null;
+    equipment: string | null;
+  } | null;
 }
 
 export default async function SessionPage({
@@ -28,6 +33,7 @@ export default async function SessionPage({
   const { id } = await params;
   const supabase = await createClient();
   const t = await getTranslations("session");
+  const locale = await getLocale();
 
   const {
     data: { user },
@@ -36,11 +42,14 @@ export default async function SessionPage({
     ? await getUserPreferences(supabase, user.id)
     : { unit: "kg" as const, restSeconds: 90 };
 
-  const { data: session } = await supabase
+  // Explicit user_id scope in addition to RLS (defence in depth — see
+  // CLAUDE.md's server-action conventions).
+  let sessionQuery = supabase
     .from("workout_sessions")
     .select("id, plan_id, status, scheduled_date, notes, workout_plans(name)")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
+  if (user) sessionQuery = sessionQuery.eq("user_id", user.id);
+  const { data: session } = await sessionQuery.single();
 
   if (!session) notFound();
 
@@ -49,15 +58,37 @@ export default async function SessionPage({
 
   // Plan exercises (targets).
   let planExercises: PlanExerciseRow[] = [];
+  const supersetByPe = new Map<string, number | null>();
   if (session.plan_id) {
     const { data } = await supabase
       .from("plan_exercises")
       .select(
-        "id, order_index, target_sets, target_reps, target_weight, rest_seconds, exercises(name)",
+        "id, order_index, target_sets, target_reps, target_weight, rest_seconds, exercises(id, name, primary_muscle, equipment)",
       )
       .eq("plan_id", session.plan_id)
       .order("order_index", { ascending: true });
     planExercises = (data ?? []) as unknown as PlanExerciseRow[];
+
+    // Superset groups (migration 0019) — read separately so a missing column
+    // can't break the whole session page.
+    const { data: groupRows } = await supabase
+      .from("plan_exercises")
+      .select("id, superset_group")
+      .eq("plan_id", session.plan_id);
+    for (const g of groupRows ?? []) {
+      supersetByPe.set(g.id, g.superset_group);
+    }
+  }
+
+  // started_at (migration 0019) — read separately for the same reason.
+  let startedAt: string | null = null;
+  {
+    const { data: startedRow } = await supabase
+      .from("workout_sessions")
+      .select("started_at")
+      .eq("id", session.id)
+      .maybeSingle();
+    startedAt = startedRow?.started_at ?? null;
   }
 
   // Existing logs (resume / view completed).
@@ -143,6 +174,10 @@ export default async function SessionPage({
     );
     return {
       plan_exercise_id: pe.id,
+      exercise_id: pe.exercises?.id ?? null,
+      primary_muscle: pe.exercises?.primary_muscle ?? null,
+      equipment: pe.exercises?.equipment ?? null,
+      superset_group: supersetByPe.get(pe.id) ?? null,
       name: pe.exercises?.name ?? t("exercise"),
       target_sets: pe.target_sets,
       target_reps: pe.target_reps,
@@ -155,16 +190,25 @@ export default async function SessionPage({
     };
   });
 
+  // Localized "Friday, 13 June" instead of the raw ISO date.
+  const dateLabel = new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(new Date(`${session.scheduled_date}T00:00:00`));
+
   return (
     <SessionRunner
       sessionId={session.id}
       planName={planName}
       date={session.scheduled_date}
+      dateLabel={dateLabel}
       status={session.status}
       exercises={exercises}
       unit={prefs.unit}
       restSeconds={prefs.restSeconds}
       notes={session.notes}
+      startedAt={startedAt}
     />
   );
 }

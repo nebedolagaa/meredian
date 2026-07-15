@@ -16,7 +16,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { OnboardingCard } from "@/components/onboarding/OnboardingCard";
 import { SessionReminder } from "@/components/pwa/SessionReminder";
 import { Reveal } from "@/components/motion/Reveal";
-import { getAnalyticsData } from "@/lib/data/analytics";
+import { getDashboardData } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
 import { weekDays, toISODate, todayISO } from "@/lib/utils/dates";
 import { formatVolume, unitLabel } from "@/lib/utils/units";
@@ -64,19 +64,37 @@ export default async function DashboardPage() {
     .gte("scheduled_date", weekStart)
     .lte("scheduled_date", weekEnd);
 
-  const byDate = new Map(
-    (weekSessions ?? []).map((s) => [s.scheduled_date, s]),
-  );
+  // Group by day — a date can hold several sessions.
+  type WeekSession = NonNullable<typeof weekSessions>[number];
+  const byDate = new Map<string, WeekSession[]>();
+  for (const s of weekSessions ?? []) {
+    const list = byDate.get(s.scheduled_date);
+    if (list) list.push(s);
+    else byDate.set(s.scheduled_date, [s]);
+  }
+  // The day's "primary" session — the one worth opening: an in-progress
+  // workout first, then anything still pending, completed only as fallback.
+  const primaryOf = (list: WeekSession[] | undefined) => {
+    if (!list || list.length === 0) return undefined;
+    return (
+      list.find((s) => s.status === "in_progress") ??
+      list.find((s) => s.status !== "completed") ??
+      list[0]
+    );
+  };
 
   const threadDays: ThreadDay[] = days.map((d) => {
     const iso = toISODate(d);
-    const session = byDate.get(iso);
+    const daySessions = byDate.get(iso);
+    const session = primaryOf(daySessions);
+    const allCompleted =
+      !!daySessions && daySessions.every((s) => s.status === "completed");
     let status: ThreadDay["status"];
     if (iso === today) {
       status = "today";
     } else if (!session) {
       status = "rest";
-    } else if (session.status === "completed") {
+    } else if (allCompleted) {
       status = "done";
     } else if (iso < today) {
       status = "missed";
@@ -108,7 +126,7 @@ export default async function DashboardPage() {
 
   // Today's session (most relevant): today's, else next upcoming planned.
   const todaySession =
-    byDate.get(today) ??
+    primaryOf(byDate.get(today)) ??
     (weekSessions ?? [])
       .filter((s) => s.scheduled_date >= today && s.status !== "completed")
       .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date))[0];
@@ -126,7 +144,7 @@ export default async function DashboardPage() {
   }
 
   const { unit, weeklyGoal } = await getUserPreferences(supabase, user.id);
-  const { insights, streak } = await getAnalyticsData(
+  const { insights, streak } = await getDashboardData(
     supabase,
     user.id,
     weeklyGoal,
@@ -244,9 +262,13 @@ export default async function DashboardPage() {
         </Card>
       </Reveal>
 
-      <Reveal delay={0.06}>
-        <StreakCard streak={streak} />
-      </Reveal>
+      {/* A zero streak on a brand-new account demotivates — show the card
+          only once there is something to keep alive. */}
+      {(streak.current > 0 || streak.longest > 0 || streak.thisWeekCount > 0) && (
+        <Reveal delay={0.06}>
+          <StreakCard streak={streak} />
+        </Reveal>
+      )}
 
       {hasNoPlans && (
         <Reveal delay={0.09}>

@@ -4,7 +4,16 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Reorder, useDragControls, useReducedMotion } from "framer-motion";
-import { ArrowUp, ArrowDown, GripVertical, Trash2, Save, X } from "lucide-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  GripVertical,
+  Link2,
+  Trash2,
+  Save,
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +52,39 @@ interface Row {
   gif_url?: string | null;
   description?: string | null;
   primary_muscle?: string | null;
+  /**
+   * Superset link, anchored to the previous row's key. Anchoring to the KEY
+   * (not a boolean) means the link silently dissolves when rows are
+   * reordered or the partner is deleted, instead of chaining to whatever row
+   * happens to land above.
+   */
+  supersetWithKey?: string | null;
+}
+
+/** Is this row actively chained with the row currently above it? */
+function isLinkedWithPrev(rows: Row[], index: number): boolean {
+  return index > 0 && rows[index].supersetWithKey === rows[index - 1].key;
+}
+
+/** Turn "linked with previous" chains into numbered superset groups. */
+function computeSupersetGroups(rows: Row[]): (number | null)[] {
+  const groups: (number | null)[] = [];
+  let nextGroup = 1;
+  for (let i = 0; i < rows.length; i++) {
+    if (isLinkedWithPrev(rows, i)) {
+      const prev = groups[i - 1];
+      if (prev !== null) {
+        groups.push(prev);
+      } else {
+        groups[i - 1] = nextGroup;
+        groups.push(nextGroup);
+        nextGroup++;
+      }
+    } else {
+      groups.push(null);
+    }
+  }
+  return groups;
 }
 
 export interface PlanBuilderInitial {
@@ -152,12 +194,14 @@ export function PlanBuilder({
       return;
     }
     setSaving(true);
-    const exercises: PlanExerciseInput[] = rows.map((r) => ({
+    const supersetGroups = computeSupersetGroups(rows);
+    const exercises: PlanExerciseInput[] = rows.map((r, i) => ({
       exercise_id: r.exercise_id,
       target_sets: r.target_sets,
       target_reps: r.target_reps,
       target_weight: r.target_weight,
       rest_seconds: r.rest_seconds ?? null,
+      superset_group: supersetGroups[i],
     }));
     const result = await savePlan(initial.id, name, exercises);
     setSaving(false);
@@ -300,6 +344,7 @@ export function PlanBuilder({
               row={row}
               index={index}
               rowsLength={rows.length}
+              prevKey={index > 0 ? rows[index - 1].key : null}
               unit={unit}
               draggable={false}
               t={t}
@@ -322,6 +367,7 @@ export function PlanBuilder({
                 row={row}
                 index={index}
                 rowsLength={rows.length}
+                prevKey={index > 0 ? rows[index - 1].key : null}
                 unit={unit}
                 draggable
                 t={t}
@@ -348,6 +394,7 @@ function PlanRowCard({
   row,
   index,
   rowsLength,
+  prevKey,
   unit,
   draggable,
   t,
@@ -358,6 +405,8 @@ function PlanRowCard({
   row: Row;
   index: number;
   rowsLength: number;
+  /** Key of the row currently above — anchors the superset link. */
+  prevKey: string | null;
   unit: WeightUnit;
   draggable: boolean;
   t: ReturnType<typeof useTranslations>;
@@ -387,6 +436,28 @@ function PlanRowCard({
           </span>
         </div>
         <div className="flex items-center gap-1">
+          {prevKey && (
+            <button
+              type="button"
+              aria-label={t("supersetWithPrev")}
+              aria-pressed={row.supersetWithKey === prevKey}
+              title={t("supersetWithPrev")}
+              onClick={() =>
+                onUpdate(row.key, {
+                  supersetWithKey:
+                    row.supersetWithKey === prevKey ? null : prevKey,
+                })
+              }
+              className={cn(
+                "rounded-md p-1.5 transition-colors",
+                row.supersetWithKey === prevKey
+                  ? "text-steel"
+                  : "text-bone-dim hover:text-bone",
+              )}
+            >
+              <Link2 className="h-4 w-4" />
+            </button>
+          )}
           <button
             type="button"
             aria-label={t("moveUp")}

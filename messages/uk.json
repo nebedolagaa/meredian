@@ -137,11 +137,7 @@
     "displayName": "Відображуване ім'я",
     "displayNamePlaceholder": "Ваше ім'я",
     "email": "Ел. пошта",
-    "signOut": "Вийти",
-    "googleCalendarTitle": "Синхронізація з Google Календарем",
-    "googleCalendarDesc": "Надсилайте заплановані тренування у Google Календар.",
-    "appleCalendarTitle": "Синхронізація з Apple Календарем",
-    "appleCalendarDesc": "Двостороння синхронізація з застосунком Apple Календар."
+    "signOut": "Вийти"
   },
   "analytics": {
     "title": "Аналітика",
@@ -154,6 +150,7 @@
     "exerciseProgressDesc": "Максимальна робоча вага у часі · рекорди кольором moss",
     "records": "Особисті рекорди",
     "recordsDesc": "Найкраща вага та розрахунковий 1ПМ для кожної вправи",
+    "oneRepMaxHint": "Розрахунковий максимум на одне повторення — за вагою та кількістю повторів у підході. Дозволяє порівнювати різні діапазони повторень.",
     "noRecords": "Проведіть кілька тренувань, щоб почати відстежувати рекорди.",
     "oneRepMax": "1ПМ {value}{unit}",
     "frequency": "Частота тренувань",
@@ -167,7 +164,15 @@
     "prTimeline": "Історія рекордів",
     "prTimelineDesc": "Кожного разу, коли ви досягаєте нового розрахункового 1ПМ",
     "share": "Поділитися рекордом",
-    "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meredian"
+    "shareText": "{name}: {weight}{unit} × {reps} (оц. 1ПМ {oneRepMax}{unit}) 💪 Meredian",
+    "sectionOverview": "Огляд",
+    "sectionCharts": "Графіки",
+    "sectionRecords": "Рекорди",
+    "sectionBody": "Тіло",
+    "historyLink": "Історія",
+    "emptyTitle": "Поки немає даних",
+    "emptyBody": "Заверши перше тренування — тут з'являться графіки, рекорди та постійність.",
+    "emptyCta": "До планів"
   },
   "plans": {
     "title": "Плани",
@@ -185,7 +190,11 @@
     "archived": "Архів",
     "delete": "Видалити план",
     "deleteConfirm": "Видалити цей план?",
-    "deleting": "Видалення…"
+    "deleting": "Видалення…",
+    "planActions": "Дії з планом",
+    "sharePlanLink": "Поділитися посиланням на план",
+    "copyShareLink": "Скопіювати посилання",
+    "disableShareLink": "Вимкнути посилання"
   },
   "planBuilder": {
     "editPlan": "Редагувати план",
@@ -208,7 +217,8 @@
     "dragToReorder": "Перетягніть, щоб змінити порядок",
     "deleteExercise": "Видалити вправу",
     "startFromTemplate": "Почати з шаблону",
-    "exercise": "Вправа"
+    "exercise": "Вправа",
+    "supersetWithPrev": "Суперсет із попередньою вправою"
   },
   "exerciseCatalog": {
     "addExercise": "Додати вправу",
@@ -245,7 +255,10 @@
         "professional": "Використовуйте цільову вагу як базу для програми — періодизуйте інтенсивність протягом тижня."
       }
     },
-    "type": { "compound": "Базова", "isolation": "Ізолювальна" },
+    "type": {
+      "compound": "Базова",
+      "isolation": "Ізолювальна"
+    },
     "equipment": {
       "barbell": "Штанга",
       "dumbbell": "Гантелі",
@@ -253,7 +266,10 @@
       "machine": "Тренажер",
       "bodyweight": "Власна вага"
     },
-    "location": { "home": "Дім", "gym": "Зал" }
+    "location": {
+      "home": "Дім",
+      "gym": "Зал"
+    }
   },
   "exerciseInfo": {
     "bench-press": {
@@ -397,7 +413,8 @@
     "addToCalendar": "Додати в Apple/Outlook календар",
     "addToGoogleCalendar": "Додати в Google Календар",
     "calendarEventTitle": "Тренування: {plan}",
-    "calendarEventDescription": "Заплановано в Meredian."
+    "calendarEventDescription": "Заплановано в Meredian.",
+    "today": "Сьогодні"
   },
   "quickAdd": {
     "scheduleSession": "Запланувати тренування",
@@ -410,7 +427,8 @@
     "repeatWeekly": "Повторювати щотижня",
     "repeatWeeks": "Кількість тижнів",
     "scheduling": "Планування…",
-    "addSession": "Додати тренування"
+    "addSession": "Додати тренування",
+    "repeatDays": "Дні тижня"
   },
   "session": {
     "target": "Ціль: {sets}×{reps} @ {weight}{unit}",
@@ -419,6 +437,7 @@
     "progressSuggest": "RPE {rpe} — додай вагу",
     "newPR": "{count, plural, one {Новий особистий рекорд!} few {# нові особисті рекорди!} many {# нових особистих рекордів!} other {# особистих рекордів!}}",
     "rpe": "RPE",
+    "rpeHint": "Оцінка зусилля (1–10): наскільки важким був підхід. 10 — сил більше не залишилось. Впливає на вагу, яку запропонують наступного разу.",
     "setDetails": "Деталі підходу",
     "exerciseDetails": "Деталі вправи",
     "setNotePlaceholder": "Нотатка",
@@ -441,7 +460,21 @@
     "skipSession": "Пропустити тренування",
     "deleteSession": "Видалити тренування",
     "sessionNotes": "Як усе пройшло?",
-    "sessionNotesPlaceholder": "Додайте нотатку про це тренування…"
+    "sessionNotesPlaceholder": "Додайте нотатку про це тренування…",
+    "exerciseOf": "Вправа {current} з {total}",
+    "replaceExercise": "Замінити вправу",
+    "replaceExerciseDesc": "обери схожу вправу. Записані підходи збережуться; план оновиться.",
+    "noAlternatives": "Схожих вправ не знайдено.",
+    "bodyweight": "ВТ",
+    "bodyweightHint": "Без додаткової ваги — лише тіло. Вказуються тільки повторення.",
+    "collapseExercise": "Згорнути вправу",
+    "addWarmup": "Розминка",
+    "superset": "Суперсет",
+    "duration": "Тривалість",
+    "shareWorkout": "Поділитися тренуванням",
+    "shareVolume": "Обсяг {volume} {unit}",
+    "shareDuration": "Тривалість {duration}",
+    "replaceExerciseHistoryNote": "Зауваж: минулі записи цього слота теж перейдуть до нової вправи."
   },
   "progression": {
     "increaseEasy": "Минулого разу було легко — додай вагу",
@@ -501,10 +534,22 @@
       "name": "Все тіло",
       "desc": "5 базових вправ, 3× на тиждень"
     },
-    "upper": { "name": "Верх тіла", "desc": "Груди, спина, плечі, руки" },
-    "lower": { "name": "Низ тіла", "desc": "Ноги та задній ланцюг" },
-    "push": { "name": "Жимовий день", "desc": "Груди, плечі, трицепс" },
-    "pull": { "name": "Тяговий день", "desc": "Спина та біцепс" }
+    "upper": {
+      "name": "Верх тіла",
+      "desc": "Груди, спина, плечі, руки"
+    },
+    "lower": {
+      "name": "Низ тіла",
+      "desc": "Ноги та задній ланцюг"
+    },
+    "push": {
+      "name": "Жимовий день",
+      "desc": "Груди, плечі, трицепс"
+    },
+    "pull": {
+      "name": "Тяговий день",
+      "desc": "Спина та біцепс"
+    }
   },
   "errors": {
     "title": "Щось пішло не так",
@@ -623,7 +668,15 @@
     "invalidWeight": "Введіть коректну вагу.",
     "goal": "Ціль: {goal} {unit} ·",
     "toGoal": "залишилося {delta} {unit}",
-    "goalReached": "Ціль досягнуто"
+    "goalReached": "Ціль досягнуто",
+    "addGirths": "+ Додати обхвати (талія, груди, рука)",
+    "hideGirths": "Сховати обхвати",
+    "waist": "Талія (см)",
+    "chest": "Груди (см)",
+    "arm": "Рука (см)",
+    "waistShort": "Т",
+    "chestShort": "Г",
+    "armShort": "Р"
   },
   "bodyGoal": {
     "title": "Тіло та ціль",
@@ -633,9 +686,13 @@
     "personalRecord": "Особистий рекорд",
     "max": "Максимум",
     "oneRepMax": "Оц. 1ПМ",
+    "oneRepMaxHint": "Розрахунковий максимум на одне повторення — за вагою та кількістю повторів у підході. Дозволяє порівнювати різні діапазони повторень.",
     "progress": "Прогрес",
     "noData": "За цією вправою поки немає даних.",
-    "sessions": "{count, plural, =0 {Немає тренувань} one {# тренування} few {# тренування} many {# тренувань} other {# тренування}}"
+    "sessions": "{count, plural, =0 {Немає тренувань} one {# тренування} few {# тренування} many {# тренувань} other {# тренування}}",
+    "metric_weight": "Макс. вага",
+    "metric_e1rm": "Розрах. 1ПМ",
+    "metric_volume": "Обсяг"
   },
   "muscleGroups": {
     "chest": "Груди",
@@ -658,7 +715,10 @@
     "planDeleted": "План видалено",
     "planDuplicated": "План скопійовано",
     "templateSaved": "Збережено як шаблон",
-    "templateRemoved": "Прибрано з шаблонів"
+    "templateRemoved": "Прибрано з шаблонів",
+    "linkCopied": "Посилання скопійовано",
+    "shareDisabled": "Посилання вимкнено",
+    "summaryCopied": "Зведення скопійовано"
   },
   "plates": {
     "open": "Млинці",
@@ -676,13 +736,30 @@
     "haptics": "Вібрація",
     "hapticsDesc": "Вібрація при завершенні підходу або рекорді.",
     "sound": "Звук",
-    "soundDesc": "Сигнал після завершення таймера відпочинку."
+    "soundDesc": "Сигнал після завершення таймера відпочинку.",
+    "hapticsUnsupported": "Не підтримується на цьому пристрої — браузери iPhone та iPad не мають API вібрації."
   },
   "heatmap": {
     "title": "Постійність",
-    "description": "Завершені тренування за останні 26 тижнів.",
+    "description": "Завершені тренування цього року.",
     "totalDays": "{count, plural, one {# активний день} few {# активних дні} many {# активних днів} other {# активних дня}}",
     "less": "Менше",
     "more": "Більше"
+  },
+  "history": {
+    "title": "Історія",
+    "subtitle": "Завершені тренування",
+    "empty": "Завершені тренування з'являться тут.",
+    "session": "Сесія",
+    "setsCount": "{count, plural, one {# підхід} few {# підходи} other {# підходів}}",
+    "showMore": "Показати ще"
+  },
+  "sharePlan": {
+    "invalid": "Посилання недійсне або вимкнене.",
+    "exerciseCount": "{count, plural, one {# вправа} few {# вправи} other {# вправ}}",
+    "exercise": "Вправа",
+    "signInToSave": "Увійдіть, щоб зберегти план",
+    "saveToMyPlans": "Зберегти в мої плани",
+    "saving": "Збереження…"
   }
 }

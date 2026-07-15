@@ -6,21 +6,19 @@ import {
   Archive,
   ListChecks,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { DuplicatePlanButton } from "@/components/plans/DuplicatePlanButton";
-import { ArchivePlanButton } from "@/components/plans/ArchivePlanButton";
-import { DeletePlanButton } from "@/components/plans/DeletePlanButton";
-import { TemplateToggleButton } from "@/components/plans/TemplateToggleButton";
+import { PlanActionsMenu } from "@/components/plans/PlanActionsMenu";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlansPage() {
   const supabase = await createClient();
   const t = await getTranslations("plans");
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,6 +31,17 @@ export default async function PlansPage() {
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  // Share tokens are read separately so a database without migration 0019
+  // doesn't break the whole page.
+  const shareTokens = new Map<string, string | null>();
+  const { data: tokenRows } = await supabase
+    .from("workout_plans")
+    .select("id, share_token")
+    .eq("user_id", user.id);
+  for (const row of tokenRows ?? []) {
+    shareTokens.set(row.id, row.share_token);
+  }
 
   // Last used date per plan.
   const planIds = (plans ?? []).map((p) => p.id);
@@ -56,6 +65,16 @@ export default async function PlansPage() {
   const exerciseCount = (plan: {
     plan_exercises: { count: number }[] | null;
   }) => plan.plan_exercises?.[0]?.count ?? 0;
+
+  // "last 13 Jul" instead of a raw ISO date.
+  const dateFmt = new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+  });
+  const lastUsedLabel = (planId: string) => {
+    const iso = lastUsed.get(planId);
+    return iso ? dateFmt.format(new Date(`${iso}T00:00:00`)) : null;
+  };
 
   return (
     <div className="flex flex-col gap-4 pb-8">
@@ -90,11 +109,11 @@ export default async function PlansPage() {
           {activePlans.map((plan) => (
             <Card
               key={plan.id}
-              className="group flex flex-col p-0 transition-colors hover:border-steel/40"
+              className="group flex items-center gap-1 p-0 pr-2 transition-colors hover:border-steel/40"
             >
               <Link
                 href={`/plans/${plan.slug ?? plan.id}`}
-                className="flex items-center gap-3 p-4"
+                className="flex min-w-0 flex-1 items-center gap-3 p-4"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-steel/10 text-steel">
                   <Dumbbell className="h-5 w-5" />
@@ -106,22 +125,20 @@ export default async function PlansPage() {
                   <span className="flex items-center gap-1.5 font-num text-xs tabular-nums text-bone-dim">
                     <ListChecks className="h-3.5 w-3.5" />
                     {t("exerciseCount", { count: exerciseCount(plan) })}
-                    {lastUsed.has(plan.id) && (
-                      <> · {t("lastUsed", { date: lastUsed.get(plan.id)! })}</>
+                    {lastUsedLabel(plan.id) && (
+                      <> · {t("lastUsed", { date: lastUsedLabel(plan.id)! })}</>
                     )}
                   </span>
                 </span>
                 <ChevronRight className="h-5 w-5 shrink-0 text-bone-dim transition-transform group-hover:translate-x-0.5" />
               </Link>
-              <div className="flex items-center justify-end gap-1 border-t border-panel-border/70 px-3 py-1.5">
-                <TemplateToggleButton
-                  planId={plan.id}
-                  isTemplate={plan.is_template}
-                />
-                <DuplicatePlanButton planId={plan.id} />
-                <ArchivePlanButton planId={plan.id} archived={false} />
-                <DeletePlanButton planId={plan.id} />
-              </div>
+              <PlanActionsMenu
+                planId={plan.id}
+                planName={plan.name}
+                isTemplate={plan.is_template}
+                archived={false}
+                shareToken={shareTokens.get(plan.id) ?? null}
+              />
             </Card>
           ))}
 
@@ -150,10 +167,12 @@ export default async function PlansPage() {
                       {t("exerciseCount", { count: exerciseCount(plan) })}
                     </span>
                   </Link>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <ArchivePlanButton planId={plan.id} archived={true} />
-                    <DeletePlanButton planId={plan.id} />
-                  </div>
+                  <PlanActionsMenu
+                    planId={plan.id}
+                    planName={plan.name}
+                    isTemplate={plan.is_template}
+                    archived={true}
+                  />
                 </Card>
               ))}
             </>

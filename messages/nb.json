@@ -137,11 +137,7 @@
     "displayName": "Visningsnavn",
     "displayNamePlaceholder": "Navnet ditt",
     "email": "E-post",
-    "signOut": "Logg ut",
-    "googleCalendarTitle": "Google Kalender-synk",
-    "googleCalendarDesc": "Send planlagte økter til Google Kalender.",
-    "appleCalendarTitle": "Apple Kalender-synk",
-    "appleCalendarDesc": "Toveis synk med Apple Kalender-appen."
+    "signOut": "Logg ut"
   },
   "analytics": {
     "title": "Analyse",
@@ -154,6 +150,7 @@
     "exerciseProgressDesc": "Tyngste arbeidsvekt over tid · PR-er i mosegrønt",
     "records": "Personlige rekorder",
     "recordsDesc": "Beste vekt og estimert 1RM per øvelse",
+    "oneRepMaxHint": "Beregnet maks for én repetisjon — ut fra vekt × reps i settet. Gjør at ulike repsområder kan sammenlignes.",
     "noRecords": "Logg noen økter for å begynne å spore rekorder.",
     "oneRepMax": "1RM {value}{unit}",
     "frequency": "Treningsfrekvens",
@@ -167,7 +164,15 @@
     "prTimeline": "Rekordhistorikk",
     "prTimelineDesc": "Hver gang du setter en ny estimert 1RM",
     "share": "Del rekord",
-    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian"
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian",
+    "sectionOverview": "Oversikt",
+    "sectionCharts": "Grafer",
+    "sectionRecords": "Rekorder",
+    "sectionBody": "Kropp",
+    "historyLink": "Historikk",
+    "emptyTitle": "Ingen data ennå",
+    "emptyBody": "Fullfør din første økt, så dukker grafer, rekorder og kontinuitet opp her.",
+    "emptyCta": "Gå til planer"
   },
   "plans": {
     "title": "Planer",
@@ -185,7 +190,11 @@
     "archived": "Arkivert",
     "delete": "Slett plan",
     "deleteConfirm": "Slette denne planen?",
-    "deleting": "Sletter…"
+    "deleting": "Sletter…",
+    "planActions": "Planhandlinger",
+    "sharePlanLink": "Del planlenke",
+    "copyShareLink": "Kopier delingslenke",
+    "disableShareLink": "Slå av delingslenke"
   },
   "planBuilder": {
     "editPlan": "Rediger plan",
@@ -208,7 +217,8 @@
     "dragToReorder": "Dra for å endre rekkefølge",
     "deleteExercise": "Slett øvelse",
     "startFromTemplate": "Start fra en mal",
-    "exercise": "Øvelse"
+    "exercise": "Øvelse",
+    "supersetWithPrev": "Supersett med forrige øvelse"
   },
   "exerciseCatalog": {
     "addExercise": "Legg til øvelse",
@@ -245,7 +255,10 @@
         "professional": "Bruk målet som utgangspunkt for programmet — perioder intensiteten gjennom uken."
       }
     },
-    "type": { "compound": "Baseøvelse", "isolation": "Isolasjon" },
+    "type": {
+      "compound": "Baseøvelse",
+      "isolation": "Isolasjon"
+    },
     "equipment": {
       "barbell": "Vektstang",
       "dumbbell": "Manualer",
@@ -253,7 +266,10 @@
       "machine": "Maskin",
       "bodyweight": "Kroppsvekt"
     },
-    "location": { "home": "Hjemme", "gym": "Treningssenter" }
+    "location": {
+      "home": "Hjemme",
+      "gym": "Treningssenter"
+    }
   },
   "exerciseInfo": {
     "bench-press": {
@@ -397,7 +413,8 @@
     "addToCalendar": "Legg til i Apple/Outlook-kalender",
     "addToGoogleCalendar": "Legg til i Google Kalender",
     "calendarEventTitle": "Økt: {plan}",
-    "calendarEventDescription": "Planlagt i Meredian."
+    "calendarEventDescription": "Planlagt i Meredian.",
+    "today": "I dag"
   },
   "quickAdd": {
     "scheduleSession": "Planlegg en økt",
@@ -410,7 +427,8 @@
     "repeatWeekly": "Gjenta ukentlig",
     "repeatWeeks": "Antall uker",
     "scheduling": "Planlegger…",
-    "addSession": "Legg til økt"
+    "addSession": "Legg til økt",
+    "repeatDays": "Ukedager"
   },
   "session": {
     "target": "Mål: {sets}×{reps} @ {weight}{unit}",
@@ -419,6 +437,7 @@
     "progressSuggest": "RPE {rpe} — øk",
     "newPR": "{count, plural, one {Ny personlig rekord!} other {# nye personlige rekorder!}}",
     "rpe": "RPE",
+    "rpeHint": "Opplevd anstrengelse (1–10): hvor tungt settet føltes. 10 = ingenting igjen. Påvirker vekten som foreslås neste økt.",
     "setDetails": "Settdetaljer",
     "exerciseDetails": "Øvelsesdetaljer",
     "setNotePlaceholder": "Notat",
@@ -441,7 +460,21 @@
     "skipSession": "Hopp over økten",
     "deleteSession": "Slett økten",
     "sessionNotes": "Hvordan gikk det?",
-    "sessionNotesPlaceholder": "Legg til et notat om denne økten…"
+    "sessionNotesPlaceholder": "Legg til et notat om denne økten…",
+    "exerciseOf": "Øvelse {current} av {total}",
+    "replaceExercise": "Bytt øvelse",
+    "replaceExerciseDesc": "velg en lignende øvelse. Loggede sett beholdes; planen oppdateres.",
+    "noAlternatives": "Fant ingen lignende øvelser.",
+    "bodyweight": "KV",
+    "bodyweightHint": "Ingen ekstra vekt — bare kroppen din. Kun repetisjoner registreres.",
+    "collapseExercise": "Skjul øvelse",
+    "addWarmup": "Oppvarming",
+    "superset": "Supersett",
+    "duration": "Varighet",
+    "shareWorkout": "Del økt",
+    "shareVolume": "{volume} {unit} volum",
+    "shareDuration": "Varighet {duration}",
+    "replaceExerciseHistoryNote": "Merk: tidligere logger for denne plassen flyttes også til den nye øvelsen."
   },
   "progression": {
     "increaseEasy": "Det føltes lett sist — øk vekten",
@@ -501,10 +534,22 @@
       "name": "Helkropp",
       "desc": "5 baseøvelser, 3× per uke"
     },
-    "upper": { "name": "Overkropp", "desc": "Bryst, rygg, skuldre, armer" },
-    "lower": { "name": "Underkropp", "desc": "Bein og bakside" },
-    "push": { "name": "Push-dag", "desc": "Bryst, skuldre, triceps" },
-    "pull": { "name": "Pull-dag", "desc": "Rygg og biceps" }
+    "upper": {
+      "name": "Overkropp",
+      "desc": "Bryst, rygg, skuldre, armer"
+    },
+    "lower": {
+      "name": "Underkropp",
+      "desc": "Bein og bakside"
+    },
+    "push": {
+      "name": "Push-dag",
+      "desc": "Bryst, skuldre, triceps"
+    },
+    "pull": {
+      "name": "Pull-dag",
+      "desc": "Rygg og biceps"
+    }
   },
   "errors": {
     "title": "Noe gikk galt",
@@ -623,7 +668,15 @@
     "invalidWeight": "Skriv inn en gyldig vekt.",
     "goal": "Mål: {goal} {unit} ·",
     "toGoal": "{delta} {unit} igjen",
-    "goalReached": "Mål nådd"
+    "goalReached": "Mål nådd",
+    "addGirths": "+ Legg til mål (midje, bryst, arm)",
+    "hideGirths": "Skjul mål",
+    "waist": "Midje (cm)",
+    "chest": "Bryst (cm)",
+    "arm": "Arm (cm)",
+    "waistShort": "M",
+    "chestShort": "B",
+    "armShort": "A"
   },
   "bodyGoal": {
     "title": "Kropp og mål",
@@ -633,9 +686,13 @@
     "personalRecord": "Personlig rekord",
     "max": "Tyngst",
     "oneRepMax": "Est. 1RM",
+    "oneRepMaxHint": "Beregnet maks for én repetisjon — ut fra vekt × reps i settet. Gjør at ulike repsområder kan sammenlignes.",
     "progress": "Fremgang",
     "noData": "Ingen loggførte data for denne øvelsen ennå.",
-    "sessions": "{count, plural, =0 {Ingen økter} one {# økt} other {# økter}}"
+    "sessions": "{count, plural, =0 {Ingen økter} one {# økt} other {# økter}}",
+    "metric_weight": "Toppvekt",
+    "metric_e1rm": "Est. 1RM",
+    "metric_volume": "Volum"
   },
   "muscleGroups": {
     "chest": "Bryst",
@@ -658,7 +715,10 @@
     "planDeleted": "Plan slettet",
     "planDuplicated": "Plan kopiert",
     "templateSaved": "Lagret som mal",
-    "templateRemoved": "Fjernet fra maler"
+    "templateRemoved": "Fjernet fra maler",
+    "linkCopied": "Lenke kopiert",
+    "shareDisabled": "Delingslenke av",
+    "summaryCopied": "Sammendrag kopiert"
   },
   "plates": {
     "open": "Skiver",
@@ -676,13 +736,30 @@
     "haptics": "Vibrasjon",
     "hapticsDesc": "Vibrer når du fullfører et sett eller setter rekord.",
     "sound": "Lyd",
-    "soundDesc": "Spill en lyd når pausetimeren er ferdig."
+    "soundDesc": "Spill en lyd når pausetimeren er ferdig.",
+    "hapticsUnsupported": "Støttes ikke på denne enheten — nettlesere på iPhone og iPad har ingen vibrasjons-API."
   },
   "heatmap": {
     "title": "Konsistens",
-    "description": "Fullførte økter de siste 26 ukene.",
+    "description": "Dine fullførte økter i år.",
     "totalDays": "{count, plural, one {# aktiv dag} other {# aktive dager}}",
     "less": "Mindre",
     "more": "Mer"
+  },
+  "history": {
+    "title": "Historikk",
+    "subtitle": "Dine fullførte økter",
+    "empty": "Fullførte økter vises her.",
+    "session": "Økt",
+    "setsCount": "{count, plural, one {# sett} other {# sett}}",
+    "showMore": "Vis flere"
+  },
+  "sharePlan": {
+    "invalid": "Denne delingslenken er ugyldig eller slått av.",
+    "exerciseCount": "{count, plural, one {# øvelse} other {# øvelser}}",
+    "exercise": "Øvelse",
+    "signInToSave": "Logg inn for å lagre planen",
+    "saveToMyPlans": "Lagre i mine planer",
+    "saving": "Lagrer…"
   }
 }

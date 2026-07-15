@@ -137,11 +137,7 @@
     "displayName": "Nombre visible",
     "displayNamePlaceholder": "Tu nombre",
     "email": "Correo",
-    "signOut": "Cerrar sesión",
-    "googleCalendarTitle": "Sincronización con Google Calendar",
-    "googleCalendarDesc": "Envía las sesiones programadas a tu Google Calendar.",
-    "appleCalendarTitle": "Sincronización con Apple Calendar",
-    "appleCalendarDesc": "Sincronización bidireccional con la app Apple Calendar."
+    "signOut": "Cerrar sesión"
   },
   "analytics": {
     "title": "Analíticas",
@@ -154,6 +150,7 @@
     "exerciseProgressDesc": "Mayor peso de trabajo a lo largo del tiempo · PR en verde musgo",
     "records": "Récords personales",
     "recordsDesc": "Mejor peso y 1RM estimado por ejercicio",
+    "oneRepMaxHint": "1RM estimado — la carga máxima para una repetición según el peso × reps de la serie. Permite comparar distintos rangos de repeticiones.",
     "noRecords": "Registra algunas sesiones para empezar a seguir récords.",
     "oneRepMax": "1RM {value}{unit}",
     "frequency": "Frecuencia de entrenamiento",
@@ -167,7 +164,15 @@
     "prTimeline": "Cronología de récords",
     "prTimelineDesc": "Cada vez que logras un nuevo 1RM estimado",
     "share": "Compartir récord",
-    "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meredian"
+    "shareText": "{name}: {weight}{unit} × {reps} (1RM est. {oneRepMax}{unit}) 💪 Meredian",
+    "sectionOverview": "Resumen",
+    "sectionCharts": "Gráficos",
+    "sectionRecords": "Récords",
+    "sectionBody": "Cuerpo",
+    "historyLink": "Historial",
+    "emptyTitle": "Aún no hay datos",
+    "emptyBody": "Completa tu primer entrenamiento y aquí aparecerán tus gráficos, récords y consistencia.",
+    "emptyCta": "Ir a planes"
   },
   "plans": {
     "title": "Planes",
@@ -185,7 +190,11 @@
     "archived": "Archivado",
     "delete": "Eliminar plan",
     "deleteConfirm": "¿Eliminar este plan?",
-    "deleting": "Eliminando…"
+    "deleting": "Eliminando…",
+    "planActions": "Acciones del plan",
+    "sharePlanLink": "Compartir enlace del plan",
+    "copyShareLink": "Copiar enlace",
+    "disableShareLink": "Desactivar enlace"
   },
   "planBuilder": {
     "editPlan": "Editar plan",
@@ -208,7 +217,8 @@
     "dragToReorder": "Arrastra para reordenar",
     "deleteExercise": "Eliminar ejercicio",
     "startFromTemplate": "Empezar con una plantilla",
-    "exercise": "Ejercicio"
+    "exercise": "Ejercicio",
+    "supersetWithPrev": "Superserie con el ejercicio anterior"
   },
   "exerciseCatalog": {
     "addExercise": "Añadir ejercicio",
@@ -245,7 +255,10 @@
         "professional": "Usa el objetivo como base de tu programación: periodiza la intensidad a lo largo de la semana."
       }
     },
-    "type": { "compound": "Compuesto", "isolation": "Aislamiento" },
+    "type": {
+      "compound": "Compuesto",
+      "isolation": "Aislamiento"
+    },
     "equipment": {
       "barbell": "Barra",
       "dumbbell": "Mancuernas",
@@ -253,7 +266,10 @@
       "machine": "Máquina",
       "bodyweight": "Peso corporal"
     },
-    "location": { "home": "Casa", "gym": "Gimnasio" }
+    "location": {
+      "home": "Casa",
+      "gym": "Gimnasio"
+    }
   },
   "exerciseInfo": {
     "bench-press": {
@@ -397,7 +413,8 @@
     "addToCalendar": "Añadir a Apple/Outlook Calendar",
     "addToGoogleCalendar": "Añadir a Google Calendar",
     "calendarEventTitle": "Entrenamiento: {plan}",
-    "calendarEventDescription": "Planificado en Meredian."
+    "calendarEventDescription": "Planificado en Meredian.",
+    "today": "Hoy"
   },
   "quickAdd": {
     "scheduleSession": "Programar una sesión",
@@ -410,7 +427,8 @@
     "repeatWeekly": "Repetir cada semana",
     "repeatWeeks": "Número de semanas",
     "scheduling": "Programando…",
-    "addSession": "Añadir sesión"
+    "addSession": "Añadir sesión",
+    "repeatDays": "Días de la semana"
   },
   "session": {
     "target": "Objetivo: {sets}×{reps} @ {weight}{unit}",
@@ -419,6 +437,7 @@
     "progressSuggest": "RPE {rpe} — sube",
     "newPR": "{count, plural, one {¡Nuevo récord personal!} other {¡# nuevos récords personales!}}",
     "rpe": "RPE",
+    "rpeHint": "Esfuerzo percibido (1–10): cuán duro fue la serie. 10 = no quedaba nada más. Influye en el peso sugerido la próxima sesión.",
     "setDetails": "Detalles de la serie",
     "exerciseDetails": "Detalles del ejercicio",
     "setNotePlaceholder": "Nota",
@@ -441,7 +460,21 @@
     "skipSession": "Omitir sesión",
     "deleteSession": "Eliminar sesión",
     "sessionNotes": "¿Qué tal fue?",
-    "sessionNotesPlaceholder": "Añade una nota sobre esta sesión…"
+    "sessionNotesPlaceholder": "Añade una nota sobre esta sesión…",
+    "exerciseOf": "Ejercicio {current} de {total}",
+    "replaceExercise": "Reemplazar ejercicio",
+    "replaceExerciseDesc": "elige un ejercicio similar. Las series registradas se conservan; el plan se actualiza.",
+    "noAlternatives": "No se encontraron ejercicios similares.",
+    "bodyweight": "PC",
+    "bodyweightHint": "Sin peso añadido — solo tu cuerpo. Solo se registran repeticiones.",
+    "collapseExercise": "Contraer ejercicio",
+    "addWarmup": "Calentamiento",
+    "superset": "Superserie",
+    "duration": "Duración",
+    "shareWorkout": "Compartir entrenamiento",
+    "shareVolume": "{volume} {unit} de volumen",
+    "shareDuration": "Duración {duration}",
+    "replaceExerciseHistoryNote": "Nota: los registros anteriores de esta posición también pasan al nuevo ejercicio."
   },
   "progression": {
     "increaseEasy": "La última vez fue fácil — sube el peso",
@@ -505,9 +538,18 @@
       "name": "Tren superior",
       "desc": "Pecho, espalda, hombros, brazos"
     },
-    "lower": { "name": "Tren inferior", "desc": "Piernas y cadena posterior" },
-    "push": { "name": "Día de empuje", "desc": "Pecho, hombros, tríceps" },
-    "pull": { "name": "Día de tirón", "desc": "Espalda y bíceps" }
+    "lower": {
+      "name": "Tren inferior",
+      "desc": "Piernas y cadena posterior"
+    },
+    "push": {
+      "name": "Día de empuje",
+      "desc": "Pecho, hombros, tríceps"
+    },
+    "pull": {
+      "name": "Día de tirón",
+      "desc": "Espalda y bíceps"
+    }
   },
   "errors": {
     "title": "Algo salió mal",
@@ -626,7 +668,15 @@
     "invalidWeight": "Introduce un peso válido.",
     "goal": "Objetivo: {goal} {unit} ·",
     "toGoal": "faltan {delta} {unit}",
-    "goalReached": "Objetivo alcanzado"
+    "goalReached": "Objetivo alcanzado",
+    "addGirths": "+ Añadir contornos (cintura, pecho, brazo)",
+    "hideGirths": "Ocultar contornos",
+    "waist": "Cintura (cm)",
+    "chest": "Pecho (cm)",
+    "arm": "Brazo (cm)",
+    "waistShort": "Ci",
+    "chestShort": "Pe",
+    "armShort": "Br"
   },
   "bodyGoal": {
     "title": "Cuerpo y objetivo",
@@ -636,9 +686,13 @@
     "personalRecord": "Récord personal",
     "max": "Más pesado",
     "oneRepMax": "1RM est.",
+    "oneRepMaxHint": "1RM estimado — la carga máxima para una repetición según el peso × reps de la serie. Permite comparar distintos rangos de repeticiones.",
     "progress": "Progreso",
     "noData": "Aún no hay datos registrados para este ejercicio.",
-    "sessions": "{count, plural, =0 {Sin sesiones} one {# sesión} other {# sesiones}}"
+    "sessions": "{count, plural, =0 {Sin sesiones} one {# sesión} other {# sesiones}}",
+    "metric_weight": "Peso máximo",
+    "metric_e1rm": "1RM est.",
+    "metric_volume": "Volumen"
   },
   "muscleGroups": {
     "chest": "Pecho",
@@ -661,7 +715,10 @@
     "planDeleted": "Plan eliminado",
     "planDuplicated": "Plan duplicado",
     "templateSaved": "Guardado como plantilla",
-    "templateRemoved": "Quitado de plantillas"
+    "templateRemoved": "Quitado de plantillas",
+    "linkCopied": "Enlace copiado",
+    "shareDisabled": "Enlace desactivado",
+    "summaryCopied": "Resumen copiado"
   },
   "plates": {
     "open": "Discos",
@@ -679,13 +736,30 @@
     "haptics": "Vibración",
     "hapticsDesc": "Vibra al completar una serie o lograr un récord.",
     "sound": "Sonido",
-    "soundDesc": "Suena un aviso cuando termina el descanso."
+    "soundDesc": "Suena un aviso cuando termina el descanso.",
+    "hapticsUnsupported": "No compatible con este dispositivo: los navegadores de iPhone y iPad no tienen API de vibración."
   },
   "heatmap": {
     "title": "Constancia",
-    "description": "Tus sesiones completadas en las últimas 26 semanas.",
+    "description": "Tus sesiones completadas este año.",
     "totalDays": "{count, plural, one {# día activo} other {# días activos}}",
     "less": "Menos",
     "more": "Más"
+  },
+  "history": {
+    "title": "Historial",
+    "subtitle": "Tus entrenamientos completados",
+    "empty": "Los entrenamientos completados aparecerán aquí.",
+    "session": "Sesión",
+    "setsCount": "{count, plural, one {# serie} other {# series}}",
+    "showMore": "Mostrar más"
+  },
+  "sharePlan": {
+    "invalid": "Este enlace no es válido o fue desactivado.",
+    "exerciseCount": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+    "exercise": "Ejercicio",
+    "signInToSave": "Inicia sesión para guardar este plan",
+    "saveToMyPlans": "Guardar en mis planes",
+    "saving": "Guardando…"
   }
 }

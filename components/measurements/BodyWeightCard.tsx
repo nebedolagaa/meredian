@@ -29,6 +29,10 @@ export interface MeasurementPoint {
   date: string;
   /** Already converted to the user's display unit. */
   weight: number;
+  /** Girths in cm (migration 0019) — null when not recorded. */
+  waistCm?: number | null;
+  chestCm?: number | null;
+  armCm?: number | null;
 }
 
 function ChartTooltip({
@@ -72,6 +76,10 @@ export function BodyWeightCard({
   const router = useRouter();
   const [weight, setWeight] = useState("");
   const [date, setDate] = useState(todayISO());
+  const [girthsOpen, setGirthsOpen] = useState(false);
+  const [waist, setWaist] = useState("");
+  const [chest, setChest] = useState("");
+  const [arm, setArm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -82,13 +90,24 @@ export function BodyWeightCard({
       setError(t("invalidWeight"));
       return;
     }
+    const girth = (raw: string) => {
+      const n = Number(raw);
+      return raw !== "" && n > 0 ? n : null;
+    };
     startTransition(async () => {
-      const result = await addMeasurement(value, unit, date);
+      const result = await addMeasurement(value, unit, date, undefined, {
+        waistCm: girth(waist),
+        chestCm: girth(chest),
+        armCm: girth(arm),
+      });
       if (result.error) {
         setError(result.error);
         return;
       }
       setWeight("");
+      setWaist("");
+      setChest("");
+      setArm("");
       router.refresh();
     });
   }
@@ -148,6 +167,62 @@ export function BodyWeightCard({
           {pending ? tCommon("saving") : t("add")}
         </Button>
       </div>
+
+      {/* Optional girths — weight alone lies for recomp/gain goals. */}
+      <button
+        type="button"
+        onClick={() => setGirthsOpen((v) => !v)}
+        aria-expanded={girthsOpen}
+        className="self-start text-xs text-steel hover:underline"
+      >
+        {girthsOpen ? t("hideGirths") : t("addGirths")}
+      </button>
+      {girthsOpen && (
+        <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="bw-waist">{t("waist")}</Label>
+            <Input
+              id="bw-waist"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={0.5}
+              value={waist}
+              onChange={(e) => setWaist(e.target.value)}
+              className="font-num tabular-nums"
+              placeholder="cm"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="bw-chest">{t("chest")}</Label>
+            <Input
+              id="bw-chest"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={0.5}
+              value={chest}
+              onChange={(e) => setChest(e.target.value)}
+              className="font-num tabular-nums"
+              placeholder="cm"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="bw-arm">{t("arm")}</Label>
+            <Input
+              id="bw-arm"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={0.5}
+              value={arm}
+              onChange={(e) => setArm(e.target.value)}
+              className="font-num tabular-nums"
+              placeholder="cm"
+            />
+          </div>
+        </div>
+      )}
 
       {error && <p className="text-xs text-red-400">{error}</p>}
 
@@ -224,6 +299,17 @@ export function BodyWeightCard({
                 {shortDate(m.date)}
               </span>
               <div className="flex items-center gap-3">
+                {(m.waistCm || m.chestCm || m.armCm) && (
+                  <span className="font-num text-[10px] tabular-nums text-bone-dim">
+                    {[
+                      m.waistCm && `${t("waistShort")} ${m.waistCm}`,
+                      m.chestCm && `${t("chestShort")} ${m.chestCm}`,
+                      m.armCm && `${t("armShort")} ${m.armCm}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
+                )}
                 <span className="font-num text-sm tabular-nums text-bone">
                   {m.weight} {unitName}
                 </span>

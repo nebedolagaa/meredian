@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { ChevronLeft, ChevronRight, Plus, Check, X, Clock } from "lucide-react";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -92,11 +93,16 @@ function escapeIcsText(value: string): string {
     .replace(/;/g, "\\;");
 }
 
-function dotClass(status: string, isPast: boolean): string {
-  if (status === "completed") return "bg-steel";
+/**
+ * Status glyph for a day cell — shape + colour (not colour alone, so the
+ * statuses stay distinguishable for colour-blind users) matching the legend.
+ */
+function StatusGlyph({ status, isPast }: { status: string; isPast: boolean }) {
+  if (status === "completed")
+    return <Check className="h-3 w-3 text-steel" strokeWidth={3} />;
   if (status === "skipped" || (isPast && status !== "completed"))
-    return "bg-clay";
-  return "bg-bone-dim";
+    return <X className="h-3 w-3 text-clay" strokeWidth={3} />;
+  return <Clock className="h-3 w-3 text-bone-dim" strokeWidth={2.5} />;
 }
 
 export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
@@ -107,6 +113,7 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
   const supabase = useMemo(() => createClient(), []);
   const [cursor, setCursor] = useState(() => startOfMonth(new Date()));
   const [sessions, setSessions] = useState<CalSession[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddDate, setQuickAddDate] = useState<string | undefined>();
@@ -145,6 +152,7 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
   }, [locale, selected]);
 
   const load = useCallback(async () => {
+    setLoading(true);
     const from = toISODate(grid[0]);
     const to = toISODate(grid[grid.length - 1]);
     const { data } = await supabase
@@ -153,19 +161,28 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
       .gte("scheduled_date", from)
       .lte("scheduled_date", to);
     setSessions((data ?? []) as unknown as CalSession[]);
+    setLoading(false);
   }, [supabase, grid]);
 
   useEffect(() => {
     load();
   }, [load]);
 
+  // A day can hold several sessions — keep them all.
   const byDate = useMemo(() => {
-    const map = new Map<string, CalSession>();
-    for (const s of sessions) map.set(s.scheduled_date, s);
+    const map = new Map<string, CalSession[]>();
+    for (const s of sessions) {
+      const list = map.get(s.scheduled_date);
+      if (list) list.push(s);
+      else map.set(s.scheduled_date, [s]);
+    }
     return map;
   }, [sessions]);
 
-  const selectedSession = selected ? byDate.get(selected) : undefined;
+  const selectedSessions = (selected ? byDate.get(selected) : undefined) ?? [];
+  const isCurrentMonth =
+    cursor.getMonth() === new Date().getMonth() &&
+    cursor.getFullYear() === new Date().getFullYear();
 
   function shiftMonth(delta: number) {
     setCursor((c) => new Date(c.getFullYear(), c.getMonth() + delta, 1));
@@ -232,6 +249,14 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
           {t("title")}
         </h1>
         <div className="flex items-center gap-1">
+          {!isCurrentMonth && (
+            <button
+              onClick={() => setCursor(startOfMonth(new Date()))}
+              className="rounded-lg border border-panel-border px-2.5 py-1 text-xs text-bone-dim transition-colors hover:text-bone"
+            >
+              {t("today")}
+            </button>
+          )}
           <button
             aria-label={t("prevMonth")}
             onClick={() => shiftMonth(-1)}
@@ -264,45 +289,63 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
         ))}
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {grid.map((d) => {
-          const iso = toISODate(d);
-          const inMonth = d.getMonth() === cursor.getMonth();
-          const session = byDate.get(iso);
-          const isToday = iso === today;
-          const isPast = iso < today;
-          return (
-            <button
-              key={iso}
-              onClick={() => setSelected(iso)}
-              className={cn(
-                "flex aspect-square flex-col items-center justify-start gap-1 rounded-lg border border-transparent p-1 transition-colors",
-                inMonth ? "text-bone" : "text-bone-dim/40",
-                isToday && "border-steel",
-                "hover:border-panel-border",
-              )}
-            >
-              <span className="font-num text-xs tabular-nums">
-                {d.getDate()}
-              </span>
-              {session && (
-                <span
-                  className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    dotClass(session.status, isPast),
-                  )}
-                />
-              )}
-              {session?.workout_plans?.name && inMonth && (
-                <span className="line-clamp-1 w-full text-center text-[8px] leading-tight text-bone-dim">
-                  {session.workout_plans.name}
+      {/* Grid — swipe horizontally to change months */}
+      <LazyMotion features={domAnimation} strict>
+        <m.div
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.15}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -60) shiftMonth(1);
+            else if (info.offset.x > 60) shiftMonth(-1);
+          }}
+          className={cn(
+            "grid touch-pan-y grid-cols-7 gap-1 transition-opacity",
+            loading && "opacity-50",
+          )}
+        >
+          {grid.map((d) => {
+            const iso = toISODate(d);
+            const inMonth = d.getMonth() === cursor.getMonth();
+            const daySessions = byDate.get(iso) ?? [];
+            const isToday = iso === today;
+            const isPast = iso < today;
+            return (
+              <button
+                key={iso}
+                onClick={() => setSelected(iso)}
+                className={cn(
+                  "flex aspect-square flex-col items-center justify-start gap-0.5 rounded-lg border border-transparent p-1 transition-colors",
+                  inMonth ? "text-bone" : "text-bone-dim/40",
+                  isToday && "border-steel",
+                  "hover:border-panel-border",
+                )}
+              >
+                <span className="font-num text-xs tabular-nums">
+                  {d.getDate()}
                 </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+                {daySessions.length > 0 && (
+                  <span className="flex items-center justify-center gap-0.5">
+                    {daySessions.slice(0, 3).map((s) => (
+                      <StatusGlyph key={s.id} status={s.status} isPast={isPast} />
+                    ))}
+                    {daySessions.length > 3 && (
+                      <span className="font-num text-[8px] tabular-nums text-bone-dim">
+                        +{daySessions.length - 3}
+                      </span>
+                    )}
+                  </span>
+                )}
+                {daySessions[0]?.workout_plans?.name && inMonth && (
+                  <span className="line-clamp-1 w-full text-center text-[8px] leading-tight text-bone-dim">
+                    {daySessions[0].workout_plans.name}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </m.div>
+      </LazyMotion>
 
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 pt-2 text-[10px] text-bone-dim">
@@ -349,66 +392,68 @@ export function CalendarView({ plans }: { plans: WorkoutPlan[] }) {
               {selectedLabel}
             </SheetTitle>
             <SheetDescription>
-              {selectedSession ? t("scheduledSession") : t("noSessionDay")}
+              {selectedSessions.length > 0
+                ? t("scheduledSession")
+                : t("noSessionDay")}
             </SheetDescription>
           </SheetHeader>
 
-          <div className="mt-5 flex flex-col gap-4">
-            {selectedSession ? (
-              <>
-                <div className="flex items-center justify-between rounded-lg border border-panel-border bg-carbon p-3">
+          <div className="mt-5 flex max-h-[60dvh] flex-col gap-4 overflow-y-auto">
+            {selectedSessions.map((session) => (
+              <div
+                key={session.id}
+                className="flex flex-col gap-3 rounded-xl border border-panel-border bg-carbon p-3"
+              >
+                <div className="flex items-center justify-between">
                   <span className="text-sm text-bone">
-                    {selectedSession.workout_plans?.name ?? t("session")}
+                    {session.workout_plans?.name ?? t("session")}
                   </span>
                   <Badge
-                    variant={
-                      selectedSession.status === "completed" ? "moss" : "steel"
-                    }
+                    variant={session.status === "completed" ? "moss" : "steel"}
                   >
-                    {tStatus(selectedSession.status)}
+                    {tStatus(session.status)}
                   </Badge>
                 </div>
-                <Button
-                  onClick={() => router.push(`/session/${selectedSession.id}`)}
-                >
+                <Button onClick={() => router.push(`/session/${session.id}`)}>
                   {t("openSession")}
                 </Button>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <Button
                     variant="outline"
-                    onClick={() => exportSessionIcs(selectedSession)}
+                    onClick={() => exportSessionIcs(session)}
                   >
                     <AppleLogo className="h-5 w-5 shrink-0" />
                     {t("addToCalendar")}
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => openGoogleCalendar(selectedSession)}
+                    onClick={() => openGoogleCalendar(session)}
                   >
                     <GoogleLogo className="h-5 w-5 shrink-0" />
                     {t("addToGoogleCalendar")}
                   </Button>
                 </div>
                 <RescheduleControl
-                  sessionId={selectedSession.id}
-                  initialDate={selectedSession.scheduled_date}
+                  sessionId={session.id}
+                  initialDate={session.scheduled_date}
                   onDone={() => {
                     setSelected(null);
                     load();
                   }}
                 />
-              </>
-            ) : (
-              <Button
-                onClick={() => {
-                  setQuickAddDate(selected ?? today);
-                  setSelected(null);
-                  setQuickAddOpen(true);
-                }}
-              >
-                <Plus className="h-4 w-4" /> {t("addSession")}
-              </Button>
-            )}
+              </div>
+            ))}
+
+            <Button
+              variant={selectedSessions.length > 0 ? "outline" : "default"}
+              onClick={() => {
+                setQuickAddDate(selected ?? today);
+                setSelected(null);
+                setQuickAddOpen(true);
+              }}
+            >
+              <Plus className="h-4 w-4" /> {t("addSession")}
+            </Button>
           </div>
         </SheetContent>
       </Sheet>

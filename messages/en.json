@@ -137,11 +137,7 @@
     "displayName": "Display name",
     "displayNamePlaceholder": "Your name",
     "email": "Email",
-    "signOut": "Sign out",
-    "googleCalendarTitle": "Google Calendar sync",
-    "googleCalendarDesc": "Push scheduled sessions to your Google Calendar.",
-    "appleCalendarTitle": "Apple Calendar sync",
-    "appleCalendarDesc": "Two-way sync with the Apple Calendar app."
+    "signOut": "Sign out"
   },
   "analytics": {
     "title": "Analytics",
@@ -154,6 +150,7 @@
     "exerciseProgressDesc": "Top working weight over time · PRs in moss",
     "records": "Personal records",
     "recordsDesc": "Best weight and estimated 1RM per exercise",
+    "oneRepMaxHint": "Estimated one-rep max — the heaviest single lift your weight × reps predicts. Lets different rep ranges compare fairly.",
     "noRecords": "Log a few sessions to start tracking records.",
     "oneRepMax": "1RM {value}{unit}",
     "frequency": "Training frequency",
@@ -167,7 +164,15 @@
     "prTimeline": "PR timeline",
     "prTimelineDesc": "Every time you set a new estimated 1RM",
     "share": "Share record",
-    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian"
+    "shareText": "{name}: {weight}{unit} × {reps} (est. 1RM {oneRepMax}{unit}) 💪 Meredian",
+    "sectionOverview": "Overview",
+    "sectionCharts": "Charts",
+    "sectionRecords": "Records",
+    "sectionBody": "Body",
+    "historyLink": "History",
+    "emptyTitle": "No data yet",
+    "emptyBody": "Complete your first workout and your charts, records and consistency will show up here.",
+    "emptyCta": "Go to plans"
   },
   "plans": {
     "title": "Plans",
@@ -185,7 +190,11 @@
     "archived": "Archived",
     "delete": "Delete plan",
     "deleteConfirm": "Delete this plan?",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "planActions": "Plan actions",
+    "sharePlanLink": "Share plan link",
+    "copyShareLink": "Copy share link",
+    "disableShareLink": "Disable share link"
   },
   "planBuilder": {
     "editPlan": "Edit plan",
@@ -208,7 +217,8 @@
     "dragToReorder": "Drag to reorder",
     "deleteExercise": "Delete exercise",
     "startFromTemplate": "Start from template",
-    "exercise": "Exercise"
+    "exercise": "Exercise",
+    "supersetWithPrev": "Superset with previous exercise"
   },
   "exerciseCatalog": {
     "addExercise": "Add exercise",
@@ -245,7 +255,10 @@
         "professional": "Treat the target as a base for your programming — periodise intensity across the week."
       }
     },
-    "type": { "compound": "Compound", "isolation": "Isolation" },
+    "type": {
+      "compound": "Compound",
+      "isolation": "Isolation"
+    },
     "equipment": {
       "barbell": "Barbell",
       "dumbbell": "Dumbbells",
@@ -253,7 +266,10 @@
       "machine": "Machine",
       "bodyweight": "Bodyweight"
     },
-    "location": { "home": "Home", "gym": "Gym" }
+    "location": {
+      "home": "Home",
+      "gym": "Gym"
+    }
   },
   "exerciseInfo": {
     "bench-press": {
@@ -397,7 +413,8 @@
     "addToCalendar": "Add to Apple Calendar",
     "addToGoogleCalendar": "Add to Google Calendar",
     "calendarEventTitle": "Workout: {plan}",
-    "calendarEventDescription": "Planned in Meredian."
+    "calendarEventDescription": "Planned in Meredian.",
+    "today": "Today"
   },
   "quickAdd": {
     "scheduleSession": "Schedule a session",
@@ -410,7 +427,8 @@
     "repeatWeekly": "Repeat weekly",
     "repeatWeeks": "Number of weeks",
     "scheduling": "Scheduling…",
-    "addSession": "Add session"
+    "addSession": "Add session",
+    "repeatDays": "Days of the week"
   },
   "session": {
     "target": "Target: {sets}×{reps} @ {weight}{unit}",
@@ -419,6 +437,7 @@
     "progressSuggest": "RPE {rpe} — go up",
     "newPR": "{count, plural, one {New personal record!} other {# new personal records!}}",
     "rpe": "RPE",
+    "rpeHint": "Rate of Perceived Exertion (1–10): how hard the set felt. 10 = nothing left. Feeds the weight suggested next session.",
     "setDetails": "Set details",
     "exerciseDetails": "Exercise details",
     "setNotePlaceholder": "Note",
@@ -441,7 +460,21 @@
     "skipSession": "Skip session",
     "deleteSession": "Delete session",
     "sessionNotes": "How did it go?",
-    "sessionNotesPlaceholder": "Add a note about this session…"
+    "sessionNotesPlaceholder": "Add a note about this session…",
+    "exerciseOf": "Exercise {current} of {total}",
+    "replaceExercise": "Replace exercise",
+    "replaceExerciseDesc": "pick a similar exercise. Logged sets stay in place; the plan is updated.",
+    "noAlternatives": "No similar exercises found.",
+    "bodyweight": "BW",
+    "bodyweightHint": "No added weight — just your body. Only reps are logged.",
+    "collapseExercise": "Collapse exercise",
+    "addWarmup": "Warm-up",
+    "superset": "Superset",
+    "duration": "Duration",
+    "shareWorkout": "Share workout",
+    "shareVolume": "{volume} {unit} volume",
+    "shareDuration": "Duration {duration}",
+    "replaceExerciseHistoryNote": "Note: past logs of this slot move to the new exercise too."
   },
   "progression": {
     "increaseEasy": "That felt easy last time — add weight",
@@ -501,10 +534,22 @@
       "name": "Full Body",
       "desc": "5 compound lifts, 3× per week"
     },
-    "upper": { "name": "Upper Body", "desc": "Chest, back, shoulders, arms" },
-    "lower": { "name": "Lower Body", "desc": "Legs and posterior chain" },
-    "push": { "name": "Push Day", "desc": "Chest, shoulders, triceps" },
-    "pull": { "name": "Pull Day", "desc": "Back and biceps" }
+    "upper": {
+      "name": "Upper Body",
+      "desc": "Chest, back, shoulders, arms"
+    },
+    "lower": {
+      "name": "Lower Body",
+      "desc": "Legs and posterior chain"
+    },
+    "push": {
+      "name": "Push Day",
+      "desc": "Chest, shoulders, triceps"
+    },
+    "pull": {
+      "name": "Pull Day",
+      "desc": "Back and biceps"
+    }
   },
   "errors": {
     "title": "Something went wrong",
@@ -623,7 +668,15 @@
     "invalidWeight": "Enter a valid weight.",
     "goal": "Goal: {goal} {unit} ·",
     "toGoal": "{delta} {unit} to go",
-    "goalReached": "Goal reached"
+    "goalReached": "Goal reached",
+    "addGirths": "+ Add girths (waist, chest, arm)",
+    "hideGirths": "Hide girths",
+    "waist": "Waist (cm)",
+    "chest": "Chest (cm)",
+    "arm": "Arm (cm)",
+    "waistShort": "W",
+    "chestShort": "C",
+    "armShort": "A"
   },
   "bodyGoal": {
     "title": "Body & goal",
@@ -633,9 +686,13 @@
     "personalRecord": "Personal record",
     "max": "Heaviest",
     "oneRepMax": "Est. 1RM",
+    "oneRepMaxHint": "Estimated one-rep max — the heaviest single lift your weight × reps predicts. Lets different rep ranges compare fairly.",
     "progress": "Progress",
     "noData": "No logged data for this exercise yet.",
-    "sessions": "{count, plural, =0 {No sessions} one {# session} other {# sessions}}"
+    "sessions": "{count, plural, =0 {No sessions} one {# session} other {# sessions}}",
+    "metric_weight": "Top weight",
+    "metric_e1rm": "Est. 1RM",
+    "metric_volume": "Volume"
   },
   "muscleGroups": {
     "chest": "Chest",
@@ -658,7 +715,10 @@
     "planDeleted": "Plan deleted",
     "planDuplicated": "Plan duplicated",
     "templateSaved": "Saved as template",
-    "templateRemoved": "Removed from templates"
+    "templateRemoved": "Removed from templates",
+    "linkCopied": "Link copied",
+    "shareDisabled": "Share link disabled",
+    "summaryCopied": "Summary copied"
   },
   "plates": {
     "open": "Plates",
@@ -676,13 +736,30 @@
     "haptics": "Vibration",
     "hapticsDesc": "Buzz when you complete a set or hit a PR.",
     "sound": "Sound",
-    "soundDesc": "Play a chime when the rest timer ends."
+    "soundDesc": "Play a chime when the rest timer ends.",
+    "hapticsUnsupported": "Not supported on this device — iPhone and iPad browsers have no vibration API."
   },
   "heatmap": {
     "title": "Consistency",
-    "description": "Your completed sessions over the last 26 weeks.",
+    "description": "Your completed sessions this year.",
     "totalDays": "{count, plural, one {# active day} other {# active days}}",
     "less": "Less",
     "more": "More"
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "Your completed workouts",
+    "empty": "Completed workouts will appear here.",
+    "session": "Session",
+    "setsCount": "{count, plural, one {# set} other {# sets}}",
+    "showMore": "Show more"
+  },
+  "sharePlan": {
+    "invalid": "This share link is invalid or has been disabled.",
+    "exerciseCount": "{count, plural, one {# exercise} other {# exercises}}",
+    "exercise": "Exercise",
+    "signInToSave": "Sign in to save this plan",
+    "saveToMyPlans": "Save to my plans",
+    "saving": "Saving…"
   }
 }

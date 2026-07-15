@@ -1,10 +1,18 @@
-import { TrendingDown, TrendingUp, Minus, Trophy, Dumbbell } from "lucide-react";
+import {
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  Trophy,
+  Dumbbell,
+  History,
+} from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { InfoHint } from "@/components/ui/InfoHint";
 import { InsightCard } from "@/components/insight/InsightCard";
 import { VolumeChart } from "@/components/charts/VolumeChart";
 import { FrequencyChart } from "@/components/charts/FrequencyChart";
@@ -13,7 +21,6 @@ import { ExerciseProgressChart } from "@/components/charts/ExerciseProgressChart
 import { ShareRecordButton } from "@/components/analytics/ShareRecordButton";
 import { ConsistencyHeatmap } from "@/components/analytics/ConsistencyHeatmap";
 import { BodyWeightCard } from "@/components/measurements/BodyWeightCard";
-import { StreakCard } from "@/components/streak/StreakCard";
 import { BodyMap } from "@/components/exercises/BodyMap";
 import { getAnalyticsData } from "@/lib/data/analytics";
 import { getUserPreferences } from "@/lib/data/preferences";
@@ -49,7 +56,6 @@ export default async function AnalyticsPage() {
     frequencySeries,
     muscleVolume,
     muscleIntensity,
-    streak,
     completedDates,
   } = await getAnalyticsData(supabase, user.id, weeklyGoal);
   const unitName = unitLabel(unit);
@@ -80,10 +86,25 @@ export default async function AnalyticsPage() {
       ? toDisplayWeight(goalWeightRow.goal_weight_kg, unit)
       : null;
 
+  // Girths (migration 0019) — read separately so a missing column can't
+  // break the analytics page.
+  const girthsById = new Map<
+    string,
+    { waist_cm: number | null; chest_cm: number | null; arm_cm: number | null }
+  >();
+  const { data: girthRows } = await supabase
+    .from("body_measurements")
+    .select("id, waist_cm, chest_cm, arm_cm")
+    .eq("user_id", user.id);
+  for (const g of girthRows ?? []) girthsById.set(g.id, g);
+
   const measurements = (measurementRows ?? []).map((m) => ({
     id: m.id,
     date: m.measured_on,
     weight: toDisplayWeight(m.weight_kg, unit),
+    waistCm: girthsById.get(m.id)?.waist_cm ?? null,
+    chestCm: girthsById.get(m.id)?.chest_cm ?? null,
+    armCm: girthsById.get(m.id)?.arm_cm ?? null,
   }));
 
   // Last 30 days for the progress chart.
@@ -92,13 +113,76 @@ export default async function AnalyticsPage() {
   const cutoffISO = cutoff.toISOString().slice(0, 10);
   const recentProgress = progressSeries.filter((p) => p.date >= cutoffISO);
 
+  // Before the first completed session every card is a separate "no data"
+  // shell — show one clear empty state with a call to action instead.
+  // Body-weight entries count as data: this page hosts their input form.
+  const hasAnyData =
+    completedDates.length > 0 ||
+    progressSeries.length > 0 ||
+    records.length > 0 ||
+    measurements.length > 0;
+  if (!hasAnyData) {
+    return (
+      <div className="flex flex-col gap-6 pb-8">
+        <PageHeader title={t("title")} subtitle={t("subtitle")} />
+        <Card>
+          <CardContent className="flex flex-col items-center gap-4 py-14 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-steel/10 text-steel">
+              <Dumbbell className="h-7 w-7" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-medium text-bone">{t("emptyTitle")}</p>
+              <p className="max-w-[32ch] text-sm text-bone-dim">
+                {t("emptyBody")}
+              </p>
+            </div>
+            <Link
+              href="/plans"
+              className="rounded-xl bg-steel px-4 py-2 text-sm font-medium text-carbon transition-transform active:scale-95"
+            >
+              {t("emptyCta")}
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const sections = [
+    { id: "overview", label: t("sectionOverview") },
+    { id: "charts", label: t("sectionCharts") },
+    { id: "records", label: t("sectionRecords") },
+    { id: "body", label: t("sectionBody") },
+  ];
+
   return (
     <div className="flex flex-col gap-6 pb-8">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
-      <StreakCard streak={streak} />
+      {/* Section chips — quick jumps through a long page */}
+      <nav className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+        {sections.map((s) => (
+          <a
+            key={s.id}
+            href={`#${s.id}`}
+            className="shrink-0 rounded-full border border-panel-border px-3 py-1.5 text-xs text-bone-dim transition-colors hover:border-steel/40 hover:text-bone"
+          >
+            {s.label}
+          </a>
+        ))}
+        <Link
+          href="/history"
+          className="flex shrink-0 items-center gap-1.5 rounded-full border border-panel-border px-3 py-1.5 text-xs text-bone-dim transition-colors hover:border-steel/40 hover:text-bone"
+        >
+          <History className="h-3 w-3" />
+          {t("historyLink")}
+        </Link>
+      </nav>
 
-      <ConsistencyHeatmap dates={completedDates} />
+      {/* Streak lives on the dashboard; the heatmap owns "consistency" here. */}
+      <div id="overview" className="flex scroll-mt-4 flex-col gap-6">
+        <ConsistencyHeatmap dates={completedDates} />
+      </div>
 
       {/* Insights */}
       {insights.length > 0 && (
@@ -114,6 +198,7 @@ export default async function AnalyticsPage() {
         </div>
       )}
 
+      <div id="charts" className="flex scroll-mt-4 flex-col gap-6">
       {/* Volume over time */}
       <Card>
         <CardHeader>
@@ -191,13 +276,16 @@ export default async function AnalyticsPage() {
           )}
         </CardContent>
       </Card>
+      </div>
 
+      <div id="records" className="flex scroll-mt-4 flex-col gap-6">
       {/* Personal records */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-moss" />
             {t("records")}
+            <InfoHint text={t("oneRepMaxHint")} />
           </CardTitle>
           <p className="text-xs text-bone-dim">{t("recordsDesc")}</p>
         </CardHeader>
@@ -282,9 +370,10 @@ export default async function AnalyticsPage() {
           )}
         </CardContent>
       </Card>
+      </div>
 
       {/* Body weight */}
-      <Card>
+      <Card id="body" className="scroll-mt-4">
         <CardHeader>
           <CardTitle>{tBody("title")}</CardTitle>
           <p className="text-xs text-bone-dim">{tBody("description")}</p>

@@ -68,12 +68,15 @@ export async function createSession(
 const MAX_RECURRING_WEEKS = 12;
 
 /**
- * Create `weeks` planned sessions, one per week starting on `startDate`.
+ * Create planned sessions for `weeks` weeks starting on `startDate`.
+ * By default one session per week on the start date's weekday; pass
+ * `weekdays` (0 = Monday … 6 = Sunday) to schedule several days per week.
  */
 export async function createRecurringSessions(
   planId: string | null,
   startDate: string,
   weeks: number,
+  weekdays?: number[],
 ): Promise<ActionResult> {
   try {
     const { supabase, user } = await requireUser();
@@ -83,6 +86,9 @@ export async function createRecurringSessions(
     if (!Number.isInteger(weeks) || weeks < 2 || weeks > MAX_RECURRING_WEEKS) {
       return { error: `Repeat count must be between 2 and ${MAX_RECURRING_WEEKS} weeks.` };
     }
+    const days = [...new Set(weekdays ?? [])].filter(
+      (d) => Number.isInteger(d) && d >= 0 && d <= 6,
+    );
     if (planId) {
       const { data: plan } = await supabase
         .from("workout_plans")
@@ -94,12 +100,37 @@ export async function createRecurringSessions(
     }
 
     const start = new Date(`${startDate}T00:00:00`);
-    const rows = Array.from({ length: weeks }, (_, i) => ({
-      plan_id: planId,
-      user_id: user.id,
-      scheduled_date: toISODate(addDays(start, 7 * i)),
-      status: "planned" as const,
-    }));
+    let rows: {
+      plan_id: string | null;
+      user_id: string;
+      scheduled_date: string;
+      status: "planned";
+    }[];
+    if (days.length > 0) {
+      // Monday of the start week anchors the weekday pattern.
+      const monday = addDays(start, -((start.getDay() + 6) % 7));
+      rows = [];
+      for (let w = 0; w < weeks; w++) {
+        for (const d of days) {
+          const date = addDays(monday, w * 7 + d);
+          if (toISODate(date) < startDate) continue; // don't schedule in the past
+          rows.push({
+            plan_id: planId,
+            user_id: user.id,
+            scheduled_date: toISODate(date),
+            status: "planned" as const,
+          });
+        }
+      }
+      if (rows.length === 0) return { error: "No dates to schedule." };
+    } else {
+      rows = Array.from({ length: weeks }, (_, i) => ({
+        plan_id: planId,
+        user_id: user.id,
+        scheduled_date: toISODate(addDays(start, 7 * i)),
+        status: "planned" as const,
+      }));
+    }
 
     const { data, error } = await supabase
       .from("workout_sessions")
@@ -118,12 +149,22 @@ export async function createRecurringSessions(
 export async function startSession(sessionId: string): Promise<ActionResult> {
   try {
     const { supabase, user } = await requireUser();
+    // started_at anchors workout duration. Fall back to a plain status update
+    // if migration 0019 hasn't been applied yet.
     const { error } = await supabase
       .from("workout_sessions")
-      .update({ status: "in_progress" })
+      .update({ status: "in_progress", started_at: new Date().toISOString() })
       .eq("id", sessionId)
       .eq("user_id", user.id);
-    if (error) return { error: safeActionError("startSession", error) };
+    if (error) {
+      const { error: retryError } = await supabase
+        .from("workout_sessions")
+        .update({ status: "in_progress" })
+        .eq("id", sessionId)
+        .eq("user_id", user.id);
+      if (retryError)
+        return { error: safeActionError("startSession", retryError) };
+    }
     revalidatePath(`/session/${sessionId}`);
     revalidatePath("/dashboard");
     return { id: sessionId };
@@ -146,18 +187,33 @@ export async function logWorkoutNow(planId: string): Promise<ActionResult> {
       .eq("user_id", user.id)
       .maybeSingle();
     if (!plan) return { error: "Plan not found." };
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("workout_sessions")
       .insert({
         plan_id: planId,
         user_id: user.id,
         scheduled_date: todayISO(),
         status: "in_progress",
+        started_at: new Date().toISOString(),
       })
       .select("id")
       .single();
 
-    if (error) return { error: safeActionError("logWorkoutNow", error) };
+    // Fall back for a database without migration 0019 (no started_at yet).
+    if (error) {
+      ({ data, error } = await supabase
+        .from("workout_sessions")
+        .insert({
+          plan_id: planId,
+          user_id: user.id,
+          scheduled_date: todayISO(),
+          status: "in_progress",
+        })
+        .select("id")
+        .single());
+    }
+    if (error || !data)
+      return { error: safeActionError("logWorkoutNow", error) };
     revalidatePath("/dashboard");
     revalidatePath("/calendar");
     return { id: data.id };
@@ -292,6 +348,75 @@ export async function rescheduleSession(
     return { id: sessionId };
   } catch (e) {
     return { error: safeActionError("rescheduleSession", e) };
+  }
+}
+
+/**
+ * Update only the session notes — much lighter than re-running
+ * completeSession with every log when the user just edits the note.
+ */
+export async function updateSessionNotes(
+  sessionId: string,
+  notes: string | null,
+): Promise<ActionResult> {
+  try {
+    const { supabase, user } = await requireUser();
+    const parsedNotes = sessionNotesSchema.safeParse(notes ?? null);
+    if (!parsedNotes.success) return { error: "Invalid notes." };
+    const { error } = await supabase
+      .from("workout_sessions")
+      .update({ notes: parsedNotes.data || null })
+      .eq("id", sessionId)
+      .eq("user_id", user.id);
+    if (error) return { error: safeActionError("updateSessionNotes", error) };
+    revalidatePath(`/session/${sessionId}`);
+    return { id: sessionId };
+  } catch (e) {
+    return { error: safeActionError("updateSessionNotes", e) };
+  }
+}
+
+/**
+ * Swap the exercise behind a plan slot for another one (e.g. the machine is
+ * taken mid-workout). Existing logs keep pointing at the same plan slot.
+ * Note: the plan itself is updated, so future sessions use the new exercise.
+ */
+export async function swapPlanExercise(
+  planExerciseId: string,
+  newExerciseId: string,
+): Promise<ActionResult> {
+  try {
+    const { supabase, user } = await requireUser();
+
+    // The slot must belong to one of the caller's plans.
+    const { data: slot } = await supabase
+      .from("plan_exercises")
+      .select("id, workout_plans!inner(user_id)")
+      .eq("id", planExerciseId)
+      .eq("workout_plans.user_id", user.id)
+      .maybeSingle();
+    if (!slot) return { error: "Exercise not found." };
+
+    // The replacement must be a catalog exercise or the user's own.
+    const { data: exercise } = await supabase
+      .from("exercises")
+      .select("id, user_id")
+      .eq("id", newExerciseId)
+      .maybeSingle();
+    if (!exercise || (exercise.user_id && exercise.user_id !== user.id)) {
+      return { error: "Exercise not found." };
+    }
+
+    const { error } = await supabase
+      .from("plan_exercises")
+      .update({ exercise_id: newExerciseId })
+      .eq("id", planExerciseId);
+    if (error) return { error: safeActionError("swapPlanExercise", error) };
+
+    revalidatePath("/dashboard");
+    return { id: planExerciseId };
+  } catch (e) {
+    return { error: safeActionError("swapPlanExercise", e) };
   }
 }
 

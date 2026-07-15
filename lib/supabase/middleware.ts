@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
     isAuthRoute ||
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/update-password") ||
-    pathname.startsWith("/auth/callback");
+    pathname.startsWith("/auth/callback") ||
+    pathname.startsWith("/share/");
 
   // Redirect responses must carry the refreshed session cookies, otherwise the
   // browser keeps its expired tokens and every follow-up request redirects
