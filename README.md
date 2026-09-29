@@ -34,6 +34,7 @@ a rough edge here and there.
 <p>
   <img src="screenshots/calendar.png" width="240" alt="Calendar view" />
   <img src="screenshots/analytics.png" width="240" alt="Personal records and PR timeline" />
+  <img src="screenshots/profile.png" width="240" alt="Profile and settings" />
 </p>
 
 ## Stack

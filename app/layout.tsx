@@ -27,7 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const title = "Meredian — Train with precision.";
+const title = "Meredian - Train with precision.";
 const description =
   "A training planner and analytics tool. Plan your workouts, log reality, and surface insights over time.";
 
