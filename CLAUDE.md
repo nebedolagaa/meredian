@@ -15,7 +15,7 @@ analytics. Mobile-first, installable PWA with offline shell.
 - **Tailwind CSS** + Radix UI primitives (custom design system in `components/ui/`)
 - **next-intl** for i18n — 5 locales: `messages/{en,es,nb,ru,uk}.json`
 - **recharts** (analytics), **framer-motion** (motion), **zod** (validation)
-- **react-hook-form**, **react-muscle-highlighter** (body map)
+- **react-muscle-highlighter** (body map)
 - Tests: **Vitest**
 
 ## Commands
@@ -146,6 +146,8 @@ export async function doThing(...): Promise<{ error?: string; id?: string }> {
 - Prefer editing existing files over creating new ones.
 - Match the existing code style; don't add comments/docstrings to untouched code.
 - Only make the change requested; avoid speculative refactors.
+- Do not add `Co-Authored-By: Claude` (or similar AI attribution) lines to git
+  commit messages or PR descriptions.
 - After schema changes, remind the user a new migration will auto-apply on merge to `main`.
 
 ## Before committing

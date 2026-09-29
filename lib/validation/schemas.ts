@@ -56,11 +56,6 @@ export const savePlanSchema = z.object({
   exercises: z.array(planExerciseSchema).max(100),
 });
 
-export const createSessionSchema = z.object({
-  planId: z.string().uuid("Invalid plan.").nullable(),
-  scheduledDate: isoDateSchema,
-});
-
 // Onboarding wizard payload. Weights/height arrive already converted to
 // metric (kg / cm); sex is optional ("prefer not to say").
 export const onboardingSchema = z.object({
