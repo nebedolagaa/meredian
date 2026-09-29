@@ -90,9 +90,11 @@ export async function doThing(...): Promise<{ error?: string; id?: string }> {
 
 ### Database & migrations
 
-- Migrations are **plain SQL** in `supabase/migrations/NNNN_*.sql`, applied
-  **manually** in the Supabase SQL editor (no CLI push). When you add a migration,
-  tell the user to run it.
+- Migrations are **plain SQL** in `supabase/migrations/NNNN_*.sql`. The
+  `Push Supabase Migrations` GitHub Action (`.github/workflows/supabase-migrations.yml`)
+  runs `supabase db push` automatically when a migration file merges to `main` —
+  no manual SQL editor step needed. Still tell the user when you add one, so they
+  know it'll apply on merge.
 - Keep `lib/types/database.ts` in sync by hand when schema changes (Row/Insert/Update).
 - Profiles' newer columns are read with **separate `.select()` calls** so an
   unapplied migration (missing column) doesn't break the whole page.
@@ -144,7 +146,7 @@ export async function doThing(...): Promise<{ error?: string; id?: string }> {
 - Prefer editing existing files over creating new ones.
 - Match the existing code style; don't add comments/docstrings to untouched code.
 - Only make the change requested; avoid speculative refactors.
-- After schema changes, remind the user to run the migration in Supabase.
+- After schema changes, remind the user a new migration will auto-apply on merge to `main`.
 
 ## Before committing
 
