@@ -656,7 +656,8 @@
     "description": "Recibe una notificación del navegador para la sesión de hoy mientras la app está abierta.",
     "enable": "Activar recordatorios de sesión",
     "notificationTitle": "Sesión de hoy",
-    "notificationBody": "{plan} está programado para hoy. Hora de entrenar."
+    "notificationBody": "{plan} está programado para hoy. Hora de entrenar.",
+    "pushFailed": "No se pudieron activar las notificaciones push. En iPhone/iPad, añade primero Meredian a la pantalla de inicio (Compartir → Añadir a pantalla de inicio) y vuelve a intentarlo."
   },
   "bodyWeight": {
     "title": "Peso corporal",

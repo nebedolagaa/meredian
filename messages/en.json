@@ -656,7 +656,8 @@
     "description": "Get a browser notification for today's session while the app is open.",
     "enable": "Enable session reminders",
     "notificationTitle": "Today's session",
-    "notificationBody": "{plan} is scheduled for today. Time to train."
+    "notificationBody": "{plan} is scheduled for today. Time to train.",
+    "pushFailed": "Couldn't turn on push notifications. On iPhone/iPad, add Meredian to your Home Screen first (Share → Add to Home Screen), then try again."
   },
   "bodyWeight": {
     "title": "Body weight",

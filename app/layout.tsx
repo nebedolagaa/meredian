@@ -27,10 +27,16 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const title = "Meredian — Train with precision.";
+const description =
+  "A training planner and analytics tool. Plan your workouts, log reality, and surface insights over time.";
+
 export const metadata: Metadata = {
-  title: "Meredian — Train with precision.",
-  description:
-    "A training planner and analytics tool. Plan your workouts, log reality, and surface insights over time.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://meredian.fit",
+  ),
+  title,
+  description,
   manifest: "/manifest.webmanifest",
   applicationName: "Meredian",
   appleWebApp: {
@@ -42,13 +48,23 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/icon.svg",
   },
+  openGraph: {
+    title,
+    description,
+    siteName: "Meredian",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#0F1015",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
 
 export default async function RootLayout({

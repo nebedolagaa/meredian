@@ -656,7 +656,8 @@
     "description": "Få et nettleservarsel for dagens økt mens appen er åpen.",
     "enable": "Aktiver øktpåminnelser",
     "notificationTitle": "Dagens økt",
-    "notificationBody": "{plan} er planlagt for i dag. På tide å trene."
+    "notificationBody": "{plan} er planlagt for i dag. På tide å trene.",
+    "pushFailed": "Kunne ikke aktivere push-varsler. På iPhone/iPad, legg først Meredian til på Hjem-skjermen (Del → Legg til på Hjem-skjerm), og prøv igjen."
   },
   "bodyWeight": {
     "title": "Kroppsvekt",

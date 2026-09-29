@@ -133,14 +133,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         {mode === "login" ? (
           <>
             {t("noAccount")}{" "}
-            <Link href="/signup" className="text-steel hover:underline">
+            <Link href="/signup" className="text-steel underline underline-offset-2 hover:no-underline">
               {t("signUp")}
             </Link>
           </>
         ) : (
           <>
             {t("haveAccount")}{" "}
-            <Link href="/login" className="text-steel hover:underline">
+            <Link href="/login" className="text-steel underline underline-offset-2 hover:no-underline">
               {t("signIn")}
             </Link>
           </>
