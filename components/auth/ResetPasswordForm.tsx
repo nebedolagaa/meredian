@@ -52,7 +52,7 @@ export function ResetPasswordForm() {
       </Button>
 
       <p className="text-center text-sm text-bone-dim">
-        <Link href="/login" className="text-steel hover:underline">
+        <Link href="/login" className="text-steel underline underline-offset-2 hover:no-underline">
           {t("backToSignIn")}
         </Link>
       </p>

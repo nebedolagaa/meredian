@@ -11,7 +11,7 @@
     --graphite: 255 255 255; /* card / panel #FFFFFF */
     --panel-border: rgba(15, 16, 21, 0.1);
     --bone: 20 21 26; /* primary text #14151A */
-    --bone-dim: rgba(20, 21, 26, 0.55);
+    --bone-dim: rgba(20, 21, 26, 0.6); /* 4.6:1 on --carbon, WCAG AA */
     --steel: 79 70 229; /* accent — indigo #4F46E5 */
     --clay: 220 38 38; /* destructive — red #DC2626 */
     --moss: 77 124 15; /* success — lime #4D7C0F */
@@ -36,7 +36,7 @@
     --secondary: 228 26% 95%;
     --secondary-foreground: 228 13% 9%;
     --muted: 228 26% 95%;
-    --muted-foreground: rgba(20, 21, 26, 0.55);
+    --muted-foreground: rgba(20, 21, 26, 0.6);
     --accent: 230 30% 93%;
     --accent-foreground: 228 13% 9%;
     --destructive: 0 72% 51%;
@@ -52,7 +52,7 @@
     --graphite: 24 26 33; /* graphite #181A21 */
     --panel-border: rgba(255, 255, 255, 0.08);
     --bone: 236 236 242; /* bone #ECECF2 */
-    --bone-dim: rgba(236, 236, 242, 0.45);
+    --bone-dim: rgba(236, 236, 242, 0.5); /* 4.7:1 on --carbon, WCAG AA */
     --steel: 129 140 248; /* accent — indigo #818CF8 */
     --clay: 248 113 113; /* destructive — red #F87171 */
     --moss: 163 230 53; /* success — lime #A3E635 */
@@ -71,7 +71,7 @@
     --secondary: 228 16% 11%;
     --secondary-foreground: 240 18% 94%;
     --muted: 228 16% 11%;
-    --muted-foreground: rgba(236, 236, 242, 0.45);
+    --muted-foreground: rgba(236, 236, 242, 0.5);
     --accent: 228 16% 14%;
     --accent-foreground: 240 18% 94%;
     --destructive: 0 91% 71%; /* red #F87171 */
