@@ -36,16 +36,8 @@ export function addDays(d: Date, n: number): Date {
   return date;
 }
 
-export function isSameDay(a: Date, b: Date): boolean {
-  return toISODate(a) === toISODate(b);
-}
-
 export function startOfMonth(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), 1);
-}
-
-export function endOfMonth(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth() + 1, 0);
 }
 
 /** 6-week grid (42 cells) of dates for a month view, Monday-first. */
@@ -55,28 +47,7 @@ export function monthGrid(d: Date): Date[] {
   return Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
 }
 
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export function monthLabel(d: Date): string {
-  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
-}
-
 export function shortDate(iso: string): string {
   const [, m, day] = iso.split("-");
   return `${day}.${m}`;
 }
-
-export const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
